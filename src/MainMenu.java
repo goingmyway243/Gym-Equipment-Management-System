@@ -15,7 +15,6 @@ public class MainMenu extends javax.swing.JFrame {
      */
     public MainMenu() {
         initComponents();
-        initRenderers();
         this.setResizable(false);
     }
 
@@ -30,23 +29,21 @@ public class MainMenu extends javax.swing.JFrame {
 
         MainDesktopPane = new javax.swing.JDesktopPane();
         titleLabel = new javax.swing.JLabel();
-        addButton = new javax.swing.JButton();
-        editButton = new javax.swing.JButton();
-        searchButton = new javax.swing.JButton();
-        statisticButton = new javax.swing.JButton();
-        panelAddEquipment = new javax.swing.JPanel();
-        clearButton_tabAdd = new javax.swing.JButton();
-        confirmButton_tabAdd = new javax.swing.JButton();
-        panelViewAndEdit = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        table_tabView = new javax.swing.JTable();
-        updateButton_tabView = new javax.swing.JButton();
-        removeButton_tabView = new javax.swing.JButton();
-        editButton_tabView = new javax.swing.JButton();
-        panelSearch = new javax.swing.JPanel();
-        searchField_tabSearch = new javax.swing.JTextField();
-        searchLabel_tabSeach = new javax.swing.JLabel();
-        panelStatistic = new javax.swing.JPanel();
+        addCategoryButton = new javax.swing.JButton();
+        addSupplierButton = new javax.swing.JButton();
+        newImportButton = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jTabbedPane3 = new javax.swing.JTabbedPane();
+        equipmentsTable = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        importDetailsTable = new javax.swing.JScrollPane();
+        jTable5 = new javax.swing.JTable();
+        usersTable = new javax.swing.JScrollPane();
+        jTable4 = new javax.swing.JTable();
+        categoriesTable = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
+        suppliersTable = new javax.swing.JScrollPane();
+        jTable3 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -57,220 +54,139 @@ public class MainMenu extends javax.swing.JFrame {
         titleLabel.setForeground(new java.awt.Color(255, 255, 255));
         titleLabel.setText("Hệ thống quản lý Thiết bị phòng Gym");
 
-        addButton.setText("Thêm thiết bị");
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
+        addCategoryButton.setText("Thêm loại thiết bị");
+        addCategoryButton.setPreferredSize(new java.awt.Dimension(107, 23));
 
-        editButton.setText("Xem danh sách");
-        editButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editButtonActionPerformed(evt);
-            }
-        });
+        addSupplierButton.setText("Thêm nhà cc");
+        addSupplierButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        addSupplierButton.setPreferredSize(new java.awt.Dimension(107, 23));
 
-        searchButton.setText("Tìm kiếm");
-        searchButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchButtonActionPerformed(evt);
-            }
-        });
+        newImportButton.setText("Tạo phiếu nhập");
 
-        statisticButton.setText("Thống kê");
-        statisticButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                statisticButtonActionPerformed(evt);
-            }
-        });
+        jButton5.setText("Cài đặt");
 
-        panelAddEquipment.setPreferredSize(new java.awt.Dimension(783, 433));
-
-        clearButton_tabAdd.setText("Làm mới");
-
-        confirmButton_tabAdd.setText("Lưu");
-
-        javax.swing.GroupLayout panelAddEquipmentLayout = new javax.swing.GroupLayout(panelAddEquipment);
-        panelAddEquipment.setLayout(panelAddEquipmentLayout);
-        panelAddEquipmentLayout.setHorizontalGroup(
-            panelAddEquipmentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAddEquipmentLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(confirmButton_tabAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
-                .addComponent(clearButton_tabAdd)
-                .addGap(28, 28, 28))
-        );
-        panelAddEquipmentLayout.setVerticalGroup(
-            panelAddEquipmentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAddEquipmentLayout.createSequentialGroup()
-                .addContainerGap(384, Short.MAX_VALUE)
-                .addGroup(panelAddEquipmentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(clearButton_tabAdd)
-                    .addComponent(confirmButton_tabAdd))
-                .addGap(26, 26, 26))
-        );
-
-        panelViewAndEdit.setPreferredSize(new java.awt.Dimension(218, 433));
-
-        table_tabView.setModel(new javax.swing.table.DefaultTableModel(
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(table_tabView);
+        equipmentsTable.setViewportView(jTable1);
 
-        updateButton_tabView.setText("Cập nhật tình trạng");
+        jTabbedPane3.addTab("Thiết bị đang quản lý", equipmentsTable);
 
-        removeButton_tabView.setText("Xóa thiết bị");
+        jTable5.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        importDetailsTable.setViewportView(jTable5);
 
-        editButton_tabView.setText("Chỉnh sửa thông tin");
+        jTabbedPane3.addTab("Danh sách phiếu nhập", importDetailsTable);
 
-        javax.swing.GroupLayout panelViewAndEditLayout = new javax.swing.GroupLayout(panelViewAndEdit);
-        panelViewAndEdit.setLayout(panelViewAndEditLayout);
-        panelViewAndEditLayout.setHorizontalGroup(
-            panelViewAndEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelViewAndEditLayout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 612, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(panelViewAndEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(updateButton_tabView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(editButton_tabView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(removeButton_tabView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 26, Short.MAX_VALUE))
-        );
-        panelViewAndEditLayout.setVerticalGroup(
-            panelViewAndEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelViewAndEditLayout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 5, Short.MAX_VALUE))
-            .addGroup(panelViewAndEditLayout.createSequentialGroup()
-                .addGap(78, 78, 78)
-                .addComponent(editButton_tabView)
-                .addGap(18, 18, 18)
-                .addComponent(updateButton_tabView)
-                .addGap(18, 18, 18)
-                .addComponent(removeButton_tabView)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jTable4.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        usersTable.setViewportView(jTable4);
 
-        searchLabel_tabSeach.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        searchLabel_tabSeach.setText("Nhập tên thiết bị");
+        jTabbedPane3.addTab("Danh sách nhân viên", usersTable);
 
-        javax.swing.GroupLayout panelSearchLayout = new javax.swing.GroupLayout(panelSearch);
-        panelSearch.setLayout(panelSearchLayout);
-        panelSearchLayout.setHorizontalGroup(
-            panelSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelSearchLayout.createSequentialGroup()
-                .addGap(55, 55, 55)
-                .addComponent(searchLabel_tabSeach)
-                .addGap(54, 54, 54)
-                .addComponent(searchField_tabSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(156, Short.MAX_VALUE))
-        );
-        panelSearchLayout.setVerticalGroup(
-            panelSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelSearchLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchField_tabSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchLabel_tabSeach))
-                .addContainerGap(402, Short.MAX_VALUE))
-        );
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        categoriesTable.setViewportView(jTable2);
 
-        panelStatistic.setPreferredSize(new java.awt.Dimension(783, 433));
+        jTabbedPane3.addTab("Loại thiết bị", categoriesTable);
 
-        javax.swing.GroupLayout panelStatisticLayout = new javax.swing.GroupLayout(panelStatistic);
-        panelStatistic.setLayout(panelStatisticLayout);
-        panelStatisticLayout.setHorizontalGroup(
-            panelStatisticLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 783, Short.MAX_VALUE)
-        );
-        panelStatisticLayout.setVerticalGroup(
-            panelStatisticLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 432, Short.MAX_VALUE)
-        );
+        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        suppliersTable.setViewportView(jTable3);
+
+        jTabbedPane3.addTab("Nhà cung cấp", suppliersTable);
 
         MainDesktopPane.setLayer(titleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(addButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(editButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(searchButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(statisticButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(panelAddEquipment, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(panelViewAndEdit, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(panelSearch, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(panelStatistic, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(addCategoryButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(addSupplierButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(newImportButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(jButton5, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(jTabbedPane3, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout MainDesktopPaneLayout = new javax.swing.GroupLayout(MainDesktopPane);
         MainDesktopPane.setLayout(MainDesktopPaneLayout);
         MainDesktopPaneLayout.setHorizontalGroup(
             MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(panelAddEquipment, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(MainDesktopPaneLayout.createSequentialGroup()
-                        .addComponent(addButton)
-                        .addGap(125, 125, 125)
-                        .addComponent(editButton)
-                        .addGap(128, 128, 128)
-                        .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(108, 108, 108)
-                        .addComponent(statisticButton, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)))
-                .addContainerGap())
+            .addGroup(MainDesktopPaneLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jTabbedPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 725, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 157, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(133, 133, 133))
-            .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(MainDesktopPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panelViewAndEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 783, Short.MAX_VALUE)
-                    .addContainerGap()))
-            .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(MainDesktopPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panelSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
-            .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panelStatistic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
+                .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
+                        .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(newImportButton, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+                            .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(addCategoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(addSupplierButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(17, 17, 17))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
+                        .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(197, 197, 197))))
         );
         MainDesktopPaneLayout.setVerticalGroup(
             MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MainDesktopPaneLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addGap(25, 25, 25)
                 .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchButton)
-                    .addComponent(statisticButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(editButton)
-                    .addComponent(addButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(panelAddEquipment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
-                    .addContainerGap(111, Short.MAX_VALUE)
-                    .addComponent(panelViewAndEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 432, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
-            .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
-                    .addContainerGap(110, Short.MAX_VALUE)
-                    .addComponent(panelSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
-            .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
-                    .addContainerGap(111, Short.MAX_VALUE)
-                    .addComponent(panelStatistic, javax.swing.GroupLayout.PREFERRED_SIZE, 432, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
+                .addGap(30, 30, 30)
+                .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(MainDesktopPaneLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(newImportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(73, 73, 73)
+                        .addComponent(addCategoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(74, 74, 74)
+                        .addComponent(addSupplierButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton5))
+                    .addComponent(jTabbedPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -287,37 +203,6 @@ public class MainMenu extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
-    private void initRenderers()
-    {
-        setPanelsVisible(false);
-    }
-    
-    private void setPanelsVisible(boolean visible)
-    {
-        panelAddEquipment.setVisible(visible);
-        panelViewAndEdit.setVisible(visible);
-        panelSearch.setVisible(visible);
-        panelStatistic.setVisible(visible);
-    }
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        setPanelsVisible(false);
-        panelAddEquipment.setVisible(true);
-    }//GEN-LAST:event_addButtonActionPerformed
-
-    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        setPanelsVisible(false);
-        panelViewAndEdit.setVisible(true);
-    }//GEN-LAST:event_editButtonActionPerformed
-
-    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-        setPanelsVisible(false);
-        panelSearch.setVisible(true);
-    }//GEN-LAST:event_searchButtonActionPerformed
-
-    private void statisticButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statisticButtonActionPerformed
-        setPanelsVisible(false);
-        panelStatistic.setVisible(true);
-    }//GEN-LAST:event_statisticButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -356,23 +241,21 @@ public class MainMenu extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane MainDesktopPane;
-    private javax.swing.JButton addButton;
-    private javax.swing.JButton clearButton_tabAdd;
-    private javax.swing.JButton confirmButton_tabAdd;
-    private javax.swing.JButton editButton;
-    private javax.swing.JButton editButton_tabView;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel panelAddEquipment;
-    private javax.swing.JPanel panelSearch;
-    private javax.swing.JPanel panelStatistic;
-    private javax.swing.JPanel panelViewAndEdit;
-    private javax.swing.JButton removeButton_tabView;
-    private javax.swing.JButton searchButton;
-    private javax.swing.JTextField searchField_tabSearch;
-    private javax.swing.JLabel searchLabel_tabSeach;
-    private javax.swing.JButton statisticButton;
-    private javax.swing.JTable table_tabView;
+    private javax.swing.JButton addCategoryButton;
+    private javax.swing.JButton addSupplierButton;
+    private javax.swing.JScrollPane categoriesTable;
+    private javax.swing.JScrollPane equipmentsTable;
+    private javax.swing.JScrollPane importDetailsTable;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JTabbedPane jTabbedPane3;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
+    private javax.swing.JTable jTable3;
+    private javax.swing.JTable jTable4;
+    private javax.swing.JTable jTable5;
+    private javax.swing.JButton newImportButton;
+    private javax.swing.JScrollPane suppliersTable;
     private javax.swing.JLabel titleLabel;
-    private javax.swing.JButton updateButton_tabView;
+    private javax.swing.JScrollPane usersTable;
     // End of variables declaration//GEN-END:variables
 }
