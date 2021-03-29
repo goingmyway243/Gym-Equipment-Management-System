@@ -1,3 +1,13 @@
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -15,7 +25,36 @@ public class MainMenu extends javax.swing.JFrame {
      */
     public MainMenu() {
         initComponents();
+        getSuppliers();
         this.setResizable(false);
+    }
+    
+    private void getSuppliers()
+    {
+        DefaultTableModel tableModel = (DefaultTableModel) suppliersTable.getModel();
+        tableModel.setNumRows(0);
+        
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "select * from suppliers";
+        Vector vector;
+        try {
+            PreparedStatement ps = connector.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next())
+            {
+                vector = new Vector();
+                vector.add(rs.getInt("id"));
+                vector.add(rs.getString("name"));
+                vector.add(rs.getString("address"));
+                vector.add(rs.getString("phone_number"));
+                tableModel.addRow(vector);
+            }
+            suppliersTable.setModel(tableModel);
+            rs.close();
+            ps.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -32,18 +71,20 @@ public class MainMenu extends javax.swing.JFrame {
         addCategoryButton = new javax.swing.JButton();
         addSupplierButton = new javax.swing.JButton();
         newImportButton = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jTabbedPane3 = new javax.swing.JTabbedPane();
-        equipmentsTable = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        importDetailsTable = new javax.swing.JScrollPane();
-        jTable5 = new javax.swing.JTable();
-        usersTable = new javax.swing.JScrollPane();
-        jTable4 = new javax.swing.JTable();
-        categoriesTable = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
-        suppliersTable = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
+        settingButton = new javax.swing.JButton();
+        mainTabbedPane = new javax.swing.JTabbedPane();
+        equipmentsScrollPane = new javax.swing.JScrollPane();
+        equipmentsTable = new javax.swing.JTable();
+        importDetailsScrollPane = new javax.swing.JScrollPane();
+        importDetailsTable = new javax.swing.JTable();
+        usersScrollPane = new javax.swing.JScrollPane();
+        usersTable = new javax.swing.JTable();
+        categoriesScrollPane = new javax.swing.JScrollPane();
+        categoriesTable = new javax.swing.JTable();
+        suppliersScrollPane = new javax.swing.JScrollPane();
+        suppliersTable = new javax.swing.JTable();
+        editButton = new javax.swing.JButton();
+        removeButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -62,90 +103,130 @@ public class MainMenu extends javax.swing.JFrame {
         addSupplierButton.setPreferredSize(new java.awt.Dimension(107, 23));
 
         newImportButton.setText("Tạo phiếu nhập");
+        newImportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newImportButtonActionPerformed(evt);
+            }
+        });
 
-        jButton5.setText("Cài đặt");
+        settingButton.setText("Cài đặt");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        equipmentsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Mã thiết bị", "Trạng thái", "Hình ảnh", "Mã loại thiết bị", "Mã phiếu nhập", "Cập nhật lúc"
             }
-        ));
-        equipmentsTable.setViewportView(jTable1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
 
-        jTabbedPane3.addTab("Thiết bị đang quản lý", equipmentsTable);
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        equipmentsScrollPane.setViewportView(equipmentsTable);
 
-        jTable5.setModel(new javax.swing.table.DefaultTableModel(
+        mainTabbedPane.addTab("Thiết bị đang quản lý", equipmentsScrollPane);
+
+        importDetailsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Mã phiếu nhập", "Mã người nhập", "Ngày nhập"
             }
-        ));
-        importDetailsTable.setViewportView(jTable5);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
 
-        jTabbedPane3.addTab("Danh sách phiếu nhập", importDetailsTable);
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        importDetailsScrollPane.setViewportView(importDetailsTable);
 
-        jTable4.setModel(new javax.swing.table.DefaultTableModel(
+        mainTabbedPane.addTab("Danh sách phiếu nhập", importDetailsScrollPane);
+
+        usersTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Mã nhân viên", "Họ tên", "Ngày sinh", "Email", "Số điện thoại", "Chân dung", "Cập nhật lúc"
             }
-        ));
-        usersTable.setViewportView(jTable4);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
+            };
 
-        jTabbedPane3.addTab("Danh sách nhân viên", usersTable);
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        usersScrollPane.setViewportView(usersTable);
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        mainTabbedPane.addTab("Danh sách nhân viên", usersScrollPane);
+
+        categoriesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Mã loại", "Tên", "Hình ảnh", "Giá", "Hạn bảo hành", "Mã nhà cung cấp"
             }
-        ));
-        categoriesTable.setViewportView(jTable2);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
 
-        jTabbedPane3.addTab("Loại thiết bị", categoriesTable);
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        categoriesScrollPane.setViewportView(categoriesTable);
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        mainTabbedPane.addTab("Loại thiết bị", categoriesScrollPane);
+
+        suppliersTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Mã nhà cung cấp", "Tên nhà cung cấp", "Địa chỉ", "Số điện thoại"
             }
-        ));
-        suppliersTable.setViewportView(jTable3);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
 
-        jTabbedPane3.addTab("Nhà cung cấp", suppliersTable);
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        suppliersScrollPane.setViewportView(suppliersTable);
+
+        mainTabbedPane.addTab("Nhà cung cấp", suppliersScrollPane);
+
+        editButton.setText("Sửa...");
+        editButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        editButton.setPreferredSize(new java.awt.Dimension(107, 23));
+
+        removeButton.setText("Xóa...");
+        removeButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        removeButton.setPreferredSize(new java.awt.Dimension(107, 23));
 
         MainDesktopPane.setLayer(titleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         MainDesktopPane.setLayer(addCategoryButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
         MainDesktopPane.setLayer(addSupplierButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
         MainDesktopPane.setLayer(newImportButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(jButton5, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(jTabbedPane3, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(settingButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(mainTabbedPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(editButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(removeButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout MainDesktopPaneLayout = new javax.swing.GroupLayout(MainDesktopPane);
         MainDesktopPane.setLayout(MainDesktopPaneLayout);
@@ -153,7 +234,7 @@ public class MainMenu extends javax.swing.JFrame {
             MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MainDesktopPaneLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jTabbedPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 725, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(mainTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 725, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 157, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -161,9 +242,11 @@ public class MainMenu extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
                         .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(newImportButton, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
-                            .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(settingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(addCategoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(addSupplierButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(addSupplierButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(editButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(removeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(17, 17, 17))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
                         .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -179,13 +262,17 @@ public class MainMenu extends javax.swing.JFrame {
                     .addGroup(MainDesktopPaneLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
                         .addComponent(newImportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(73, 73, 73)
+                        .addGap(18, 18, 18)
                         .addComponent(addCategoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(74, 74, 74)
+                        .addGap(18, 18, 18)
                         .addComponent(addSupplierButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(60, 60, 60)
+                        .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(removeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton5))
-                    .addComponent(jTabbedPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(settingButton))
+                    .addComponent(mainTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
@@ -202,6 +289,11 @@ public class MainMenu extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void newImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newImportButtonActionPerformed
+        importForm = new ImportForm();
+        importForm.setVisible(true);
+    }//GEN-LAST:event_newImportButtonActionPerformed
     
 
     /**
@@ -238,24 +330,27 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
     }
-
+    
+    private ImportForm importForm;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane MainDesktopPane;
     private javax.swing.JButton addCategoryButton;
     private javax.swing.JButton addSupplierButton;
-    private javax.swing.JScrollPane categoriesTable;
-    private javax.swing.JScrollPane equipmentsTable;
-    private javax.swing.JScrollPane importDetailsTable;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JTabbedPane jTabbedPane3;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTable jTable3;
-    private javax.swing.JTable jTable4;
-    private javax.swing.JTable jTable5;
+    private javax.swing.JScrollPane categoriesScrollPane;
+    private javax.swing.JTable categoriesTable;
+    private javax.swing.JButton editButton;
+    private javax.swing.JScrollPane equipmentsScrollPane;
+    private javax.swing.JTable equipmentsTable;
+    private javax.swing.JScrollPane importDetailsScrollPane;
+    private javax.swing.JTable importDetailsTable;
+    private javax.swing.JTabbedPane mainTabbedPane;
     private javax.swing.JButton newImportButton;
-    private javax.swing.JScrollPane suppliersTable;
+    private javax.swing.JButton removeButton;
+    private javax.swing.JButton settingButton;
+    private javax.swing.JScrollPane suppliersScrollPane;
+    private javax.swing.JTable suppliersTable;
     private javax.swing.JLabel titleLabel;
-    private javax.swing.JScrollPane usersTable;
+    private javax.swing.JScrollPane usersScrollPane;
+    private javax.swing.JTable usersTable;
     // End of variables declaration//GEN-END:variables
 }
