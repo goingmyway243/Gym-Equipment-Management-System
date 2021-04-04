@@ -1,3 +1,15 @@
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.table.DefaultTableModel;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -13,9 +25,50 @@ public class ImportForm extends javax.swing.JFrame {
     /**
      * Creates new form ImportForm
      */
-    public ImportForm() {
+    public ImportForm(int userID) {
+        _userID = userID;
+        
         initComponents();
+        initRenderer();
+    }
+    
+    public void addEquiment(String id, String name, String status, int price, String picture, String detailID)
+    {
+        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+        Vector vector = new Vector();
+        vector.add(id);
+        vector.add(name);
+        vector.add(status);
+        vector.add(price);
+        vector.add(picture);
+        vector.add(detailID);
+        tableModel.addRow(vector);
+    }
+    
+    private void initRenderer()
+    {
         this.setResizable(false);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
+        loadUserName();
+        importDateTextField.setText(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+    }
+    
+    private void loadUserName()
+    {
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "select * from users where id = '"+_userID+"'";
+        String userName = "";
+        try {
+            ResultSet rs = connector.createStatement().executeQuery(sql);
+            if(rs.next())
+            {
+                userName = rs.getString("lastName") + " " + rs.getString("firstName");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ImportForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        userNameTextField.setText(userName);
     }
 
     /**
@@ -29,8 +82,8 @@ public class ImportForm extends javax.swing.JFrame {
 
         importIDLabel = new javax.swing.JLabel();
         importIDTextField = new javax.swing.JTextField();
-        userIDLabel = new javax.swing.JLabel();
-        userIDTextField = new javax.swing.JTextField();
+        userNameLabel = new javax.swing.JLabel();
+        userNameTextField = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
         scrollPane = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
@@ -38,12 +91,16 @@ public class ImportForm extends javax.swing.JFrame {
         cancelButton = new javax.swing.JButton();
         importDateLabel = new javax.swing.JLabel();
         importDateTextField = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         importIDLabel.setText("Mã phiếu nhập");
 
-        userIDLabel.setText("Mã nhân viên");
+        userNameLabel.setText("Tên nhân viên");
+
+        userNameTextField.setEditable(false);
 
         addButton.setText("Thêm thiết bị");
         addButton.addActionListener(new java.awt.event.ActionListener() {
@@ -57,7 +114,7 @@ public class ImportForm extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Mã thiết bị", "Tên thiết bị", "Hình ảnh", "Giá", "Hạn bảo hành", "Nhà cung cấp"
+                "Mã thiết bị", "Tên thiết bị", "Trạng thái", "Giá", "Hình ảnh", "Mã loại thiết bị"
             }
         ));
         scrollPane.setViewportView(table);
@@ -70,8 +127,21 @@ public class ImportForm extends javax.swing.JFrame {
         });
 
         cancelButton.setText("Hủy");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         importDateLabel.setText("Ngày nhập");
+
+        importDateTextField.setEditable(false);
+
+        jButton1.setText("Sửa");
+        jButton1.setEnabled(false);
+
+        jButton2.setText("Xóa");
+        jButton2.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -83,11 +153,11 @@ public class ImportForm extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(importIDLabel)
-                            .addComponent(userIDLabel))
+                            .addComponent(userNameLabel))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(importIDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
-                            .addComponent(userIDTextField))
+                            .addComponent(userNameTextField))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -100,7 +170,10 @@ public class ImportForm extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(addButton)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)))
                         .addGap(19, 19, 19))))
@@ -114,11 +187,16 @@ public class ImportForm extends javax.swing.JFrame {
                     .addComponent(importIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(userIDLabel)
-                    .addComponent(userIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(userNameLabel)
+                    .addComponent(userNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(addButton)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(addButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton2))
                     .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -137,12 +215,16 @@ public class ImportForm extends javax.swing.JFrame {
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        addEquimentForm = new AddEquimentForm();
+        javax.swing.JFrame addEquimentForm = new AddEquimentForm(this);
         addEquimentForm.setVisible(true);
+        addEquimentForm.setLocationRelativeTo(this);
     }//GEN-LAST:event_addButtonActionPerformed
 
-    
-    private AddEquimentForm addEquimentForm;
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private int _userID = 0;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;
@@ -150,10 +232,12 @@ public class ImportForm extends javax.swing.JFrame {
     private javax.swing.JTextField importDateTextField;
     private javax.swing.JLabel importIDLabel;
     private javax.swing.JTextField importIDTextField;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton saveButton;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JTable table;
-    private javax.swing.JLabel userIDLabel;
-    private javax.swing.JTextField userIDTextField;
+    private javax.swing.JLabel userNameLabel;
+    private javax.swing.JTextField userNameTextField;
     // End of variables declaration//GEN-END:variables
 }
