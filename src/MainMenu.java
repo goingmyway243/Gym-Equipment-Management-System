@@ -23,10 +23,12 @@ public class MainMenu extends javax.swing.JFrame {
     /**
      * Creates new form MainMenu
      */
-    public MainMenu() {
+    public MainMenu(int userID, String role) {
         initComponents();
         getSuppliers();
         this.setResizable(false);
+        _userID = userID;
+        _role = role;
     }
     
     private void getSuppliers()
@@ -212,10 +214,12 @@ public class MainMenu extends javax.swing.JFrame {
         mainTabbedPane.addTab("Nhà cung cấp", suppliersScrollPane);
 
         editButton.setText("Sửa...");
+        editButton.setEnabled(false);
         editButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         editButton.setPreferredSize(new java.awt.Dimension(107, 23));
 
         removeButton.setText("Xóa...");
+        removeButton.setEnabled(false);
         removeButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         removeButton.setPreferredSize(new java.awt.Dimension(107, 23));
 
@@ -241,7 +245,7 @@ public class MainMenu extends javax.swing.JFrame {
                 .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
                         .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(newImportButton, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+                            .addComponent(newImportButton, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
                             .addComponent(settingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(addCategoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(addSupplierButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -291,12 +295,14 @@ public class MainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void newImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newImportButtonActionPerformed
-        importForm = new ImportForm();
+        javax.swing.JFrame importForm = new ImportForm(_userID);
+        importForm.setLocationRelativeTo(this);
         importForm.setVisible(true);
     }//GEN-LAST:event_newImportButtonActionPerformed
     
     
-    private ImportForm importForm;
+    private int _userID;
+    private String _role;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane MainDesktopPane;
     private javax.swing.JButton addCategoryButton;

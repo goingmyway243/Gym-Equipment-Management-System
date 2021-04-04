@@ -131,7 +131,9 @@ public class LoginForm extends javax.swing.JFrame {
         if (loginAction(usernameTf.getText(), passwordTf.getText())) {
             java.awt.EventQueue.invokeLater(() -> {
                 alertLb.setVisible(false);
-                new MainMenu().setVisible(true);
+                javax.swing.JFrame frame = new MainMenu(_userID,_role);
+                frame.setVisible(true);
+                frame.setLocationRelativeTo(null);
                 setVisible(false);
                 dispose();
             });
@@ -144,14 +146,33 @@ public class LoginForm extends javax.swing.JFrame {
     private boolean loginAction(String username, String password) {
         Connection connectDB = ConnectMysql.getConnectDB();
         String sql = "SELECT * FROM `login_info` WHERE userName = '" + username + "' and password = '" + password + "'";
+        int roleID = 0;
         try {
             ResultSet rs = connectDB.createStatement().executeQuery(sql);
-            if (rs.next()) {
+            if (rs.next()) { 
+                roleID = rs.getInt("role_id");
+                _userID = rs.getInt("userId");
+                _role = getRole(roleID);
                 return true;
             }
             return false;
         } catch (SQLException ex) {
             return false;
+        }
+    }
+    
+    private String getRole(int roleID)
+    {
+        Connection connectDB = ConnectMysql.getConnectDB();
+        String sql = "SELECT * FROM `role` WHERE id = '" + roleID + "'";
+        try {
+            ResultSet rs = connectDB.createStatement().executeQuery(sql);
+            if (rs.next()) {
+                return rs.getString("role");
+            }
+            return "Nhân viên";
+        } catch (SQLException ex) {
+            return "Nhân viên";
         }
     }
 
@@ -190,7 +211,10 @@ public class LoginForm extends javax.swing.JFrame {
             frame.setVisible(true);
         });
     }
-
+    
+    
+    private int _userID = 0;
+    private String _role = "";
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel alertLb;
     private javax.swing.JLabel jLabel1;

@@ -32,68 +32,72 @@
                           <Component id="statusLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="equipmentNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="separate" pref="175" max="32767" attributes="0"/>
-                      <Component id="confirmButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="cancelButton" min="-2" pref="75" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="priceLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="pictureLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
+                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                                      <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  <Component id="priceAlertLabel" min="-2" max="-2" attributes="0"/>
+                                  <Component id="pictureTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="supplierLabel" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="priceTextField" min="-2" pref="100" max="-2" attributes="0"/>
+                                      <Component id="supplierTextField" min="-2" pref="100" max="-2" attributes="0"/>
+                                      <Component id="equipmentNameTextField" min="-2" pref="234" max="-2" attributes="0"/>
                                   </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace max="32767" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="warrantyLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <EmptySpace min="63" pref="63" max="-2" attributes="0"/>
-                                              <Component id="warrantyTextField" min="-2" pref="92" max="-2" attributes="0"/>
-                                          </Group>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <EmptySpace min="-2" pref="86" max="-2" attributes="0"/>
+                                  <Component id="confirmButton" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="83" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="equipmentIDAlertLabel" min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="equipmentIDTextField" alignment="0" min="-2" pref="101" max="-2" attributes="0"/>
+                                          <Component id="statusComboBox" alignment="0" pref="135" max="32767" attributes="0"/>
+                                          <Component id="detailIDComboBox" alignment="0" max="32767" attributes="0"/>
                                       </Group>
+                                  </Group>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="19" pref="93" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="detailIDLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="240" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="warrantyLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="63" pref="63" max="-2" attributes="0"/>
+                                      <Component id="warrantyTextField" min="-2" pref="92" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
                           <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="amountLabel" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                                      <Component id="amountTextField" min="-2" pref="30" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace min="-2" pref="83" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="statusComboBox" alignment="0" min="-2" pref="101" max="-2" attributes="0"/>
-                                          <Component id="equipmentIDTextField" alignment="0" min="-2" pref="101" max="-2" attributes="0"/>
-                                          <Component id="detailIDComboBox" alignment="0" min="-2" pref="101" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="supplierLabel" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="priceTextField" min="-2" pref="100" max="-2" attributes="0"/>
-                                          <Component id="supplierTextField" min="-2" pref="100" max="-2" attributes="0"/>
-                                          <Component id="equipmentNameTextField" min="-2" pref="234" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                              </Group>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <Component id="amountLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                              <Component id="amountTextField" min="-2" pref="30" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="48" max="-2" attributes="0"/>
+                              <Component id="amountAlertLabel" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="detailIDLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -109,7 +113,9 @@
                   <Component id="equipmentIDLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="equipmentIDTextField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="equipmentIDAlertLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="statusLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="statusComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -129,24 +135,27 @@
                   <Component id="supplierLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="supplierTextField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" pref="27" max="32767" attributes="0"/>
+              <EmptySpace type="separate" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="priceLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="priceTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="warrantyLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="warrantyTextField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="priceAlertLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                  <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                  <Component id="pictureLabel" min="-2" max="-2" attributes="0"/>
+                  <Component id="pictureTextField" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="amountLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="amountTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="amountAlertLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="confirmButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -180,6 +189,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="equipmentNameTextField">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JComboBox" name="statusComboBox">
       <Properties>
@@ -216,6 +228,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="supplierTextField">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="priceLabel">
       <Properties>
@@ -230,16 +245,25 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="warrantyTextField">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="confirmButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="X&#xe1;c nh&#x1ead;n"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="confirmButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="cancelButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="H&#x1ee7;y"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="amountLabel">
       <Properties>
@@ -252,12 +276,12 @@
         <Property name="text" type="java.lang.String" value="1"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="pictureLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="H&#xec;nh &#x1ea3;nh"/>
       </Properties>
     </Component>
-    <Container class="javax.swing.JPanel" name="jPanel1">
+    <Container class="javax.swing.JPanel" name="pictureTextField">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -279,5 +303,29 @@
         </DimensionLayout>
       </Layout>
     </Container>
+    <Component class="javax.swing.JLabel" name="priceAlertLabel">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" red="ff" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Nh&#x1ead;p gi&#xe1; ti&#x1ec1;n l&#x1edb;n h&#x1a1;n 10000&#x111;"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="amountAlertLabel">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" red="ff" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Nh&#x1ead;p s&#x1ed1; l&#x1b0;&#x1ee3;ng l&#x1edb;n h&#x1a1;n 1"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="equipmentIDAlertLabel">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" red="ff" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="M&#xe3; thi&#x1ebf;t b&#x1ecb; kh&#xf4;ng &#x111;&#x1b0;&#x1ee3;c &#x111;&#x1ec3; tr&#x1ed1;ng"/>
+      </Properties>
+    </Component>
   </SubComponents>
 </Form>
