@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 02, 2021 lúc 06:05 PM
+-- Thời gian đã tạo: Th4 07, 2021 lúc 07:00 PM
 -- Phiên bản máy phục vụ: 10.4.18-MariaDB
 -- Phiên bản PHP: 8.0.3
 
@@ -59,6 +59,13 @@ CREATE TABLE `gym_equipments` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Đang đổ dữ liệu cho bảng `gym_equipments`
+--
+
+INSERT INTO `gym_equipments` (`id`, `status`, `import_price`, `detail_id`, `import_id`, `created_at`, `updated_at`) VALUES
+('ASD-001', 'Đang hoạt động', 13500000, 'MCB01', 1, '2021-04-07 15:48:53', '2021-04-07 15:48:53');
+
 -- --------------------------------------------------------
 
 --
@@ -68,8 +75,15 @@ CREATE TABLE `gym_equipments` (
 CREATE TABLE `import_details` (
   `id` int(11) NOT NULL,
   `user_id` tinyint(3) NOT NULL,
-  `date_import` datetime NOT NULL DEFAULT current_timestamp()
+  `date_import` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Đang đổ dữ liệu cho bảng `import_details`
+--
+
+INSERT INTO `import_details` (`id`, `user_id`, `date_import`) VALUES
+(1, 1, '2021-04-07');
 
 -- --------------------------------------------------------
 
@@ -216,7 +230,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `import_details`
 --
 ALTER TABLE `import_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `role`
