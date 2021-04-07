@@ -101,8 +101,26 @@ public class AddEquimentForm extends javax.swing.JFrame {
         
         equipmentNameTextField.setText(name);
         warrantyTextField.setText(warrantyTime+" năm");
-        priceTextField.setText(price+"đ");
+        priceTextField.setText(price+"");
         supplierTextField.setText(supplier);
+    }
+    
+    String getMaxEquimentID(String equipmentID)
+    {
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "select count(id) as countID from gym_equipments where substring(id,1,3) = '" + equipmentID + "'";
+        int idCount = 1;
+        try {
+            ResultSet rs = connector.createStatement().executeQuery(sql);
+            if(rs.next())
+            {
+                idCount = rs.getInt("countID") + 1;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return equipmentID + String.format("-%03d", idCount);
     }
     
     private void setAlertVisible(boolean visible)
@@ -110,6 +128,7 @@ public class AddEquimentForm extends javax.swing.JFrame {
         equipmentIDAlertLabel.setVisible(visible);
         priceAlertLabel.setVisible(visible);
         amountAlertLabel.setVisible(visible);
+        detailIDAlertLabel.setVisible(visible);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -143,6 +162,7 @@ public class AddEquimentForm extends javax.swing.JFrame {
         priceAlertLabel = new javax.swing.JLabel();
         amountAlertLabel = new javax.swing.JLabel();
         equipmentIDAlertLabel = new javax.swing.JLabel();
+        detailIDAlertLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -217,7 +237,10 @@ public class AddEquimentForm extends javax.swing.JFrame {
         amountAlertLabel.setText("Nhập số lượng lớn hơn 1");
 
         equipmentIDAlertLabel.setForeground(new java.awt.Color(255, 0, 0));
-        equipmentIDAlertLabel.setText("Mã thiết bị không được để trống");
+        equipmentIDAlertLabel.setText("Nhập mã thiết bị 3 chữ");
+
+        detailIDAlertLabel.setForeground(new java.awt.Color(255, 51, 0));
+        detailIDAlertLabel.setText("Chọn 1 mã thiết bị");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -228,10 +251,16 @@ public class AddEquimentForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(equipmentIDLabel)
-                            .addComponent(statusLabel)
-                            .addComponent(equipmentNameLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(equipmentIDLabel)
+                                    .addComponent(statusLabel)
+                                    .addComponent(equipmentNameLabel))
+                                .addGap(0, 263, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(confirmButton)))
+                        .addGap(18, 18, 18)
                         .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -243,28 +272,24 @@ public class AddEquimentForm extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(priceAlertLabel)
                                     .addComponent(pictureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(supplierLabel)
-                                    .addGap(18, 18, 18)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(priceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(supplierTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(equipmentNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addGap(86, 86, 86)
-                                    .addComponent(confirmButton))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(83, 83, 83)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(equipmentIDAlertLabel)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(supplierLabel)
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(priceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(supplierTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(equipmentNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(83, 83, 83)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(equipmentIDAlertLabel)
+                                    .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                             .addComponent(equipmentIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(statusComboBox, 0, 135, Short.MAX_VALUE)
-                                            .addComponent(detailIDComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
-                        .addGap(19, 93, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(detailIDComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGap(46, 46, 46)
+                                        .addComponent(detailIDAlertLabel))))
                             .addComponent(detailIDLabel)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(240, 240, 240)
@@ -298,7 +323,8 @@ public class AddEquimentForm extends javax.swing.JFrame {
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(detailIDLabel)
-                    .addComponent(detailIDComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(detailIDComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(detailIDAlertLabel))
                 .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(equipmentNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -307,10 +333,10 @@ public class AddEquimentForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(supplierLabel)
                     .addComponent(supplierTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(priceLabel)
-                    .addComponent(priceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(priceTextField)
                     .addComponent(warrantyLabel)
                     .addComponent(warrantyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -348,37 +374,63 @@ public class AddEquimentForm extends javax.swing.JFrame {
 
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
         setAlertVisible(false);
-        Connection connector = ConnectMysql.getConnectDB();
         boolean check = true;
+        String pricePattern = "\\d{1,15}";
+        String amountPattern = "\\d{1,2}";
+        String idPattern = "[a-zA-Z]{3}";
         
         int amount = Integer.valueOf(amountTextField.getText());
-        String id = equipmentIDTextField.getText();
+        String id = equipmentIDTextField.getText().toUpperCase();
         String name = equipmentNameTextField.getText();
         String status = statusComboBox.getSelectedItem().toString();
-        int price = Integer.valueOf(priceTextField.getText().substring(0, priceTextField.getText().length()-1));
+        int price = 0;
         String picture = "";
         String detailID = detailIDComboBox.getSelectedItem().toString();
         
-        if(id.equals(""))
+        if(!id.matches(idPattern))
         {
             equipmentIDAlertLabel.setVisible(true);
             check = false;
         }
-        if(price < 10000)
+        if(!priceTextField.getText().matches(pricePattern))
         {
             priceAlertLabel.setVisible(true);
             check = false;
         }
-        if(amount <1)
+        if(!amountTextField.getText().matches(amountPattern))
         {
             amountAlertLabel.setVisible(true);
+            check = false;
+        }
+        if(detailID.equals(""))
+        {
+            detailIDAlertLabel.setVisible(true);
             check = false;
         }
         
         if(!check)
             return;
         
-        _parent.addEquiment(id, name, status, price, picture, detailID);
+        price = Integer.valueOf(priceTextField.getText());
+        
+        id = getMaxEquimentID(id);
+        int incID = Integer.valueOf(id.substring(4, id.length()));
+        for(int i=0;i<_parent.checkIDList.size();i++)
+        {
+            if(id.substring(0,3).equals(_parent.checkIDList.get(i)))
+            {
+                incID++;
+            }
+        }
+        id = id.substring(0, 4) + String.format("%03d", incID);
+        
+        for(int i = 0; i < amount; i++)
+        {
+            _parent.addEquiment(id, name, status, price, picture, detailID);
+            incID++;
+            id = id.substring(0, 4) + String.format("%03d", incID);
+        }
+        
         this.dispose(); 
     }//GEN-LAST:event_confirmButtonActionPerformed
 
@@ -390,6 +442,7 @@ public class AddEquimentForm extends javax.swing.JFrame {
     private javax.swing.JTextField amountTextField;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton confirmButton;
+    private javax.swing.JLabel detailIDAlertLabel;
     private javax.swing.JComboBox<String> detailIDComboBox;
     private javax.swing.JLabel detailIDLabel;
     private javax.swing.JLabel equipmentIDAlertLabel;

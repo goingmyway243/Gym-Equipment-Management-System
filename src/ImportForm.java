@@ -1,5 +1,6 @@
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -43,6 +44,42 @@ public class ImportForm extends javax.swing.JFrame {
         vector.add(picture);
         vector.add(detailID);
         tableModel.addRow(vector);
+        
+        checkIDList.add(id.substring(0, 3));
+    }
+    
+    private void saveEquipmentToDatabase(String id, String status, int price, String detailID, int importID, java.sql.Timestamp timeStamp)
+    {
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "insert into gym_equipments values (?,?,?,?,?,?,?)";
+        try {
+            PreparedStatement ps = connector.prepareStatement(sql);
+            ps.setString(1, id);
+            ps.setString(2, status);
+            ps.setInt(3, price);
+            ps.setString(4, detailID);
+            ps.setInt(5, importID);
+            ps.setTimestamp(6, timeStamp);
+            ps.setTimestamp(7, timeStamp);
+            ps.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(ImportForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void saveImportDetailToDatabase(int importID, int userID, java.sql.Date date)
+    {
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "insert into import_details values (?,?,?)";
+        try {
+            PreparedStatement ps = connector.prepareStatement(sql);
+            ps.setInt(1, importID);
+            ps.setInt(2, userID);
+            ps.setDate(3, date);
+            ps.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(ImportForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private void initRenderer()
@@ -50,6 +87,7 @@ public class ImportForm extends javax.swing.JFrame {
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
+        loadImportID();
         loadUserName();
         importDateTextField.setText(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
     }
@@ -70,6 +108,24 @@ public class ImportForm extends javax.swing.JFrame {
         }
         userNameTextField.setText(userName);
     }
+    
+    private void loadImportID()
+    {
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "select count(id) as countID from import_details";
+        int id = 1;
+        try {
+            ResultSet rs = connector.createStatement().executeQuery(sql);
+            if(rs.next())
+            {
+                id = rs.getInt("countID")+1;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ImportForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        importIDTextField.setText(id+"");
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -97,6 +153,8 @@ public class ImportForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         importIDLabel.setText("Mã phiếu nhập");
+
+        importIDTextField.setEditable(false);
 
         userNameLabel.setText("Tên nhân viên");
 
@@ -211,7 +269,24 @@ public class ImportForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        // TODO add your handling code here:
+        String id, status, detailID;
+        int price;
+        java.sql.Timestamp timeStamp = new java.sql.Timestamp(new Date().getTime());
+        java.sql.Date date = new java.sql.Date(new Date().getTime());
+        int importID = Integer.valueOf(importIDTextField.getText());
+        
+        saveImportDetailToDatabase(importID,_userID,date);
+        
+        for(int i=0; i<table.getRowCount(); i++)
+        {
+            id = table.getValueAt(i, 0).toString();
+            status = table.getValueAt(i, 2).toString();
+            price = Integer.valueOf(table.getValueAt(i, 3).toString());
+            detailID = table.getValueAt(i, 5).toString();
+            saveEquipmentToDatabase(id, status, price, detailID, importID, timeStamp);
+        }
+        System.out.println("Lưu vào CSDL thành công");
+        this.dispose();
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
@@ -225,6 +300,7 @@ public class ImportForm extends javax.swing.JFrame {
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private int _userID = 0;
+    public Vector<String> checkIDList = new Vector<>();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;
