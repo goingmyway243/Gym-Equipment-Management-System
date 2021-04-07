@@ -13,12 +13,11 @@ import javax.swing.table.DefaultTableModel;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Nguyen Hai Dang
  */
-public class MainMenu extends javax.swing.JFrame {
+public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCallBack, SettingFrom.ExitCallBack {
 
     /**
      * Creates new form MainMenu
@@ -26,24 +25,22 @@ public class MainMenu extends javax.swing.JFrame {
     public MainMenu(int userID, String role) {
         initComponents();
         getSuppliers();
-        this.setResizable(false);
+        setResizable(false);
         _userID = userID;
         _role = role;
     }
-    
-    private void getSuppliers()
-    {
+
+    private void getSuppliers() {
         DefaultTableModel tableModel = (DefaultTableModel) suppliersTable.getModel();
         tableModel.setNumRows(0);
-        
+
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select * from suppliers";
         Vector vector;
         try {
             PreparedStatement ps = connector.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            while(rs.next())
-            {
+            while (rs.next()) {
                 vector = new Vector();
                 vector.add(rs.getInt("id"));
                 vector.add(rs.getString("name"));
@@ -112,6 +109,11 @@ public class MainMenu extends javax.swing.JFrame {
         });
 
         settingButton.setText("Cài đặt");
+        settingButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                settingButtonActionPerformed(evt);
+            }
+        });
 
         equipmentsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -300,9 +302,18 @@ public class MainMenu extends javax.swing.JFrame {
         importForm.setVisible(true);
     }//GEN-LAST:event_newImportButtonActionPerformed
     
+    private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingButtonActionPerformed
+        settingFrom = new SettingFrom(_userID);
+        settingFrom.setLogOutCallBack(this);
+        settingFrom.setExitCallBack(this);
+        settingFrom.setLocationRelativeTo(null);
+        settingFrom.setVisible(true);
+        setEnabled(false);
+    }
     
-    private int _userID;
-    private String _role;
+    private int _userID = 0;
+    private String _role = "";
+    private SettingFrom settingFrom = null;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane MainDesktopPane;
     private javax.swing.JButton addCategoryButton;
@@ -324,4 +335,18 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JScrollPane usersScrollPane;
     private javax.swing.JTable usersTable;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void exit() {
+        setEnabled(true);
+        setVisible(true);
+        settingFrom = null;
+    }
+
+    @Override
+    public void logout() {
+        dispose();
+        settingFrom = null;
+    }
+
 }

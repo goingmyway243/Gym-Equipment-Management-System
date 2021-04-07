@@ -142,6 +142,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="C&#xe0;i &#x111;&#x1eb7;t"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="settingButtonActionPerformed"/>
+          </Events>
         </Component>
         <Container class="javax.swing.JTabbedPane" name="mainTabbedPane">
 

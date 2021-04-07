@@ -30,7 +30,7 @@
                   <Group type="103" alignment="0" groupAlignment="1" attributes="0">
                       <Component id="loginBtn" min="-2" pref="374" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="alertLb" alignment="0" max="32767" attributes="0"/>
+                          <Component id="alertLb" alignment="0" pref="374" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
@@ -95,11 +95,6 @@
         <Property name="name" type="java.lang.String" value="usernameTf" noResource="true"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="passwordTf">
-      <Properties>
-        <Property name="name" type="java.lang.String" value="passwordTf" noResource="true"/>
-      </Properties>
-    </Component>
     <Component class="javax.swing.JButton" name="loginBtn">
       <Properties>
         <Property name="text" type="java.lang.String" value="Login"/>
@@ -132,6 +127,8 @@
         <Property name="horizontalAlignment" type="int" value="0"/>
         <Property name="text" type="java.lang.String" value="Login"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JPasswordField" name="passwordTf">
     </Component>
   </SubComponents>
 </Form>

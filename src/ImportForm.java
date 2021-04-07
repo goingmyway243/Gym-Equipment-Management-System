@@ -275,17 +275,20 @@ public class ImportForm extends javax.swing.JFrame {
         java.sql.Date date = new java.sql.Date(new Date().getTime());
         int importID = Integer.valueOf(importIDTextField.getText());
         
-        saveImportDetailToDatabase(importID,_userID,date);
-        
-        for(int i=0; i<table.getRowCount(); i++)
+        if(table.getRowCount()>0)
         {
-            id = table.getValueAt(i, 0).toString();
-            status = table.getValueAt(i, 2).toString();
-            price = Integer.valueOf(table.getValueAt(i, 3).toString());
-            detailID = table.getValueAt(i, 5).toString();
-            saveEquipmentToDatabase(id, status, price, detailID, importID, timeStamp);
+            saveImportDetailToDatabase(importID,_userID,date);
+        
+            for(int i=0; i<table.getRowCount(); i++)
+            {
+                id = table.getValueAt(i, 0).toString();
+                status = table.getValueAt(i, 2).toString();
+                price = Integer.valueOf(table.getValueAt(i, 3).toString());
+                detailID = table.getValueAt(i, 5).toString();
+                saveEquipmentToDatabase(id, status, price, detailID, importID, timeStamp);
+            }
+            System.out.println("Lưu vào CSDL thành công");
         }
-        System.out.println("Lưu vào CSDL thành công");
         this.dispose();
     }//GEN-LAST:event_saveButtonActionPerformed
 

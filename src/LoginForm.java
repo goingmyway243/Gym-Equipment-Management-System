@@ -20,7 +20,7 @@ public class LoginForm extends javax.swing.JFrame {
     /**
      * Creates new form LoginForm
      */
-    public LoginForm() {
+    private LoginForm() {
         initComponents();
     }
 
@@ -43,10 +43,10 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         usernameTf = new javax.swing.JTextField();
-        passwordTf = new javax.swing.JTextField();
         loginBtn = new javax.swing.JButton();
         alertLb = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        passwordTf = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -57,8 +57,6 @@ public class LoginForm extends javax.swing.JFrame {
         usernameTf.setToolTipText("");
         usernameTf.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         usernameTf.setName("usernameTf"); // NOI18N
-
-        passwordTf.setName("passwordTf"); // NOI18N
 
         loginBtn.setText("Login");
         loginBtn.setName("loginBtn"); // NOI18N
@@ -88,7 +86,7 @@ public class LoginForm extends javax.swing.JFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(loginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(alertLb, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(alertLb, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(16, 16, 16)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -131,10 +129,9 @@ public class LoginForm extends javax.swing.JFrame {
         if (loginAction(usernameTf.getText(), passwordTf.getText())) {
             java.awt.EventQueue.invokeLater(() -> {
                 alertLb.setVisible(false);
-                javax.swing.JFrame frame = new MainMenu(_userID,_role);
-                frame.setVisible(true);
-                frame.setLocationRelativeTo(null);
-                setVisible(false);
+                MainMenu mainMenu = new MainMenu(_userID,_role);
+                mainMenu.setVisible(true);
+                mainMenu.setLocationRelativeTo(this);
                 dispose();
             });
         } else {
@@ -176,6 +173,15 @@ public class LoginForm extends javax.swing.JFrame {
         }
     }
 
+    public static void create() {
+        java.awt.EventQueue.invokeLater(() -> {
+            javax.swing.JFrame frame = new LoginForm();
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -202,14 +208,8 @@ public class LoginForm extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        LoginForm.create();
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            javax.swing.JFrame frame = new LoginForm();
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
     }
     
     
@@ -221,7 +221,7 @@ public class LoginForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JButton loginBtn;
-    private javax.swing.JTextField passwordTf;
+    private javax.swing.JPasswordField passwordTf;
     private javax.swing.JTextField usernameTf;
     // End of variables declaration//GEN-END:variables
 }
