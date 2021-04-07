@@ -13,35 +13,35 @@ import javax.swing.table.DefaultTableModel;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Nguyen Hai Dang
  */
-public class MainMenu extends javax.swing.JFrame {
+public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCallBack, SettingFrom.ExitCallBack {
+
+    private int userId;
 
     /**
      * Creates new form MainMenu
      */
-    public MainMenu() {
+    public MainMenu(int userId) {
         initComponents();
         getSuppliers();
-        this.setResizable(false);
+        setResizable(false);
+        this.userId = userId;
     }
-    
-    private void getSuppliers()
-    {
+
+    private void getSuppliers() {
         DefaultTableModel tableModel = (DefaultTableModel) suppliersTable.getModel();
         tableModel.setNumRows(0);
-        
+
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select * from suppliers";
         Vector vector;
         try {
             PreparedStatement ps = connector.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            while(rs.next())
-            {
+            while (rs.next()) {
                 vector = new Vector();
                 vector.add(rs.getInt("id"));
                 vector.add(rs.getString("name"));
@@ -110,6 +110,11 @@ public class MainMenu extends javax.swing.JFrame {
         });
 
         settingButton.setText("Cài đặt");
+        settingButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                settingButtonActionPerformed(evt);
+            }
+        });
 
         equipmentsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -241,7 +246,7 @@ public class MainMenu extends javax.swing.JFrame {
                 .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
                         .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(newImportButton, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+                            .addComponent(newImportButton, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
                             .addComponent(settingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(addCategoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(addSupplierButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -294,8 +299,18 @@ public class MainMenu extends javax.swing.JFrame {
         importForm = new ImportForm();
         importForm.setVisible(true);
     }//GEN-LAST:event_newImportButtonActionPerformed
-    
-    
+
+    private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingButtonActionPerformed
+        settingFrom = new SettingFrom(userId);
+        settingFrom.setLogOutCallBack(this);
+        settingFrom.setExitCallBack(this);
+        settingFrom.setLocationRelativeTo(null);
+        settingFrom.setVisible(true);
+        setEnabled(false);
+    }//GEN-LAST:event_settingButtonActionPerformed
+
+    private SettingFrom settingFrom;
+
     private ImportForm importForm;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane MainDesktopPane;
@@ -318,4 +333,17 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JScrollPane usersScrollPane;
     private javax.swing.JTable usersTable;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void exit() {
+        setEnabled(true);
+        setVisible(true);
+        settingFrom = null;
+    }
+
+    @Override
+    public void logout() {
+        dispose();
+        settingFrom = null;
+    }
 }

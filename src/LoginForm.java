@@ -20,7 +20,7 @@ public class LoginForm extends javax.swing.JFrame {
     /**
      * Creates new form LoginForm
      */
-    public LoginForm() {
+    private LoginForm() {
         initComponents();
     }
 
@@ -43,10 +43,10 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         usernameTf = new javax.swing.JTextField();
-        passwordTf = new javax.swing.JTextField();
         loginBtn = new javax.swing.JButton();
         alertLb = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        passwordTf = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -57,8 +57,6 @@ public class LoginForm extends javax.swing.JFrame {
         usernameTf.setToolTipText("");
         usernameTf.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         usernameTf.setName("usernameTf"); // NOI18N
-
-        passwordTf.setName("passwordTf"); // NOI18N
 
         loginBtn.setText("Login");
         loginBtn.setName("loginBtn"); // NOI18N
@@ -88,16 +86,14 @@ public class LoginForm extends javax.swing.JFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(loginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(alertLb, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(alertLb, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE))
-                                .addGap(41, 41, 41)
+                                .addGap(44, 44, 44)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(3, 3, 3)
-                                        .addComponent(usernameTf, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(usernameTf, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
                                     .addComponent(passwordTf))))))
                 .addContainerGap())
         );
@@ -128,31 +124,42 @@ public class LoginForm extends javax.swing.JFrame {
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
         // TODO add your handling code here:
-        if (loginAction(usernameTf.getText(), passwordTf.getText())) {
-            java.awt.EventQueue.invokeLater(() -> {
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
                 alertLb.setVisible(false);
-                new MainMenu().setVisible(true);
+                MainMenu main = new MainMenu(loginAction(usernameTf.getText(), passwordTf.getText()));
+                main.setLocationRelativeTo(null);
+                main.setVisible(true);
                 setVisible(false);
                 dispose();
-            });
-        } else {
-            alertLb.setVisible(true);
-        }
+            } catch (Exception e) {
+                alertLb.setVisible(true);
+            }
+        });
 
     }//GEN-LAST:event_loginBtnActionPerformed
 
-    private boolean loginAction(String username, String password) {
+    private int loginAction(String username, String password) {
         Connection connectDB = ConnectMysql.getConnectDB();
         String sql = "SELECT * FROM `login_info` WHERE userName = '" + username + "' and password = '" + password + "'";
         try {
             ResultSet rs = connectDB.createStatement().executeQuery(sql);
             if (rs.next()) {
-                return true;
+                return rs.getInt("userId");
             }
-            return false;
+            throw new NullPointerException("sai tên đăng nhập hoặc mật khẩu");
         } catch (SQLException ex) {
-            return false;
+            throw new NullPointerException(ex.getMessage());
         }
+    }
+
+    public static void create() {
+        java.awt.EventQueue.invokeLater(() -> {
+            javax.swing.JFrame frame = new LoginForm();
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
     }
 
     /**
@@ -181,14 +188,8 @@ public class LoginForm extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        LoginForm.create();
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            javax.swing.JFrame frame = new LoginForm();
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -197,7 +198,7 @@ public class LoginForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JButton loginBtn;
-    private javax.swing.JTextField passwordTf;
+    private javax.swing.JPasswordField passwordTf;
     private javax.swing.JTextField usernameTf;
     // End of variables declaration//GEN-END:variables
 }
