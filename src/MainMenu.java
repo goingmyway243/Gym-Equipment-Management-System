@@ -3,6 +3,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,13 +26,63 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
      */
     public MainMenu(int userID, String role) {
         initComponents();
-        getSuppliers();
         setResizable(false);
+        
         _userID = userID;
         _role = role;
-    }
+        
+        eC = new EquipmentDetailsController();
+        sC = new SupplierController();
 
-    private void getSuppliers() {
+        lED = new ArrayList<>();
+        lS = new ArrayList<>();
+
+        lED = eC.getListEquipment();
+        lS = sC.getSuppliersInfo();
+        
+        loadDatabase();
+    }
+    
+    private void loadDatabase()
+    {
+        loadUserInfos();
+        loadSuppliers();
+        loadEquipmentDetails();
+        loadEquipments();
+        loadImportDetails();
+    }
+    
+    private void loadUserInfos()
+    {
+        DefaultTableModel tableModel = (DefaultTableModel) usersTable.getModel();
+        tableModel.setNumRows(0);
+
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "select * from users";
+        Vector vector;
+        try {
+            PreparedStatement ps = connector.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                vector = new Vector();
+                vector.add(rs.getInt("id"));
+                vector.add(rs.getString("lastName") + " " + rs.getString("firstName"));
+                vector.add(rs.getDate("birthDay"));
+                vector.add(rs.getString("email"));
+                vector.add(rs.getString("contactNumber"));
+                vector.add(rs.getString("profilePicture"));
+                vector.add(rs.getTimestamp("updated_at"));
+                tableModel.addRow(vector);
+            }
+            usersTable.setModel(tableModel);
+            rs.close();
+            ps.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void loadSuppliers() {
         DefaultTableModel tableModel = (DefaultTableModel) suppliersTable.getModel();
         tableModel.setNumRows(0);
 
@@ -55,7 +107,71 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void loadImportDetails()
+    {
+        DefaultTableModel tableModel = (DefaultTableModel) importDetailsTable.getModel();
+        tableModel.setNumRows(0);
 
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "select * from import_details";
+        Vector vector;
+        try {
+            PreparedStatement ps = connector.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                vector = new Vector();
+                vector.add(rs.getInt("id"));
+                vector.add(rs.getInt("user_id"));
+                vector.add(rs.getDate("date_import"));
+                tableModel.addRow(vector);
+            }
+            importDetailsTable.setModel(tableModel);
+            rs.close();
+            ps.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void loadEquipments() {
+        DefaultTableModel tableModel = (DefaultTableModel) equipmentsTable.getModel();
+        tableModel.setNumRows(0);
+
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "select * from gym_equipments";
+        Vector vector;
+        try {
+            PreparedStatement ps = connector.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                vector = new Vector();
+                vector.add(rs.getString("id"));
+                vector.add(rs.getString("status"));
+                vector.add("");
+                vector.add(rs.getString("detail_id"));
+                vector.add(rs.getInt("import_id"));
+                vector.add(rs.getTimestamp("updated_at"));
+                tableModel.addRow(vector);
+            }
+            equipmentsTable.setModel(tableModel);
+            rs.close();
+            ps.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void loadEquipmentDetails() {
+        DefaultTableModel tblEquipDetails = (DefaultTableModel) categoriesTable.getModel();
+        tblEquipDetails.setNumRows(0);
+
+        for (Equipment_Details equipment_info : lED) {
+            tblEquipDetails.addRow(new Object[]{equipment_info.getId(), equipment_info.getName(),
+                equipment_info.getPicture(), equipment_info.getPrice(), equipment_info.getWarranty_time(),
+                equipment_info.getSupplier_id()});
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -96,10 +212,20 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
 
         addCategoryButton.setText("Thêm loại thiết bị");
         addCategoryButton.setPreferredSize(new java.awt.Dimension(107, 23));
+        addCategoryButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addCategoryButtonActionPerformed(evt);
+            }
+        });
 
         addSupplierButton.setText("Thêm nhà cc");
         addSupplierButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         addSupplierButton.setPreferredSize(new java.awt.Dimension(107, 23));
+        addSupplierButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addSupplierButtonActionPerformed(evt);
+            }
+        });
 
         newImportButton.setText("Tạo phiếu nhập");
         newImportButton.addActionListener(new java.awt.event.ActionListener() {
@@ -297,12 +423,24 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     }// </editor-fold>//GEN-END:initComponents
 
     private void newImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newImportButtonActionPerformed
-        javax.swing.JFrame importForm = new ImportForm(_userID);
+        ImportForm importForm = new ImportForm(_userID);
         importForm.setLocationRelativeTo(this);
         importForm.setVisible(true);
     }//GEN-LAST:event_newImportButtonActionPerformed
+
+    private void addCategoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCategoryButtonActionPerformed
+        AddEquimentDetailsForm addEquipmentDetailsForm = new AddEquimentDetailsForm();
+        addEquipmentDetailsForm.setLocationRelativeTo(this);
+        addEquipmentDetailsForm.setVisible(true);
+    }//GEN-LAST:event_addCategoryButtonActionPerformed
+
+    private void addSupplierButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSupplierButtonActionPerformed
+        AddSupplier addSupplier = new AddSupplier(this,true);
+        addSupplier.setLocationRelativeTo(this);
+        addSupplier.setVisible(true);
+    }//GEN-LAST:event_addSupplierButtonActionPerformed
     
-    private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingButtonActionPerformed
+    private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
         settingFrom = new SettingFrom(_userID);
         settingFrom.setLogOutCallBack(this);
         settingFrom.setExitCallBack(this);
@@ -314,6 +452,12 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     private int _userID = 0;
     private String _role = "";
     private SettingFrom settingFrom = null;
+    
+    private EquipmentDetailsController eC = null;
+    private SupplierController sC = null;
+
+    private List<Equipment_Details> lED;
+    private List<Supplier> lS;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane MainDesktopPane;
     private javax.swing.JButton addCategoryButton;

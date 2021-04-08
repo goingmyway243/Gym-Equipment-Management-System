@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 07, 2021 lúc 07:00 PM
+-- Thời gian đã tạo: Th4 08, 2021 lúc 05:07 PM
 -- Phiên bản máy phục vụ: 10.4.18-MariaDB
 -- Phiên bản PHP: 8.0.3
 
@@ -52,7 +52,6 @@ INSERT INTO `equipment_details` (`id`, `name`, `picture`, `price`, `warranty_tim
 CREATE TABLE `gym_equipments` (
   `id` varchar(7) NOT NULL,
   `status` varchar(20) NOT NULL,
-  `import_price` int(15) NOT NULL,
   `detail_id` varchar(5) NOT NULL,
   `import_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -63,8 +62,8 @@ CREATE TABLE `gym_equipments` (
 -- Đang đổ dữ liệu cho bảng `gym_equipments`
 --
 
-INSERT INTO `gym_equipments` (`id`, `status`, `import_price`, `detail_id`, `import_id`, `created_at`, `updated_at`) VALUES
-('ASD-001', 'Đang hoạt động', 13500000, 'MCB01', 1, '2021-04-07 15:48:53', '2021-04-07 15:48:53');
+INSERT INTO `gym_equipments` (`id`, `status`, `detail_id`, `import_id`, `created_at`, `updated_at`) VALUES
+('ASD-001', 'Đang hoạt động', 'MCB01', 1, '2021-04-07 15:48:53', '2021-04-07 15:48:53');
 
 -- --------------------------------------------------------
 

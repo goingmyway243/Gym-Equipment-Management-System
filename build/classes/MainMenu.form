@@ -120,6 +120,9 @@
               <Dimension value="[107, 23]"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addCategoryButtonActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="addSupplierButton">
           <Properties>
@@ -129,6 +132,9 @@
               <Dimension value="[107, 23]"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addSupplierButtonActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="newImportButton">
           <Properties>

@@ -48,19 +48,18 @@ public class ImportForm extends javax.swing.JFrame {
         checkIDList.add(id.substring(0, 3));
     }
     
-    private void saveEquipmentToDatabase(String id, String status, int price, String detailID, int importID, java.sql.Timestamp timeStamp)
+    private void saveEquipmentToDatabase(String id, String status, String detailID, int importID, java.sql.Timestamp timeStamp)
     {
         Connection connector = ConnectMysql.getConnectDB();
-        String sql = "insert into gym_equipments values (?,?,?,?,?,?,?)";
+        String sql = "insert into gym_equipments values (?,?,?,?,?,?)";
         try {
             PreparedStatement ps = connector.prepareStatement(sql);
             ps.setString(1, id);
             ps.setString(2, status);
-            ps.setInt(3, price);
-            ps.setString(4, detailID);
-            ps.setInt(5, importID);
+            ps.setString(3, detailID);
+            ps.setInt(4, importID);
+            ps.setTimestamp(5, timeStamp);
             ps.setTimestamp(6, timeStamp);
-            ps.setTimestamp(7, timeStamp);
             ps.execute();
         } catch (SQLException ex) {
             Logger.getLogger(ImportForm.class.getName()).log(Level.SEVERE, null, ex);
@@ -270,7 +269,6 @@ public class ImportForm extends javax.swing.JFrame {
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         String id, status, detailID;
-        int price;
         java.sql.Timestamp timeStamp = new java.sql.Timestamp(new Date().getTime());
         java.sql.Date date = new java.sql.Date(new Date().getTime());
         int importID = Integer.valueOf(importIDTextField.getText());
@@ -283,9 +281,8 @@ public class ImportForm extends javax.swing.JFrame {
             {
                 id = table.getValueAt(i, 0).toString();
                 status = table.getValueAt(i, 2).toString();
-                price = Integer.valueOf(table.getValueAt(i, 3).toString());
                 detailID = table.getValueAt(i, 5).toString();
-                saveEquipmentToDatabase(id, status, price, detailID, importID, timeStamp);
+                saveEquipmentToDatabase(id, status, detailID, importID, timeStamp);
             }
             System.out.println("Lưu vào CSDL thành công");
         }
