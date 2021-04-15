@@ -1,18 +1,20 @@
 
+import java.awt.Image;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Nguyen Hai Dang
@@ -24,58 +26,53 @@ public class AddEquimentForm extends javax.swing.JFrame {
      */
     public AddEquimentForm(ImportForm parent) {
         _parent = parent;
-        
-        initComponents();     
+
+        initComponents();
         initRenderer();
     }
-    
-    private void initRenderer()
-    {
+
+    private void initRenderer() {
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
+
         setAlertVisible(false);
         loadStatusComboBox();
         loadDetailIDComboBox();
     }
-    
-    private void loadStatusComboBox()
-    {
+
+    private void loadStatusComboBox() {
         statusComboBox.removeAllItems();
         statusComboBox.addItem("Đang hoạt động");
         statusComboBox.addItem("Đang bảo trì");
         statusComboBox.addItem("Bị hỏng");
     }
-    
-    private void loadDetailIDComboBox()
-    {
+
+    private void loadDetailIDComboBox() {
         detailIDComboBox.removeAllItems();
         detailIDComboBox.addItem("");
-        
+
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select distinct id from equipment_details";
-        
+
         try {
             PreparedStatement ps = connector.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            
-            while(rs.next())
-            {
+
+            while (rs.next()) {
                 detailIDComboBox.addItem(rs.getString("id"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void loadDetailInfo(String detailID)
-    {
+
+    private void loadDetailInfo(String detailID) {
         String name = "", picture = "", supplier = "";
         int price = 0, warrantyTime = 0, supplierID = 0;
-        
+
         Connection connector = ConnectMysql.getConnectDB();
-        String sql  = "select * from equipment_details where id = '"+detailID+"'";
-        
+        String sql = "select * from equipment_details where id = '" + detailID + "'";
+
         try {
             PreparedStatement ps = connector.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -84,12 +81,12 @@ public class AddEquimentForm extends javax.swing.JFrame {
             picture = rs.getString("picture");
             price = rs.getInt("price");
             warrantyTime = rs.getInt("warranty_time");
-            supplierID = rs.getInt("supplier_id");   
+            supplierID = rs.getInt("supplier_id");
         } catch (SQLException ex) {
             Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        sql = "select name from suppliers where id = '"+supplierID+"'";
+
+        sql = "select name from suppliers where id = '" + supplierID + "'";
         try {
             PreparedStatement ps = connector.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -98,38 +95,45 @@ public class AddEquimentForm extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         equipmentNameTextField.setText(name);
-        warrantyTextField.setText(warrantyTime+" năm");
-        priceTextField.setText(price+"");
+        warrantyTextField.setText(warrantyTime + " năm");
+        pictureTextField.setIcon(ResizeImage(picture, pictureTextField));
+        priceTextField.setText(price + "");
         supplierTextField.setText(supplier);
     }
-    
-    String getMaxEquimentID(String equipmentID)
-    {
+
+    String getMaxEquimentID(String equipmentID) {
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select count(id) as countID from gym_equipments where substring(id,1,3) = '" + equipmentID + "'";
         int idCount = 1;
         try {
             ResultSet rs = connector.createStatement().executeQuery(sql);
-            if(rs.next())
-            {
+            if (rs.next()) {
                 idCount = rs.getInt("countID") + 1;
             }
         } catch (SQLException ex) {
             Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return equipmentID + String.format("-%03d", idCount);
     }
-    
-    private void setAlertVisible(boolean visible)
-    {
+
+    private void setAlertVisible(boolean visible) {
         equipmentIDAlertLabel.setVisible(visible);
         priceAlertLabel.setVisible(visible);
         amountAlertLabel.setVisible(visible);
         detailIDAlertLabel.setVisible(visible);
     }
+
+    static public ImageIcon ResizeImage(String imagePath, JLabel label) {
+        ImageIcon myImage = new ImageIcon(imagePath);
+        Image img = myImage.getImage();
+        Image newImg = img.getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
+        ImageIcon image = new ImageIcon(newImg);
+        return image;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -158,11 +162,11 @@ public class AddEquimentForm extends javax.swing.JFrame {
         amountLabel = new javax.swing.JLabel();
         amountTextField = new javax.swing.JTextField();
         pictureLabel = new javax.swing.JLabel();
-        pictureTextField = new javax.swing.JPanel();
         priceAlertLabel = new javax.swing.JLabel();
         amountAlertLabel = new javax.swing.JLabel();
         equipmentIDAlertLabel = new javax.swing.JLabel();
         detailIDAlertLabel = new javax.swing.JLabel();
+        pictureTextField = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -217,19 +221,6 @@ public class AddEquimentForm extends javax.swing.JFrame {
 
         pictureLabel.setText("Hình ảnh");
 
-        pictureTextField.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        javax.swing.GroupLayout pictureTextFieldLayout = new javax.swing.GroupLayout(pictureTextField);
-        pictureTextField.setLayout(pictureTextFieldLayout);
-        pictureTextFieldLayout.setHorizontalGroup(
-            pictureTextFieldLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 170, Short.MAX_VALUE)
-        );
-        pictureTextFieldLayout.setVerticalGroup(
-            pictureTextFieldLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 125, Short.MAX_VALUE)
-        );
-
         priceAlertLabel.setForeground(new java.awt.Color(255, 0, 0));
         priceAlertLabel.setText("Nhập giá tiền lớn hơn 10000đ");
 
@@ -268,10 +259,13 @@ public class AddEquimentForm extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(priceLabel)
                                     .addComponent(pictureLabel))
-                                .addGap(20, 20, 20)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(priceAlertLabel)
-                                    .addComponent(pictureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(20, 20, 20)
+                                        .addComponent(priceAlertLabel))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addGap(45, 45, 45)
+                                        .addComponent(pictureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(supplierLabel)
                                 .addGap(18, 18, 18)
@@ -344,8 +338,8 @@ public class AddEquimentForm extends javax.swing.JFrame {
                 .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pictureLabel)
-                    .addComponent(pictureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
+                    .addComponent(pictureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(amountLabel)
                     .addComponent(amountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -362,8 +356,7 @@ public class AddEquimentForm extends javax.swing.JFrame {
 
     private void detailIDComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_detailIDComboBoxItemStateChanged
         String detailID = detailIDComboBox.getSelectedItem().toString();
-        if(!detailID.equals(""))
-        {
+        if (!detailID.equals("")) {
             loadDetailInfo(detailID);
         }
     }//GEN-LAST:event_detailIDComboBoxItemStateChanged
@@ -378,7 +371,7 @@ public class AddEquimentForm extends javax.swing.JFrame {
         String pricePattern = "\\d{1,15}";
         String amountPattern = "\\d{1,2}";
         String idPattern = "[a-zA-Z]{3}";
-        
+
         int amount = Integer.valueOf(amountTextField.getText());
         String id = equipmentIDTextField.getText().toUpperCase();
         String name = equipmentNameTextField.getText();
@@ -386,54 +379,47 @@ public class AddEquimentForm extends javax.swing.JFrame {
         int price = 0;
         String picture = "";
         String detailID = detailIDComboBox.getSelectedItem().toString();
-        
-        if(!id.matches(idPattern))
-        {
+
+        if (!id.matches(idPattern)) {
             equipmentIDAlertLabel.setVisible(true);
             check = false;
         }
-        if(!priceTextField.getText().matches(pricePattern))
-        {
+        if (!priceTextField.getText().matches(pricePattern)) {
             priceAlertLabel.setVisible(true);
             check = false;
         }
-        if(!amountTextField.getText().matches(amountPattern))
-        {
+        if (!amountTextField.getText().matches(amountPattern)) {
             amountAlertLabel.setVisible(true);
             check = false;
         }
-        if(detailID.equals(""))
-        {
+        if (detailID.equals("")) {
             detailIDAlertLabel.setVisible(true);
             check = false;
         }
-        
-        if(!check)
+
+        if (!check) {
             return;
-        
+        }
+
         price = Integer.valueOf(priceTextField.getText());
-        
+
         id = getMaxEquimentID(id);
         int incID = Integer.valueOf(id.substring(4, id.length()));
-        for(int i=0;i<_parent.checkIDList.size();i++)
-        {
-            if(id.substring(0,3).equals(_parent.checkIDList.get(i)))
-            {
+        for (int i = 0; i < _parent.checkIDList.size(); i++) {
+            if (id.substring(0, 3).equals(_parent.checkIDList.get(i))) {
                 incID++;
             }
         }
         id = id.substring(0, 4) + String.format("%03d", incID);
-        
-        for(int i = 0; i < amount; i++)
-        {
+
+        for (int i = 0; i < amount; i++) {
             _parent.addEquiment(id, name, status, price, picture, detailID);
             incID++;
             id = id.substring(0, 4) + String.format("%03d", incID);
         }
-        
-        this.dispose(); 
-    }//GEN-LAST:event_confirmButtonActionPerformed
 
+        this.dispose();
+    }//GEN-LAST:event_confirmButtonActionPerformed
 
     ImportForm _parent = null;
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -451,7 +437,7 @@ public class AddEquimentForm extends javax.swing.JFrame {
     private javax.swing.JLabel equipmentNameLabel;
     private javax.swing.JTextField equipmentNameTextField;
     private javax.swing.JLabel pictureLabel;
-    private javax.swing.JPanel pictureTextField;
+    private javax.swing.JLabel pictureTextField;
     private javax.swing.JLabel priceAlertLabel;
     private javax.swing.JLabel priceLabel;
     private javax.swing.JTextField priceTextField;

@@ -1,6 +1,4 @@
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,7 +18,7 @@ public class AddSupplier extends javax.swing.JDialog {
         initComponents();
         this.setLocationRelativeTo(null);
         sC = new SupplierController();
-        _parent = parent ;
+        _parent = parent;
     }
 
     /**
@@ -48,11 +46,6 @@ public class AddSupplier extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
-                formWindowClosed(evt);
-            }
-        });
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel1.setLabelFor(txtMaNCC);
@@ -213,11 +206,17 @@ public class AddSupplier extends javax.swing.JDialog {
             isOk = false;
         }
 
-        if (maNCCs.matches("[a-zA-Z]+")) {
-            JOptionPane.showMessageDialog(this, "Mã nhà cung cấp phải là chữ số");
+        if (!maNCCs.matches("\\d+")) {
+            JOptionPane.showMessageDialog(this, "Mã nhà cung cấp phải là chữ số ");
             isOk = false;
-        } else if (sdtNCC.matches("[a-zA-Z]+")) {
+        } else if (!sdtNCC.matches("\\d+")) {
             JOptionPane.showMessageDialog(this, "SDT nhà cung cấp phải là chữ số");
+            isOk = false;
+        } else if (!maNCCs.matches("^[0-9]{1,3}$")) {
+            JOptionPane.showMessageDialog(this, "Mã nhà cung cấp không được vượt quá 3 ký tự");
+            isOk = false;
+        } else if (!sdtNCC.matches("^[0-9]{10}$")) {
+            JOptionPane.showMessageDialog(this, "SDT nhà cung cấp phải là 10 ký tự");
             isOk = false;
         }
 
@@ -229,40 +228,38 @@ public class AddSupplier extends javax.swing.JDialog {
                 if (option == 0) {
                     if (sC.updateSupplier(s)) {
                         JOptionPane.showMessageDialog(this, "Cập nhật thành công");
-                        if(_parent.getClass().getName().equals("AddEquimentDetailsForm"))
-                        {
-                            AddEquimentDetailsForm aEF = (AddEquimentDetailsForm)_parent;
+                        if (_parent.getClass().getName().equals("AddEquimentDetailsForm")) {
+                            AddEquimentDetailsForm aEF = (AddEquimentDetailsForm) _parent;
                             aEF.getSupplierList();
+                            aEF.getParent().loadSuppliers();
                         }
-                                
-                        txtMaNCC.setText("");
-                        txtTenNCC.setText("");
-                        txtDiaChiNCC.setText("");
-                        txtSDT.setText("");
+                        if (_parent.getClass().getName().equals("MainMenu")) {
+                            MainMenu mainMenu = (MainMenu) _parent;
+                            mainMenu.loadSuppliers();
+                        }
+                        resetField();
                     } else {
                         JOptionPane.showMessageDialog(this, "Cập nhật thất  bại");
                     }
                 }
             } else {
-
                 if (sC.addNewSupplier(s)) {
                     JOptionPane.showMessageDialog(this, "Thêm thành công");
-                    if(_parent.getClass().getName().equals("AddEquimentDetailsForm"))
-                    {
-                        AddEquimentDetailsForm aEF = (AddEquimentDetailsForm)_parent;
+                    if (_parent.getClass().getName().equals("AddEquimentDetailsForm")) {
+                        AddEquimentDetailsForm aEF = (AddEquimentDetailsForm) _parent;
                         aEF.getSupplierList();
+                        aEF.getParent().loadSuppliers();
                     }
-                    txtMaNCC.setText("");
-                    txtTenNCC.setText("");
-                    txtDiaChiNCC.setText("");
-                    txtSDT.setText("");
+                    if (_parent.getClass().getName().equals("MainMenu")) {
+                        MainMenu mainMenu = (MainMenu) _parent;
+                        mainMenu.loadSuppliers();
+                    }
+                    resetField();
                 } else {
                     JOptionPane.showMessageDialog(this, "Thêm thất  bại");
                 }
             }
         }
-
-
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -270,16 +267,15 @@ public class AddSupplier extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        resetField();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    public void resetField() {
         txtMaNCC.setText("");
         txtTenNCC.setText("");
         txtDiaChiNCC.setText("");
         txtSDT.setText("");
-    }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-        new AddEquimentDetailsForm().getSupplierList();
-        System.out.println("true");
-    }//GEN-LAST:event_formWindowClosed
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

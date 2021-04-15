@@ -26,34 +26,42 @@ import javax.swing.filechooser.FileFilter;
  * @author Nguyen Hai Dang
  */
 public class AddEquimentDetailsForm extends javax.swing.JFrame {
-    
+
     EquipmentDetailsController eC = null;
     SupplierController sC = null;
     List<Supplier> listOfSuppliers;
     String imagePath;
     int size;
-    
+    private MainMenu mainMenu;
+
+    public MainMenu getParent() {
+        return mainMenu;
+    }
+
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
-    
+
     public String getImagePath() {
         return imagePath;
     }
 
     /**
      * Creates new form AddEquimentForm
+     *
+     * @param parent
      */
-    public AddEquimentDetailsForm() {
+    public AddEquimentDetailsForm(java.awt.Frame parent) {
         initComponents();
         this.setLocationRelativeTo(null);
         eC = new EquipmentDetailsController();
         sC = new SupplierController();
         listOfSuppliers = new ArrayList<>();
-        
+        mainMenu = (MainMenu) parent;
+
         getSupplierList();
     }
-    
+
     public void getSupplierList() {
         cbNhaCungCap.removeAllItems();
         listOfSuppliers = sC.getSuppliersInfo();
@@ -123,7 +131,7 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
             }
         });
 
-        btnGetImage.setText("Click to choose image");
+        btnGetImage.setText("Chọn hình ảnh!");
         btnGetImage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGetImageActionPerformed(evt);
@@ -224,9 +232,9 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
         int selectedNhaCungCap = cbNhaCungCap.getSelectedIndex();
         String thoigianBH = txtThoiGianBH.getText();
         int nhaCungCapId = 0;
-        
+
         boolean isSatisfied = true;
-        
+
         if (maChiTietTB.length() == 0) {
             JOptionPane.showMessageDialog(this, "Mã chi tiết thiết bị không được để trống!");
             isSatisfied = false;
@@ -240,29 +248,29 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Thời gian bảo hành không được để trống!");
             isSatisfied = false;
         }
-        
-        if (maChiTietTB.matches("\\d+")) {
-            JOptionPane.showMessageDialog(this, "Mã chi tiết thiết bị phải là kí tự ");
+
+        if (maChiTietTB.length() > 0 && maChiTietTB.matches("\\d+")) {
+            JOptionPane.showMessageDialog(this, "Mã chi tiết thiết bị phải là kí tự chữ và số");
             isSatisfied = false;
-        } else if (tenThietbi.matches("\\d+")) {
+        } else if (tenThietbi.length() > 0 && !tenThietbi.matches("[a-zA-Z]+")) {
             JOptionPane.showMessageDialog(this, "Tên thiết bị phải là chữ cái ");
             isSatisfied = false;
-        } else if (gia.matches("[a-zA-Z]+")) {
+        } else if (gia.length() > 0  && !gia.matches("\\d+")) {
             JOptionPane.showMessageDialog(this, "Gía thiết bị phải là chữ số ");
             isSatisfied = false;
         } else if (cbNhaCungCap.getSelectedItem().toString().equals("Thêm nhà cung cấp")) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn nhà cung cấp ");
             isSatisfied = false;
         }
-        
+
         if (maChiTietTB.length() > 5) {
             JOptionPane.showMessageDialog(this, "Mã chi tiết thiết bị không được vượt quá 5 ký tự");
             isSatisfied = false;
-        } else if (thoigianBH.length() > 2) {
+        } else if (thoigianBH.length() > 0 && thoigianBH.length() <= 2 && Integer.parseInt(thoigianBH) > 11) {
             JOptionPane.showMessageDialog(this, "Thời gian bảo hành không được vượt quá 10 năm");
             isSatisfied = false;
         }
-        
+
         if (isSatisfied) {
             nhaCungCapId = listOfSuppliers.get(selectedNhaCungCap).getSupplierId();
             int price = Integer.parseInt(gia);
@@ -275,18 +283,14 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
 //                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 //                eD.setWarranty_time(sdf.parse(txtThoiGianBH.getText()));
             eD.setWarranty_time(thoigianBH);
-            
+
             if (eC.isIdExist(maChiTietTB)) {
                 int option = JOptionPane.showConfirmDialog(this, "Mã chi tiết thiết bị đã tồn tại, bạn có muốn cập nhật thông tin không?");
                 if (option == 0) {
                     if (eC.updateEquipmentDetails(eD)) {
                         JOptionPane.showMessageDialog(this, "Cập nhật thành công");
-                        txtMaChiTietTB.setText("");
-                        txtTenThietBi.setText("");
-                        btnGetImage.setText("Nhấn để chọn hình ảnh!");
-                        txtGia.setText("");
-                        cbNhaCungCap.setSelectedIndex(0);
-                        txtThoiGianBH.setText("");
+                        mainMenu.loadEquipmentDetails();
+                        resetField();
                     } else {
                         JOptionPane.showMessageDialog(this, "Cập nhật thất  bại");
                     }
@@ -294,19 +298,15 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
             } else {
                 if (eC.addNewEquipmentDetails(eD)) {
                     JOptionPane.showMessageDialog(this, "Thêm thành công");
-                    txtMaChiTietTB.setText("");
-                    txtTenThietBi.setText("");
-                    btnGetImage.setText("Nhấn để chọn hình ảnh!");
-                    txtGia.setText("");
-                    cbNhaCungCap.setSelectedIndex(0);
-                    txtThoiGianBH.setText("");
+                    mainMenu.loadEquipmentDetails();
+                    resetField();
                 } else {
                     JOptionPane.showMessageDialog(this, "Thêm thất  bại");
                 }
             }
-            
+
         }
-        
+
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -320,7 +320,7 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
 
     private void cbNhaCungCapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbNhaCungCapActionPerformed
         int selectedItem = cbNhaCungCap.getSelectedIndex();
-        
+
         if (selectedItem == listOfSuppliers.size()) {
             cbNhaCungCap.hidePopup();
             new AddSupplier(this, rootPaneCheckingEnabled).setVisible(true);
@@ -328,12 +328,7 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
     }//GEN-LAST:event_cbNhaCungCapActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        txtMaChiTietTB.setText("");
-        txtTenThietBi.setText("");
-        btnGetImage.setText("Nhấn để chọn hình ảnh!");
-        txtGia.setText("");
-        txtThoiGianBH.setText("");
-        cbNhaCungCap.setSelectedIndex(0);
+        this.resetField();
         if (listOfSuppliers.size() != sC.getSuppliersInfo().size()) {
             this.getSupplierList();
         }
@@ -342,7 +337,6 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    
     public void createWindow() {
         JFrame frame = new JFrame("Choose Image");
         frame.setLayout(null);
@@ -352,19 +346,19 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
         frame.setVisible(true);
         createUI(frame);
     }
-    
+
     public void createUI(final JFrame frame) {
-        JButton browseButton = new JButton("Browse");
+        JButton browseButton = new JButton("Chọn hình ảnh");
         browseButton.setBounds(300, 380, 100, 40);
         JLabel labelImage = new JLabel();
         labelImage.setBounds(10, 10, 670, 250);
         JLabel labelText = new JLabel();
         labelText.setBounds(10, 300, 670, 60);
-        
+
         frame.add(browseButton);
         frame.add(labelImage);
         frame.add(labelText);
-        
+
         browseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -372,29 +366,38 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                 fileChooser.addChoosableFileFilter(new ImageFilter());
                 fileChooser.setAcceptAllFileFilterUsed(false);
-                
+
                 int result = fileChooser.showSaveDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     String path = selectedFile.getAbsolutePath();
                     labelImage.setIcon(ResizeImage(path, labelImage));
-                    labelText.setText("File name: " + selectedFile.getName());
+                    labelText.setText("Tên file: " + selectedFile.getName());
                     setImagePath(path);
                     btnGetImage.setText(selectedFile.getName());
-                    
+
                 } else if (result == JFileChooser.CANCEL_OPTION) {
-                    System.out.println("\"No File Selected\"");
+                    System.out.println("\"Không có file nào được chọn\"");
                 }
             }
         });
     }
-    
+
     static public ImageIcon ResizeImage(String imagePath, JLabel label) {
         ImageIcon myImage = new ImageIcon(imagePath);
         Image img = myImage.getImage();
         Image newImg = img.getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
         ImageIcon image = new ImageIcon(newImg);
         return image;
+    }
+
+    public void resetField() {
+        txtMaChiTietTB.setText("");
+        txtTenThietBi.setText("");
+        btnGetImage.setText("Chọn hình ảnh!");
+        txtGia.setText("");
+        txtThoiGianBH.setText("");
+        cbNhaCungCap.setSelectedIndex(0);
     }
 
 
@@ -418,20 +421,20 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
 }
 
 class ImageFilter extends FileFilter {
-    
+
     public final static String JPEG = "jpeg";
     public final static String JPG = "jpg";
     public final static String GIF = "gif";
     public final static String TIFF = "tiff";
     public final static String TIF = "tif";
     public final static String PNG = "png";
-    
+
     @Override
     public boolean accept(File f) {
         if (f.isDirectory()) {
             return true;
         }
-        
+
         String extension = getExtension(f);
         if (extension != null) {
             if (extension.equals(TIFF)
@@ -447,17 +450,17 @@ class ImageFilter extends FileFilter {
         }
         return false;
     }
-    
+
     @Override
     public String getDescription() {
         return "Image Only";
     }
-    
+
     String getExtension(File f) {
         String ext = null;
         String s = f.getName();
         int i = s.lastIndexOf('.');
-        
+
         if (i > 0 && i < s.length() - 1) {
             ext = s.substring(i + 1).toLowerCase();
         }

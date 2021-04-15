@@ -3,6 +3,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -27,33 +28,26 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     public MainMenu(int userID, String role) {
         initComponents();
         setResizable(false);
-        
+
         _userID = userID;
         _role = role;
-        
+
         eC = new EquipmentDetailsController();
-        sC = new SupplierController();
-
         lED = new ArrayList<>();
-        lS = new ArrayList<>();
-
         lED = eC.getListEquipment();
-        lS = sC.getSuppliersInfo();
-        
+
         loadDatabase();
     }
-    
-    private void loadDatabase()
-    {
+
+    private void loadDatabase() {
         loadUserInfos();
         loadSuppliers();
         loadEquipmentDetails();
         loadEquipments();
         loadImportDetails();
     }
-    
-    private void loadUserInfos()
-    {
+
+    private void loadUserInfos() {
         DefaultTableModel tableModel = (DefaultTableModel) usersTable.getModel();
         tableModel.setNumRows(0);
 
@@ -81,8 +75,8 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void loadSuppliers() {
+
+    public void loadSuppliers() {
         DefaultTableModel tableModel = (DefaultTableModel) suppliersTable.getModel();
         tableModel.setNumRows(0);
 
@@ -107,9 +101,8 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void loadImportDetails()
-    {
+
+    private void loadImportDetails() {
         DefaultTableModel tableModel = (DefaultTableModel) importDetailsTable.getModel();
         tableModel.setNumRows(0);
 
@@ -133,7 +126,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void loadEquipments() {
         DefaultTableModel tableModel = (DefaultTableModel) equipmentsTable.getModel();
         tableModel.setNumRows(0);
@@ -161,17 +154,27 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void loadEquipmentDetails() {
-        DefaultTableModel tblEquipDetails = (DefaultTableModel) categoriesTable.getModel();
-        tblEquipDetails.setNumRows(0);
 
+    public void loadEquipmentDetails() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        
+        DefaultTableModel tblEquipDetails = (DefaultTableModel) categoriesTable.getModel();
+        tblEquipDetails.setRowCount(0);
+        lED = eC.getListEquipment();
         for (Equipment_Details equipment_info : lED) {
+                String created_at = sdf.format(equipment_info.getCreated_at());
+                String warranty_time_year = equipment_info.getWarranty_time();
+                String twoLastDigit1 = created_at.substring(8);
+                String twoLastDigit2 = warranty_time_year.substring(2,4);
+                String warranty_time_date = created_at.substring(0,8) + (Integer.parseInt(twoLastDigit1) + Integer.parseInt(twoLastDigit2));
+            
             tblEquipDetails.addRow(new Object[]{equipment_info.getId(), equipment_info.getName(),
-                equipment_info.getPicture(), equipment_info.getPrice(), equipment_info.getWarranty_time(),
-                equipment_info.getSupplier_id()});
+                equipment_info.getPicture(), equipment_info.getPrice(), warranty_time_date,
+                 equipment_info.getSupplier_id()
+            });
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -429,18 +432,18 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     }//GEN-LAST:event_newImportButtonActionPerformed
 
     private void addCategoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCategoryButtonActionPerformed
-        AddEquimentDetailsForm addEquipmentDetailsForm = new AddEquimentDetailsForm();
+        AddEquimentDetailsForm addEquipmentDetailsForm = new AddEquimentDetailsForm(this);
         addEquipmentDetailsForm.setLocationRelativeTo(this);
         addEquipmentDetailsForm.setVisible(true);
     }//GEN-LAST:event_addCategoryButtonActionPerformed
 
     private void addSupplierButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSupplierButtonActionPerformed
-        AddSupplier addSupplier = new AddSupplier(this,true);
+        AddSupplier addSupplier = new AddSupplier(this, true);
         addSupplier.setLocationRelativeTo(this);
         addSupplier.setVisible(true);
     }//GEN-LAST:event_addSupplierButtonActionPerformed
-    
-    private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
+
+    private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {
         settingFrom = new SettingFrom(_userID);
         settingFrom.setLogOutCallBack(this);
         settingFrom.setExitCallBack(this);
@@ -448,16 +451,13 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         settingFrom.setVisible(true);
         setEnabled(false);
     }
-    
+
     private int _userID = 0;
     private String _role = "";
     private SettingFrom settingFrom = null;
-    
-    private EquipmentDetailsController eC = null;
-    private SupplierController sC = null;
 
+    private EquipmentDetailsController eC = null;
     private List<Equipment_Details> lED;
-    private List<Supplier> lS;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane MainDesktopPane;
     private javax.swing.JButton addCategoryButton;
