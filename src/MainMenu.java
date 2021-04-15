@@ -43,7 +43,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         loadDatabase();
     }
     
-    private void loadDatabase()
+    public void loadDatabase()
     {
         loadUserInfos();
         loadSuppliers();
@@ -172,6 +172,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 equipment_info.getSupplier_id()});
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -257,6 +258,11 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 return canEdit [columnIndex];
             }
         });
+        equipmentsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                equipmentsTableMouseClicked(evt);
+            }
+        });
         equipmentsScrollPane.setViewportView(equipmentsTable);
 
         mainTabbedPane.addTab("Thiết bị đang quản lý", equipmentsScrollPane);
@@ -317,6 +323,11 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 return canEdit [columnIndex];
             }
         });
+        categoriesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                categoriesTableMouseClicked(evt);
+            }
+        });
         categoriesScrollPane.setViewportView(categoriesTable);
 
         mainTabbedPane.addTab("Loại thiết bị", categoriesScrollPane);
@@ -337,6 +348,11 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 return canEdit [columnIndex];
             }
         });
+        suppliersTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                suppliersTableMouseClicked(evt);
+            }
+        });
         suppliersScrollPane.setViewportView(suppliersTable);
 
         mainTabbedPane.addTab("Nhà cung cấp", suppliersScrollPane);
@@ -345,6 +361,11 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         editButton.setEnabled(false);
         editButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         editButton.setPreferredSize(new java.awt.Dimension(107, 23));
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButtonActionPerformed(evt);
+            }
+        });
 
         removeButton.setText("Xóa...");
         removeButton.setEnabled(false);
@@ -423,7 +444,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     }// </editor-fold>//GEN-END:initComponents
 
     private void newImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newImportButtonActionPerformed
-        ImportForm importForm = new ImportForm(_userID);
+        ImportForm importForm = new ImportForm(this,_userID);
         importForm.setLocationRelativeTo(this);
         importForm.setVisible(true);
     }//GEN-LAST:event_newImportButtonActionPerformed
@@ -439,6 +460,47 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         addSupplier.setLocationRelativeTo(this);
         addSupplier.setVisible(true);
     }//GEN-LAST:event_addSupplierButtonActionPerformed
+
+    private void equipmentsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_equipmentsTableMouseClicked
+        _selectedTable = 1;
+        editButton.setEnabled(true);
+    }//GEN-LAST:event_equipmentsTableMouseClicked
+
+    private void categoriesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categoriesTableMouseClicked
+        _selectedTable = 3;
+        editButton.setEnabled(true);
+    }//GEN-LAST:event_categoriesTableMouseClicked
+
+    private void suppliersTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_suppliersTableMouseClicked
+        _selectedTable = 4;
+        editButton.setEnabled(true);
+    }//GEN-LAST:event_suppliersTableMouseClicked
+
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        switch(_selectedTable)
+        {
+            case 1:
+            {
+                String id = equipmentsTable.getValueAt(equipmentsTable.getSelectedRow(), 0).toString();
+                AddEquimentForm addEquimentForm = new AddEquimentForm(this,id);
+                addEquimentForm.setVisible(true);
+                addEquimentForm.setLocationRelativeTo(this);
+                break;
+            }
+            case 2:
+            {
+                break;
+            }
+            case 3:
+            {
+                break;
+            }
+            case 4:
+            {
+                break;
+            }
+        }
+    }//GEN-LAST:event_editButtonActionPerformed
     
     private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
         settingFrom = new SettingFrom(_userID);
@@ -449,13 +511,13 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         setEnabled(false);
     }
     
+    private int _selectedTable = 0;
     private int _userID = 0;
     private String _role = "";
     private SettingFrom settingFrom = null;
     
     private EquipmentDetailsController eC = null;
     private SupplierController sC = null;
-
     private List<Equipment_Details> lED;
     private List<Supplier> lS;
     // Variables declaration - do not modify//GEN-BEGIN:variables

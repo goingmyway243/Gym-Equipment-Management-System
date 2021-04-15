@@ -3,6 +3,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -22,11 +23,23 @@ public class AddEquimentForm extends javax.swing.JFrame {
     /**
      * Creates new form AddEquimentForm
      */
-    public AddEquimentForm(ImportForm parent) {
-        _parent = parent;
+    
+    public AddEquimentForm(MainMenu parent, String id)
+    {
+        _mainMenuForm = parent;
+        _id = id;
         
         initComponents();     
-        initRenderer();
+        initRendererForEdit();
+        loadCurrentData();
+    }
+    
+    public AddEquimentForm(ImportForm parent) 
+    {
+        _importForm = parent;
+        
+        initComponents();     
+        initRenderer();  
     }
     
     private void initRenderer()
@@ -34,11 +47,60 @@ public class AddEquimentForm extends javax.swing.JFrame {
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
+        confirmEditButton.setVisible(false);
+        
         setAlertVisible(false);
         loadStatusComboBox();
         loadDetailIDComboBox();
     }
     
+    private void initRendererForEdit()
+    {
+        initRenderer();
+        equipmentIDTextField.setText(_id);
+        equipmentIDTextField.setEditable(false);
+        amountLabel.setVisible(false);
+        amountTextField.setVisible(false);
+        confirmEditButton.setVisible(true);
+        confirmButton.setVisible(false);
+    }
+    
+    private void loadCurrentData()
+    {
+        String status = "", detailID = "";
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "select * from gym_equipments where id = '"+ _id +"'";
+        try {
+            ResultSet rs = connector.createStatement().executeQuery(sql);
+            if(rs.next())
+            {
+                status = rs.getString("status");
+                detailID = rs.getString("detail_id");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        if(!status.equals("") && !detailID.equals(""))
+        {
+            for(int i=0;i<statusComboBox.getItemCount();i++)
+            {
+                if(statusComboBox.getItemAt(i).toString().equals(status))
+                {
+                    statusComboBox.setSelectedIndex(i);
+                }
+            }
+            
+            for(int i=0;i<detailIDComboBox.getItemCount();i++)
+            {
+                if(detailIDComboBox.getItemAt(i).toString().equals(detailID))
+                {
+                    detailIDComboBox.setSelectedIndex(i);
+                }
+            }
+        }
+    }
+            
     private void loadStatusComboBox()
     {
         statusComboBox.removeAllItems();
@@ -105,7 +167,24 @@ public class AddEquimentForm extends javax.swing.JFrame {
         supplierTextField.setText(supplier);
     }
     
-    String getMaxEquimentID(String equipmentID)
+    private void editEquipment(String id, String status, String detailID)
+    {
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "update gym_equipments set id = ?, status = ?, detail_id = ?, updated_at = ?";
+        try {
+            PreparedStatement ps = connector.prepareStatement(sql);
+            ps.setString(1, id);
+            ps.setString(2, status);
+            ps.setString(3, detailID);
+            ps.setTimestamp(4,  new java.sql.Timestamp(new Date().getTime()));
+            ps.execute();
+            System.out.println("Chỉnh sửa thành công");
+        } catch (SQLException ex) {
+            Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private int getMaxEquimentID(String equipmentID)
     {
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select count(id) as countID from gym_equipments where substring(id,1,3) = '" + equipmentID + "'";
@@ -114,21 +193,55 @@ public class AddEquimentForm extends javax.swing.JFrame {
             ResultSet rs = connector.createStatement().executeQuery(sql);
             if(rs.next())
             {
-                idCount = rs.getInt("countID") + 1;
+                idCount = rs.getInt("countID");
             }
         } catch (SQLException ex) {
             Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        return equipmentID + String.format("-%03d", idCount);
+        for(int i=0;i<_importForm.checkIDList.size();i++)
+        {
+            if(equipmentID.equals(_importForm.checkIDList.get(i)))
+            {
+                idCount++;
+            }
+        }
+        
+        return idCount;
     }
     
     private void setAlertVisible(boolean visible)
     {
         equipmentIDAlertLabel.setVisible(visible);
-        priceAlertLabel.setVisible(visible);
         amountAlertLabel.setVisible(visible);
         detailIDAlertLabel.setVisible(visible);
+    }
+    
+    private boolean checkValues(String id, String amount, String detailID)
+    {
+        setAlertVisible(false);
+        boolean check = true;
+        String amountPattern = "\\d{1,2}";
+        String idPattern = "[a-zA-Z]{3}";
+        
+        
+        if(!id.matches(idPattern))
+        {
+            equipmentIDAlertLabel.setVisible(true);
+            check = false;
+        }
+        if(!amountTextField.getText().matches(amountPattern))
+        {
+            amountAlertLabel.setVisible(true);
+            check = false;
+        }
+        if(detailID.equals(""))
+        {
+            detailIDAlertLabel.setVisible(true);
+            check = false;
+        }
+        
+        return check;
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -159,10 +272,10 @@ public class AddEquimentForm extends javax.swing.JFrame {
         amountTextField = new javax.swing.JTextField();
         pictureLabel = new javax.swing.JLabel();
         pictureTextField = new javax.swing.JPanel();
-        priceAlertLabel = new javax.swing.JLabel();
         amountAlertLabel = new javax.swing.JLabel();
         equipmentIDAlertLabel = new javax.swing.JLabel();
         detailIDAlertLabel = new javax.swing.JLabel();
+        confirmEditButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -191,6 +304,8 @@ public class AddEquimentForm extends javax.swing.JFrame {
         supplierTextField.setEditable(false);
 
         priceLabel.setText("Giá");
+
+        priceTextField.setEditable(false);
 
         warrantyLabel.setText("Bảo hành");
 
@@ -230,17 +345,21 @@ public class AddEquimentForm extends javax.swing.JFrame {
             .addGap(0, 125, Short.MAX_VALUE)
         );
 
-        priceAlertLabel.setForeground(new java.awt.Color(255, 0, 0));
-        priceAlertLabel.setText("Nhập giá tiền lớn hơn 10000đ");
-
         amountAlertLabel.setForeground(new java.awt.Color(255, 0, 0));
-        amountAlertLabel.setText("Nhập số lượng lớn hơn 1");
+        amountAlertLabel.setText("Nhập số lượng từ 1 - 99");
 
         equipmentIDAlertLabel.setForeground(new java.awt.Color(255, 0, 0));
         equipmentIDAlertLabel.setText("Nhập mã thiết bị 3 chữ");
 
         detailIDAlertLabel.setForeground(new java.awt.Color(255, 51, 0));
         detailIDAlertLabel.setText("Chọn 1 mã thiết bị");
+
+        confirmEditButton.setText("Xác nhận");
+        confirmEditButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                confirmEditButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -259,6 +378,8 @@ public class AddEquimentForm extends javax.swing.JFrame {
                                 .addGap(0, 263, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(confirmEditButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(confirmButton)))
                         .addGap(18, 18, 18)
                         .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -269,9 +390,7 @@ public class AddEquimentForm extends javax.swing.JFrame {
                                     .addComponent(priceLabel)
                                     .addComponent(pictureLabel))
                                 .addGap(20, 20, 20)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(priceAlertLabel)
-                                    .addComponent(pictureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(pictureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(supplierLabel)
                                 .addGap(18, 18, 18)
@@ -339,9 +458,7 @@ public class AddEquimentForm extends javax.swing.JFrame {
                     .addComponent(priceTextField)
                     .addComponent(warrantyLabel)
                     .addComponent(warrantyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(priceAlertLabel)
-                .addGap(24, 24, 24)
+                .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pictureLabel)
                     .addComponent(pictureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -353,7 +470,8 @@ public class AddEquimentForm extends javax.swing.JFrame {
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
-                    .addComponent(confirmButton))
+                    .addComponent(confirmButton)
+                    .addComponent(confirmEditButton))
                 .addGap(21, 21, 21))
         );
 
@@ -373,75 +491,58 @@ public class AddEquimentForm extends javax.swing.JFrame {
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
-        setAlertVisible(false);
-        boolean check = true;
-        String pricePattern = "\\d{1,15}";
-        String amountPattern = "\\d{1,2}";
-        String idPattern = "[a-zA-Z]{3}";
-        
-        int amount = Integer.valueOf(amountTextField.getText());
+        int amount = 0, price = 0;
         String id = equipmentIDTextField.getText().toUpperCase();
         String name = equipmentNameTextField.getText();
         String status = statusComboBox.getSelectedItem().toString();
-        int price = 0;
         String picture = "";
         String detailID = detailIDComboBox.getSelectedItem().toString();
         
-        if(!id.matches(idPattern))
-        {
-            equipmentIDAlertLabel.setVisible(true);
-            check = false;
-        }
-        if(!priceTextField.getText().matches(pricePattern))
-        {
-            priceAlertLabel.setVisible(true);
-            check = false;
-        }
-        if(!amountTextField.getText().matches(amountPattern))
-        {
-            amountAlertLabel.setVisible(true);
-            check = false;
-        }
-        if(detailID.equals(""))
-        {
-            detailIDAlertLabel.setVisible(true);
-            check = false;
-        }
-        
-        if(!check)
+        if(!checkValues(id, amountTextField.getText(), detailID))
             return;
         
+        amount = Integer.valueOf(amountTextField.getText());
         price = Integer.valueOf(priceTextField.getText());
         
-        id = getMaxEquimentID(id);
-        int incID = Integer.valueOf(id.substring(4, id.length()));
-        for(int i=0;i<_parent.checkIDList.size();i++)
-        {
-            if(id.substring(0,3).equals(_parent.checkIDList.get(i)))
-            {
-                incID++;
-            }
-        }
-        id = id.substring(0, 4) + String.format("%03d", incID);
+        int incID = getMaxEquimentID(id);
         
         for(int i = 0; i < amount; i++)
         {
-            _parent.addEquiment(id, name, status, price, picture, detailID);
             incID++;
-            id = id.substring(0, 4) + String.format("%03d", incID);
+            String equipmentID = id + String.format("-%03d", incID);
+            _importForm.addEquiment(equipmentID, name, status, price, picture, detailID);
         }
         
         this.dispose(); 
     }//GEN-LAST:event_confirmButtonActionPerformed
 
+    private void confirmEditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmEditButtonActionPerformed
+        if(detailIDComboBox.getSelectedItem().toString().equals(""))
+        {
+            detailIDAlertLabel.setVisible(true);
+            return;
+        }
+        
+        String id = equipmentIDTextField.getText();
+        String status = statusComboBox.getSelectedItem().toString();
+        String detailID = detailIDComboBox.getSelectedItem().toString();
+        
+        editEquipment(id, status, detailID);
+        _mainMenuForm.loadDatabase();
+        this.dispose();
+    }//GEN-LAST:event_confirmEditButtonActionPerformed
 
-    ImportForm _parent = null;
+
+    ImportForm _importForm = null;
+    MainMenu _mainMenuForm = null;
+    String _id;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel amountAlertLabel;
     private javax.swing.JLabel amountLabel;
     private javax.swing.JTextField amountTextField;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton confirmButton;
+    private javax.swing.JButton confirmEditButton;
     private javax.swing.JLabel detailIDAlertLabel;
     private javax.swing.JComboBox<String> detailIDComboBox;
     private javax.swing.JLabel detailIDLabel;
@@ -452,7 +553,6 @@ public class AddEquimentForm extends javax.swing.JFrame {
     private javax.swing.JTextField equipmentNameTextField;
     private javax.swing.JLabel pictureLabel;
     private javax.swing.JPanel pictureTextField;
-    private javax.swing.JLabel priceAlertLabel;
     private javax.swing.JLabel priceLabel;
     private javax.swing.JTextField priceTextField;
     private javax.swing.JComboBox<String> statusComboBox;

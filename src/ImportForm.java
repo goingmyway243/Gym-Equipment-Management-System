@@ -26,7 +26,8 @@ public class ImportForm extends javax.swing.JFrame {
     /**
      * Creates new form ImportForm
      */
-    public ImportForm(int userID) {
+    public ImportForm(MainMenu mainMenu, int userID) {
+        _mainMenuForm = mainMenu;
         _userID = userID;
         
         initComponents();
@@ -286,11 +287,12 @@ public class ImportForm extends javax.swing.JFrame {
             }
             System.out.println("Lưu vào CSDL thành công");
         }
+        _mainMenuForm.loadDatabase();
         this.dispose();
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        javax.swing.JFrame addEquimentForm = new AddEquimentForm(this);
+        AddEquimentForm addEquimentForm = new AddEquimentForm(this);
         addEquimentForm.setVisible(true);
         addEquimentForm.setLocationRelativeTo(this);
     }//GEN-LAST:event_addButtonActionPerformed
@@ -298,7 +300,8 @@ public class ImportForm extends javax.swing.JFrame {
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
-
+    
+    MainMenu _mainMenuForm = null;
     private int _userID = 0;
     public Vector<String> checkIDList = new Vector<>();
     // Variables declaration - do not modify//GEN-BEGIN:variables
