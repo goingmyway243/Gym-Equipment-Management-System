@@ -1,15 +1,28 @@
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -35,6 +48,8 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         eC = new EquipmentDetailsController();
         lED = new ArrayList<>();
         lED = eC.getListEquipment();
+
+        addClickEventForImageCell();
 
         loadDatabase();
     }
@@ -156,23 +171,91 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     }
 
     public void loadEquipmentDetails() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        
         DefaultTableModel tblEquipDetails = (DefaultTableModel) categoriesTable.getModel();
         tblEquipDetails.setRowCount(0);
-        lED = eC.getListEquipment();
+        List<Equipment_Details> lED = eC.getListEquipment();
+        ImageColumnSetting();
+
+        int dem = 1;
+
         for (Equipment_Details equipment_info : lED) {
-                String created_at = sdf.format(equipment_info.getCreated_at());
-                String warranty_time_year = equipment_info.getWarranty_time();
-                String twoLastDigit1 = created_at.substring(8);
-                String twoLastDigit2 = warranty_time_year.substring(2,4);
-                String warranty_time_date = created_at.substring(0,8) + (Integer.parseInt(twoLastDigit1) + Integer.parseInt(twoLastDigit2));
-            
+            boolean isOdd = dem % 2 != 0 ? true : false;
+
             tblEquipDetails.addRow(new Object[]{equipment_info.getId(), equipment_info.getName(),
-                equipment_info.getPicture(), equipment_info.getPrice(), warranty_time_date,
-                 equipment_info.getSupplier_id()
+                equipment_info.getPicture() == null ? createLabel("Không có hình ảnh", isOdd) : createLabel(equipment_info.getPicture(), isOdd),
+                equipment_info.getPrice(), equipment_info.getWarranty_time() + " năm",
+                equipment_info.getSupplier_id()
             });
+            dem++;
         }
+    }
+
+    public void addClickEventForImageCell() {
+        categoriesTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                categoriesTable = (JTable) evt.getSource();
+                Point p = evt.getPoint();
+                int row = categoriesTable.rowAtPoint(p);
+                int column = categoriesTable.columnAtPoint(p);
+                if (column == 2 && row <= lED.size()) {
+                    if (lED.get(row).getPicture() == null) {
+                        return;
+                    }
+                    ShowImageFrame sIF = ShowImageFrame.getObj();
+                    sIF.setVisible(true);
+                    String image = imageFolderPath + lED.get(row).getPicture();
+                    sIF.showImageLbl.setIcon(ResizeImage(image, sIF.showImageLbl));
+                }
+            }
+        });
+    }
+
+    public JLabel createLabel(String imageIcon, boolean isOdd) {
+        JLabel label = new JLabel();
+        label.setSize(50, 50);
+        label.setHorizontalAlignment(JLabel.CENTER);
+        label.setVerticalAlignment(JLabel.CENTER);
+        label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        label.setBackground(javax.swing.UIManager.getColor("Table.dropCellForeground"));
+        if(isOdd) {
+            label.setBackground(Color.white);
+        }
+        label.setOpaque(true);
+        label.setFocusable(true);
+
+        if (imageIcon.equals("Không có hình ảnh")) {
+            label.setText("Không có hình ảnh");
+            return label;
+        }
+
+        label.setIcon(ResizeImage(imageFolderPath + imageIcon, label));
+        return label;
+    }
+
+    public void ImageColumnSetting() {
+        categoriesTable.getColumn("Hình ảnh").setCellRenderer(new categoriesTableCellRenderer());
+    }
+
+    class categoriesTableCellRenderer implements TableCellRenderer {
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            TableColumn tb = categoriesTable.getColumn("Hình ảnh");
+            tb.setMaxWidth(150);
+            tb.setMinWidth(120);
+            categoriesTable.setRowHeight(50);
+
+            return (Component) value;
+        }
+    }
+
+    static public ImageIcon ResizeImage(String imagePath, JLabel label) {
+        ImageIcon myImage = new ImageIcon(imagePath);
+        Image img = myImage.getImage();
+        Image newImg = img.getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
+        ImageIcon image = new ImageIcon(newImg);
+        return image;
     }
 
     /**
@@ -376,7 +459,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
                         .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(newImportButton, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+                            .addComponent(newImportButton, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
                             .addComponent(settingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(addCategoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(addSupplierButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -455,9 +538,10 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     private int _userID = 0;
     private String _role = "";
     private SettingFrom settingFrom = null;
+    final String imageFolderPath = new File("").getAbsolutePath() + "/";
 
     private EquipmentDetailsController eC = null;
-    private List<Equipment_Details> lED;
+    private List<Equipment_Details> lED = null;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane MainDesktopPane;
     private javax.swing.JButton addCategoryButton;

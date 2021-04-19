@@ -19,6 +19,7 @@ public class AddSupplier extends javax.swing.JDialog {
         this.setLocationRelativeTo(null);
         sC = new SupplierController();
         _parent = parent;
+        this.setTitle("Thêm nhà cung cấp");
     }
 
     /**
@@ -115,6 +116,15 @@ public class AddSupplier extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel6))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(47, 47, 47)
+                                .addComponent(jLabel5))))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(44, 44, 44)
@@ -138,13 +148,7 @@ public class AddSupplier extends javax.swing.JDialog {
                                     .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtTenNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtMaNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(30, 30, 30))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel5)))
+                                .addGap(30, 30, 30)))))
                 .addContainerGap(19, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -152,12 +156,10 @@ public class AddSupplier extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(22, 22, 22)
-                                .addComponent(jLabel5))
-                            .addComponent(jLabel6))
-                        .addGap(32, 32, 32)
+                        .addComponent(jLabel6)
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel5)
+                        .addGap(34, 34, 34)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtMaNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1)))
@@ -174,11 +176,11 @@ public class AddSupplier extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton3)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
                 .addGap(64, 64, 64))
         );
 
@@ -206,16 +208,19 @@ public class AddSupplier extends javax.swing.JDialog {
             isOk = false;
         }
 
-        if (!maNCCs.matches("\\d+")) {
+        if (!maNCCs.matches("\\d+") && maNCCs.length() > 0) {
             JOptionPane.showMessageDialog(this, "Mã nhà cung cấp phải là chữ số ");
             isOk = false;
-        } else if (!sdtNCC.matches("\\d+")) {
+        } else if (tenNCC.length() > 0 && tenNCC.matches("[^a-zA-Z]+")) {
+            JOptionPane.showMessageDialog(this, "Tên nhà cung cấp cấp phải là chữ cái");
+            isOk = false;
+        } else if (!sdtNCC.matches("\\d+") && sdtNCC.length() > 0) {
             JOptionPane.showMessageDialog(this, "SDT nhà cung cấp phải là chữ số");
             isOk = false;
-        } else if (!maNCCs.matches("^[0-9]{1,3}$")) {
+        } else if (!maNCCs.matches("^[0-9]{1,3}$") && maNCCs.length() > 0) {
             JOptionPane.showMessageDialog(this, "Mã nhà cung cấp không được vượt quá 3 ký tự");
             isOk = false;
-        } else if (!sdtNCC.matches("^[0-9]{10}$")) {
+        } else if (!sdtNCC.matches("^[0-9]{10}$") && sdtNCC.length() > 0) {
             JOptionPane.showMessageDialog(this, "SDT nhà cung cấp phải là 10 ký tự");
             isOk = false;
         }

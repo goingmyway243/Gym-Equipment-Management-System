@@ -1,17 +1,33 @@
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.Border;
 
 import javax.swing.filechooser.FileFilter;
 
@@ -30,10 +46,13 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
     EquipmentDetailsController eC = null;
     SupplierController sC = null;
     List<Supplier> listOfSuppliers;
+    List<String> fileNameList;
     String imagePath;
+    String imageFolderPath;
     int size;
-    private MainMenu mainMenu;
+    private final MainMenu mainMenu;
 
+    @Override
     public MainMenu getParent() {
         return mainMenu;
     }
@@ -57,9 +76,15 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
         eC = new EquipmentDetailsController();
         sC = new SupplierController();
         listOfSuppliers = new ArrayList<>();
+        fileNameList = new ArrayList<>();
         mainMenu = (MainMenu) parent;
 
+        imageFolderPath = new File("").getAbsolutePath().concat("/src/images/");
+        listFilesForFolder(new File(imageFolderPath));
         getSupplierList();
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setTitle("Thêm chi tiết thiết bị");
+
     }
 
     public void getSupplierList() {
@@ -173,17 +198,17 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(txtThoiGianBH)
-                                        .addGap(45, 45, 45))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jButton3)
-                                        .addGap(34, 34, 34)
-                                        .addComponent(jButton1)
-                                        .addGap(0, 0, Short.MAX_VALUE)))
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(cbNhaCungCap, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtThoiGianBH)
+                                .addGap(45, 45, 45))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton3)
+                                .addGap(34, 34, 34)
+                                .addComponent(jButton1)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(cbNhaCungCap, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -209,7 +234,7 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(cbNhaCungCap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(txtThoiGianBH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -252,10 +277,10 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
         if (maChiTietTB.length() > 0 && maChiTietTB.matches("\\d+")) {
             JOptionPane.showMessageDialog(this, "Mã chi tiết thiết bị phải là kí tự chữ và số");
             isSatisfied = false;
-        } else if (tenThietbi.length() > 0 && !tenThietbi.matches("[a-zA-Z]+")) {
+        } else if (tenThietbi.length() > 0 && tenThietbi.matches("[^a-zA-Z]+")) {
             JOptionPane.showMessageDialog(this, "Tên thiết bị phải là chữ cái ");
             isSatisfied = false;
-        } else if (gia.length() > 0  && !gia.matches("\\d+")) {
+        } else if (gia.length() > 0 && !gia.matches("\\d+")) {
             JOptionPane.showMessageDialog(this, "Gía thiết bị phải là chữ số ");
             isSatisfied = false;
         } else if (cbNhaCungCap.getSelectedItem().toString().equals("Thêm nhà cung cấp")) {
@@ -266,8 +291,8 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
         if (maChiTietTB.length() > 5) {
             JOptionPane.showMessageDialog(this, "Mã chi tiết thiết bị không được vượt quá 5 ký tự");
             isSatisfied = false;
-        } else if (thoigianBH.length() > 0 && thoigianBH.length() <= 2 && Integer.parseInt(thoigianBH) > 11) {
-            JOptionPane.showMessageDialog(this, "Thời gian bảo hành không được vượt quá 10 năm");
+        } else if (thoigianBH.length() > 0 && Integer.parseInt(thoigianBH) > 10 && Integer.parseInt(thoigianBH) > 0) {
+            JOptionPane.showMessageDialog(this, "Thời gian bảo hành không được vượt quá 10 năm và phải ít nhất là 1 năm");
             isSatisfied = false;
         }
 
@@ -280,9 +305,7 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
             eD.setPicture(hinhAnh);
             eD.setPrice(price);
             eD.setSupplier_id(nhaCungCapId);
-//                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-//                eD.setWarranty_time(sdf.parse(txtThoiGianBH.getText()));
-            eD.setWarranty_time(thoigianBH);
+            eD.setWarranty_time(Integer.parseInt(thoigianBH));
 
             if (eC.isIdExist(maChiTietTB)) {
                 int option = JOptionPane.showConfirmDialog(this, "Mã chi tiết thiết bị đã tồn tại, bạn có muốn cập nhật thông tin không?");
@@ -304,9 +327,7 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Thêm thất  bại");
                 }
             }
-
         }
-
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -334,14 +355,12 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public void createWindow() {
         JFrame frame = new JFrame("Choose Image");
+        frame.setResizable(false);
         frame.setLayout(null);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(700, 460);
+        frame.setSize(720, 460);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         createUI(frame);
@@ -349,21 +368,131 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
 
     public void createUI(final JFrame frame) {
         JButton browseButton = new JButton("Chọn hình ảnh");
-        browseButton.setBounds(300, 380, 100, 40);
+        browseButton.setBounds(200, 380, 160, 40);
+
+        JButton selectButton = new JButton("Chọn");
+        selectButton.setBounds(380, 380, 100, 40);
+
+        JButton cancelButton = new JButton("Thoát");
+        cancelButton.setBounds(500, 380, 100, 40);
+
         JLabel labelImage = new JLabel();
-        labelImage.setBounds(10, 10, 670, 250);
-        JLabel labelText = new JLabel();
-        labelText.setBounds(10, 300, 670, 60);
+        labelImage.setBounds(10, 10, 720, 340);
+        JPanel panel = new JPanel();
 
-        frame.add(browseButton);
-        frame.add(labelImage);
-        frame.add(labelText);
+        int row = (int) (fileNameList.size() % 3 == 0 ? fileNameList.size() / 3 : Math.round((fileNameList.size() / 3) + 0.5));
+        panel.setLayout(new GridLayout(row, 3, 5, 5));
+        List<JLabel> arrayLabel = new ArrayList<>();
 
-        browseButton.addActionListener(new ActionListener() {
+        int dem = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < 3; j++) {
+                JLabel labelImg = new JLabel();
+                labelImg.setSize(230, 130);
+                labelImg.setBorder(null);
+                if (dem > fileNameList.size() - 1) {
+                    break;
+                }
+                labelImg.setIcon(ResizeImage(imageFolderPath + "/" + fileNameList.get(dem), labelImg));
+                panel.add(labelImg);
+                arrayLabel.add(labelImg);
+                dem++;
+            }
+        }
+
+        JScrollPane scrollPane = new JScrollPane(panel,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBounds(0, 0, 740, 360);
+
+        JPanel contentPane = new JPanel(null);
+        contentPane.setPreferredSize(new Dimension(740, 440));
+        contentPane.add(scrollPane);
+        contentPane.add(browseButton);
+        contentPane.add(selectButton);
+        contentPane.add(cancelButton);
+        frame.setContentPane(contentPane);
+        frame.pack();
+
+        Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
+
+        for (JLabel label : arrayLabel) {
+            label.setCursor(cursor);
+            label.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent evt) {
+                    arrayLabel.stream().filter((label) -> (label != evt.getSource())).forEachOrdered((label) -> {
+                        label.setBorder(null);
+                    });
+                    Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
+                    if (label.getBorder() != null) {
+                        label.setBorder(null);
+                    } else if (label.getBorder() == null) {
+                        label.setBorder(border);
+                    }
+                }
+            });
+        }
+
+        selectButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent ae) {
+                int x = 0;
+                for (JLabel label : arrayLabel) {
+                    if (label.getBorder() != null) {
+                        break;
+                    }
+                    x++;
+                }
+                btnGetImage.setText(fileNameList.get(x));
+                setImagePath("/src/images/" + fileNameList.get(x));
+
+                frame.dispose();
+            }
+        });
+
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                frame.dispose();
+            }
+        });
+
+        JButton backButton = new JButton("Quay lại");
+        backButton.setBounds(200, 380, 160, 40);
+
+        JButton selectButton2 = new JButton("Chọn");
+        selectButton2.setBounds(380, 380, 100, 40);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                contentPane.removeAll();
+                frame.remove(contentPane);
+                frame.repaint();
+
+                contentPane.add(scrollPane);
+                contentPane.add(selectButton);
+                browseButton.setBounds(200, 380, 160, 40);
+                contentPane.add(browseButton);
+                setImagePath(null);
+                System.out.println(imagePath);
+                btnGetImage.setText("Chọn hình ảnh!");
+
+            }
+        });
+
+        browseButton.addActionListener(
+                new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e
+            ) {
+                contentPane.remove(selectButton);
+                frame.repaint();
+                browseButton.setBounds(250, 380, 160, 40);
+
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                fileChooser.setCurrentDirectory(new File(imageFolderPath));
                 fileChooser.addChoosableFileFilter(new ImageFilter());
                 fileChooser.setAcceptAllFileFilterUsed(false);
 
@@ -371,16 +500,65 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     String path = selectedFile.getAbsolutePath();
-                    labelImage.setIcon(ResizeImage(path, labelImage));
-                    labelText.setText("Tên file: " + selectedFile.getName());
-                    setImagePath(path);
-                    btnGetImage.setText(selectedFile.getName());
 
+                    contentPane.removeAll();
+                    frame.remove(contentPane);
+                    frame.repaint();
+                    contentPane.add(labelImage);
+                    contentPane.add(cancelButton);
+                    contentPane.add(selectButton2);
+                    labelImage.setIcon(ResizeImage(path, labelImage));
+
+                    selectButton2.addActionListener((ActionEvent ae) -> {
+                        setImagePath("/src/images/" + selectedFile.getName());
+                        btnGetImage.setText(selectedFile.getName());
+                        System.out.println(selectedFile.getAbsolutePath());
+                        File dest = new File(imageFolderPath, selectedFile.getName());
+                        try {
+                            if (!(selectedFile.getParent() + "/").equals(imageFolderPath)) {
+                                copyFileUsingStream(selectedFile, dest);
+                            }
+                        } catch (IOException ex) {
+                            Logger.getLogger(AddEquimentDetailsForm.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        frame.dispose();
+                    });
                 } else if (result == JFileChooser.CANCEL_OPTION) {
                     System.out.println("\"Không có file nào được chọn\"");
+                    frame.repaint();
+                    browseButton.setBounds(200, 380, 160, 40);
+                    frame.add(selectButton);
                 }
             }
-        });
+        }
+        );
+    }
+
+    private static void copyFileUsingStream(File source, File dest) throws IOException {
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(source);
+            os = new FileOutputStream(dest);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } finally {
+            is.close();
+            os.close();
+        }
+    }
+
+    public void listFilesForFolder(final File folder) {
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                listFilesForFolder(fileEntry);
+            } else {
+                fileNameList.add(fileEntry.getName());
+            }
+        }
     }
 
     static public ImageIcon ResizeImage(String imagePath, JLabel label) {
@@ -399,7 +577,6 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
         txtThoiGianBH.setText("");
         cbNhaCungCap.setSelectedIndex(0);
     }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGetImage;

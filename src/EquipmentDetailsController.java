@@ -32,7 +32,7 @@ public class EquipmentDetailsController {
                 lEI.add(new Equipment_Details(rs.getString(1),
                         rs.getString(2),
                         rs.getString(3),
-                        rs.getInt(4), rs.getString(5), rs.getInt(6), rs.getTimestamp(7)
+                        rs.getInt(4), rs.getInt(5), rs.getInt(6)
                 ));
             }
 
@@ -51,7 +51,7 @@ public class EquipmentDetailsController {
             ps.setString(2, eD.getName());
             ps.setString(3, eD.getPicture());
             ps.setInt(4, eD.getPrice());
-            ps.setString(5, eD.getWarranty_time());
+            ps.setInt(5, eD.getWarranty_time());
             ps.setInt(6, eD.getSupplier_id());
 
             ps.executeUpdate();
@@ -85,7 +85,7 @@ public class EquipmentDetailsController {
             ps.setString(1, eD.getName());
             ps.setString(2, eD.getPicture());
             ps.setInt(3, eD.getPrice());
-            ps.setString(4, eD.getWarranty_time());
+            ps.setInt(4, eD.getWarranty_time());
             ps.setInt(5, eD.getSupplier_id());
             ps.setString(6, eD.getId());
             ps.executeUpdate();

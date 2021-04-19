@@ -16,22 +16,17 @@ public class Equipment_Details {
     private String name;
     private String picture;
     private int price;
-    private String warranty_time;
+    private int warranty_time;
     private int supplier_id;
-    private Date created_at;
 
-    public Equipment_Details(String id, String name, String picture, int price, String warranty_time, int supplier_id, Date created_at) {
+    public Equipment_Details(String id, String name, String picture, int price, int warranty_time, int supplier_id) {
         this.id = id;
         this.name = name;
         this.picture = picture;
         this.price = price;
         this.warranty_time = warranty_time;
         this.supplier_id = supplier_id;
-        this.created_at = created_at;
-    }
 
-    public Date getCreated_at() {
-        return created_at;
     }
 
     public Equipment_Details() {
@@ -53,7 +48,7 @@ public class Equipment_Details {
         return price;
     }
 
-    public String getWarranty_time() {
+    public int getWarranty_time() {
         return warranty_time;
     }
 
@@ -77,12 +72,8 @@ public class Equipment_Details {
         this.price = price;
     }
 
-    public void setWarranty_time(String warranty_time) {
+    public void setWarranty_time(int warranty_time) {
         this.warranty_time = warranty_time;
-    }
-
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
     }
 
     public void setSupplier_id(int supplier_id) {
