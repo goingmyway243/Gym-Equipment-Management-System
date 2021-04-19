@@ -488,6 +488,7 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
             public void actionPerformed(ActionEvent e
             ) {
                 contentPane.remove(selectButton);
+                contentPane.remove(cancelButton);
                 frame.repaint();
                 browseButton.setBounds(250, 380, 160, 40);
 
@@ -505,7 +506,7 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
                     frame.remove(contentPane);
                     frame.repaint();
                     contentPane.add(labelImage);
-                    contentPane.add(cancelButton);
+                    contentPane.add(backButton);
                     contentPane.add(selectButton2);
                     labelImage.setIcon(ResizeImage(path, labelImage));
 
