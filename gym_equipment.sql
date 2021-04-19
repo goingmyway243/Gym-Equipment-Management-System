@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.0
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 08, 2021 lúc 05:07 PM
--- Phiên bản máy phục vụ: 10.4.18-MariaDB
--- Phiên bản PHP: 8.0.3
+-- Host: localhost
+-- Generation Time: Apr 19, 2021 at 06:24 PM
+-- Server version: 10.4.16-MariaDB
+-- PHP Version: 7.4.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `gym_equipment`
+-- Database: `gym_equipment`
 --
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `equipment_details`
+-- Table structure for table `equipment_details`
 --
 
 CREATE TABLE `equipment_details` (
@@ -32,21 +32,23 @@ CREATE TABLE `equipment_details` (
   `name` varchar(100) NOT NULL,
   `picture` varchar(255) DEFAULT NULL,
   `price` int(15) NOT NULL,
-  `warranty_time` year(2) DEFAULT NULL,
+  `warranty_time` tinyint(2) DEFAULT NULL,
   `supplier_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Đang đổ dữ liệu cho bảng `equipment_details`
+-- Dumping data for table `equipment_details`
 --
 
 INSERT INTO `equipment_details` (`id`, `name`, `picture`, `price`, `warranty_time`, `supplier_id`) VALUES
-('MCB01', 'Máy chạy bộ Kingsport', NULL, 13500000, 02, 1);
+('BCG23', 'kkk', NULL, 72631, 11, 1),
+('MBB43', 'Máy bay bê', '/src/images/1.jpg', 30000, 3, 2),
+('MCB01', 'Máy chạy bộ Kingsport', NULL, 13500000, 2, 1);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `gym_equipments`
+-- Table structure for table `gym_equipments`
 --
 
 CREATE TABLE `gym_equipments` (
@@ -59,16 +61,17 @@ CREATE TABLE `gym_equipments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Đang đổ dữ liệu cho bảng `gym_equipments`
+-- Dumping data for table `gym_equipments`
 --
 
 INSERT INTO `gym_equipments` (`id`, `status`, `detail_id`, `import_id`, `created_at`, `updated_at`) VALUES
-('ASD-001', 'Đang hoạt động', 'MCB01', 1, '2021-04-07 15:48:53', '2021-04-07 15:48:53');
+('ASD-001', 'Đang hoạt động', 'MCB01', 1, '2021-04-07 15:48:53', '2021-04-14 16:13:16'),
+('TES-001', 'Bị hỏng', 'MCB01', 2, '2021-04-14 16:13:30', '2021-04-14 16:13:30');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `import_details`
+-- Table structure for table `import_details`
 --
 
 CREATE TABLE `import_details` (
@@ -78,16 +81,17 @@ CREATE TABLE `import_details` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Đang đổ dữ liệu cho bảng `import_details`
+-- Dumping data for table `import_details`
 --
 
 INSERT INTO `import_details` (`id`, `user_id`, `date_import`) VALUES
-(1, 1, '2021-04-07');
+(1, 1, '2021-04-07'),
+(2, 1, '2021-04-14');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `login_info`
+-- Table structure for table `login_info`
 --
 
 CREATE TABLE `login_info` (
@@ -98,7 +102,7 @@ CREATE TABLE `login_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Đang đổ dữ liệu cho bảng `login_info`
+-- Dumping data for table `login_info`
 --
 
 INSERT INTO `login_info` (`userName`, `password`, `userId`, `role_id`) VALUES
@@ -107,7 +111,7 @@ INSERT INTO `login_info` (`userName`, `password`, `userId`, `role_id`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `role`
+-- Table structure for table `role`
 --
 
 CREATE TABLE `role` (
@@ -116,7 +120,7 @@ CREATE TABLE `role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Đang đổ dữ liệu cho bảng `role`
+-- Dumping data for table `role`
 --
 
 INSERT INTO `role` (`id`, `role`) VALUES
@@ -126,7 +130,7 @@ INSERT INTO `role` (`id`, `role`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `suppliers`
+-- Table structure for table `suppliers`
 --
 
 CREATE TABLE `suppliers` (
@@ -137,16 +141,17 @@ CREATE TABLE `suppliers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Đang đổ dữ liệu cho bảng `suppliers`
+-- Dumping data for table `suppliers`
 --
 
 INSERT INTO `suppliers` (`id`, `name`, `address`, `phone_number`) VALUES
-(1, 'Kingsport', '384 Điện Biên Phủ, P.17, Q.Bình Thạnh', '0936211210');
+(1, 'Kingsport', '384 Điện Biên Phủ, P.17, Q.Bình Thạnh', '0936211210'),
+(2, 'Gym Kingdom', '77 Đinh Bộ Lĩnh, P.11, Q.Bình Thạnh', '0903666808');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -162,25 +167,25 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Đang đổ dữ liệu cho bảng `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `firstName`, `lastName`, `birthDay`, `email`, `contactNumber`, `profilePicture`, `created_at`, `updated_at`) VALUES
 (1, 'Đăng', 'Nguyễn Hải', '2000-08-24', 'nguyenhaidang240800@gmail.com', '0961362843', '', '2021-03-29 15:20:05', '2021-03-29 15:21:00');
 
 --
--- Chỉ mục cho các bảng đã đổ
+-- Indexes for dumped tables
 --
 
 --
--- Chỉ mục cho bảng `equipment_details`
+-- Indexes for table `equipment_details`
 --
 ALTER TABLE `equipment_details`
   ADD PRIMARY KEY (`id`),
   ADD KEY `supplier_id` (`supplier_id`);
 
 --
--- Chỉ mục cho bảng `gym_equipments`
+-- Indexes for table `gym_equipments`
 --
 ALTER TABLE `gym_equipments`
   ADD PRIMARY KEY (`id`),
@@ -189,14 +194,14 @@ ALTER TABLE `gym_equipments`
   ADD KEY `import_detail_id` (`import_id`);
 
 --
--- Chỉ mục cho bảng `import_details`
+-- Indexes for table `import_details`
 --
 ALTER TABLE `import_details`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
 
 --
--- Chỉ mục cho bảng `login_info`
+-- Indexes for table `login_info`
 --
 ALTER TABLE `login_info`
   ADD PRIMARY KEY (`userName`),
@@ -204,76 +209,76 @@ ALTER TABLE `login_info`
   ADD KEY `role_id` (`role_id`);
 
 --
--- Chỉ mục cho bảng `role`
+-- Indexes for table `role`
 --
 ALTER TABLE `role`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `suppliers`
+-- Indexes for table `suppliers`
 --
 ALTER TABLE `suppliers`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT cho các bảng đã đổ
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT cho bảng `import_details`
+-- AUTO_INCREMENT for table `import_details`
 --
 ALTER TABLE `import_details`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT cho bảng `role`
+-- AUTO_INCREMENT for table `role`
 --
 ALTER TABLE `role`
   MODIFY `id` tinyint(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT cho bảng `suppliers`
+-- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT cho bảng `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `id` tinyint(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- Các ràng buộc cho các bảng đã đổ
+-- Constraints for dumped tables
 --
 
 --
--- Các ràng buộc cho bảng `equipment_details`
+-- Constraints for table `equipment_details`
 --
 ALTER TABLE `equipment_details`
   ADD CONSTRAINT `equipment_details_ibfk_1` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `gym_equipments`
+-- Constraints for table `gym_equipments`
 --
 ALTER TABLE `gym_equipments`
   ADD CONSTRAINT `gym_equipments_ibfk_4` FOREIGN KEY (`detail_id`) REFERENCES `equipment_details` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `gym_equipments_ibfk_5` FOREIGN KEY (`import_id`) REFERENCES `import_details` (`id`) ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `import_details`
+-- Constraints for table `import_details`
 --
 ALTER TABLE `import_details`
   ADD CONSTRAINT `import_details_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE;
 
 --
--- Các ràng buộc cho bảng `login_info`
+-- Constraints for table `login_info`
 --
 ALTER TABLE `login_info`
   ADD CONSTRAINT `login_info_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
