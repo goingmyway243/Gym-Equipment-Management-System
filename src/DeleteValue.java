@@ -79,7 +79,7 @@ public class DeleteValue {
             JOptionPane.showMessageDialog(null, "Không thể xóa nhà cung cấp \n(tồn tại loại thiết bị đang quản lý thuộc nhà cung cấp này)");
             return;
         }
-        String sql = "delete from supplier where id = ?";
+        String sql = "delete from suppliers where id = ?";
         try {
             PreparedStatement ps = _connector.prepareStatement(sql);
             ps.setInt(1, id);
