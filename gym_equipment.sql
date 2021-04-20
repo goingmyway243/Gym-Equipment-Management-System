@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 08, 2021 lúc 05:07 PM
+-- Thời gian đã tạo: Th4 15, 2021 lúc 03:17 PM
 -- Phiên bản máy phục vụ: 10.4.18-MariaDB
 -- Phiên bản PHP: 8.0.3
 
@@ -32,7 +32,7 @@ CREATE TABLE `equipment_details` (
   `name` varchar(100) NOT NULL,
   `picture` varchar(255) DEFAULT NULL,
   `price` int(15) NOT NULL,
-  `warranty_time` year(2) DEFAULT NULL,
+  `warranty_time` tinyint(2) DEFAULT NULL,
   `supplier_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -41,7 +41,7 @@ CREATE TABLE `equipment_details` (
 --
 
 INSERT INTO `equipment_details` (`id`, `name`, `picture`, `price`, `warranty_time`, `supplier_id`) VALUES
-('MCB01', 'Máy chạy bộ Kingsport', NULL, 13500000, 02, 1);
+('MCB01', 'Máy chạy bộ Kingsport', NULL, 13500000, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -63,7 +63,8 @@ CREATE TABLE `gym_equipments` (
 --
 
 INSERT INTO `gym_equipments` (`id`, `status`, `detail_id`, `import_id`, `created_at`, `updated_at`) VALUES
-('ASD-001', 'Đang hoạt động', 'MCB01', 1, '2021-04-07 15:48:53', '2021-04-07 15:48:53');
+('ASD-001', 'Đang hoạt động', 'MCB01', 1, '2021-04-07 15:48:53', '2021-04-14 16:13:16'),
+('TES-001', 'Bị hỏng', 'MCB01', 2, '2021-04-14 16:13:30', '2021-04-14 16:13:30');
 
 -- --------------------------------------------------------
 
@@ -82,7 +83,8 @@ CREATE TABLE `import_details` (
 --
 
 INSERT INTO `import_details` (`id`, `user_id`, `date_import`) VALUES
-(1, 1, '2021-04-07');
+(1, 1, '2021-04-07'),
+(2, 1, '2021-04-14');
 
 -- --------------------------------------------------------
 
@@ -141,7 +143,8 @@ CREATE TABLE `suppliers` (
 --
 
 INSERT INTO `suppliers` (`id`, `name`, `address`, `phone_number`) VALUES
-(1, 'Kingsport', '384 Điện Biên Phủ, P.17, Q.Bình Thạnh', '0936211210');
+(1, 'Kingsport', '384 Điện Biên Phủ, P.17, Q.Bình Thạnh', '0936211210'),
+(2, 'Gym Kingdom', '77 Đinh Bộ Lĩnh, P.11, Q.Bình Thạnh', '0903666808');
 
 -- --------------------------------------------------------
 
@@ -241,7 +244,7 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT cho bảng `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `users`

@@ -30,6 +30,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         
         _userID = userID;
         _role = role;
+        _deleter.setParentFrame(this);
         
         eC = new EquipmentDetailsController();
         sC = new SupplierController();
@@ -283,6 +284,11 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 return canEdit [columnIndex];
             }
         });
+        importDetailsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                importDetailsTableMouseClicked(evt);
+            }
+        });
         importDetailsScrollPane.setViewportView(importDetailsTable);
 
         mainTabbedPane.addTab("Danh sách phiếu nhập", importDetailsScrollPane);
@@ -301,6 +307,11 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        usersTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                usersTableMouseClicked(evt);
             }
         });
         usersScrollPane.setViewportView(usersTable);
@@ -371,6 +382,11 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         removeButton.setEnabled(false);
         removeButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         removeButton.setPreferredSize(new java.awt.Dimension(107, 23));
+        removeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeButtonActionPerformed(evt);
+            }
+        });
 
         MainDesktopPane.setLayer(titleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         MainDesktopPane.setLayer(addCategoryButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -464,16 +480,19 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     private void equipmentsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_equipmentsTableMouseClicked
         _selectedTable = 1;
         editButton.setEnabled(true);
+        removeButton.setEnabled(true);
     }//GEN-LAST:event_equipmentsTableMouseClicked
 
     private void categoriesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categoriesTableMouseClicked
-        _selectedTable = 3;
+        _selectedTable = 4;
         editButton.setEnabled(true);
+        removeButton.setEnabled(true);
     }//GEN-LAST:event_categoriesTableMouseClicked
 
     private void suppliersTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_suppliersTableMouseClicked
-        _selectedTable = 4;
+        _selectedTable = 5;
         editButton.setEnabled(true);
+        removeButton.setEnabled(true);
     }//GEN-LAST:event_suppliersTableMouseClicked
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
@@ -499,22 +518,81 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
             {
                 break;
             }
+            case 5:
+            {
+                break;
+            }
+            default:
+                break;
         }
+        loadDatabase();
     }//GEN-LAST:event_editButtonActionPerformed
+
+    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
+        switch(_selectedTable)
+        {
+            case 1:
+            {
+                String id = equipmentsTable.getValueAt(equipmentsTable.getSelectedRow(), 0).toString();
+                _deleter.deleteEquipment(id);
+                break;
+            }
+            case 2:
+            {
+                int id = Integer.valueOf(importDetailsTable.getValueAt(importDetailsTable.getSelectedRow(), 0).toString());
+                _deleter.deleteImport(id);
+                break;
+            }
+            case 3:
+            {
+                int id = Integer.valueOf(usersTable.getValueAt(usersTable.getSelectedRow(), 0).toString());
+                _deleter.deleteUser(id);
+                break;
+            }
+            case 4:
+            {
+                String id = categoriesTable.getValueAt(categoriesTable.getSelectedRow(), 0).toString();
+                _deleter.deleteEquipmentDetail(id);
+                break;
+            }
+            case 5:
+            {
+                int id = Integer.valueOf(suppliersTable.getValueAt(suppliersTable.getSelectedRow(), 0).toString());
+                _deleter.deleteSupplier(id);
+                break;
+            }
+            default:
+                break;
+        }
+        loadDatabase();
+    }//GEN-LAST:event_removeButtonActionPerformed
+
+    private void importDetailsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_importDetailsTableMouseClicked
+        _selectedTable = 2;
+        editButton.setEnabled(false);
+        removeButton.setEnabled(true);
+    }//GEN-LAST:event_importDetailsTableMouseClicked
+
+    private void usersTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_usersTableMouseClicked
+        _selectedTable = 3;
+        editButton.setEnabled(false);
+        removeButton.setEnabled(false);
+    }//GEN-LAST:event_usersTableMouseClicked
     
     private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        settingFrom = new SettingFrom(_userID);
-        settingFrom.setLogOutCallBack(this);
-        settingFrom.setExitCallBack(this);
-        settingFrom.setLocationRelativeTo(null);
-        settingFrom.setVisible(true);
+        _settingFrom = new SettingFrom(_userID);
+        _settingFrom.setLogOutCallBack(this);
+        _settingFrom.setExitCallBack(this);
+        _settingFrom.setLocationRelativeTo(null);
+        _settingFrom.setVisible(true);
         setEnabled(false);
     }
     
     private int _selectedTable = 0;
     private int _userID = 0;
     private String _role = "";
-    private SettingFrom settingFrom = null;
+    private SettingFrom _settingFrom = null;
+    private DeleteValue _deleter = new DeleteValue();
     
     private EquipmentDetailsController eC = null;
     private SupplierController sC = null;
@@ -546,13 +624,13 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     public void exit() {
         setEnabled(true);
         setVisible(true);
-        settingFrom = null;
+        _settingFrom = null;
     }
 
     @Override
     public void logout() {
         dispose();
-        settingFrom = null;
+        _settingFrom = null;
     }
 
 }

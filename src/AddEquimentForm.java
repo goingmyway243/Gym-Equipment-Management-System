@@ -528,7 +528,6 @@ public class AddEquimentForm extends javax.swing.JFrame {
         String detailID = detailIDComboBox.getSelectedItem().toString();
         
         editEquipment(id, status, detailID);
-        _mainMenuForm.loadDatabase();
         this.dispose();
     }//GEN-LAST:event_confirmEditButtonActionPerformed
 
