@@ -15,30 +15,37 @@ import java.text.SimpleDateFormat;
  * @author Dell
  */
 public class SettingFrom extends javax.swing.JFrame {
-
-    private int userId;
-
-    private String userQuery() {
-        return "SELECT * FROM `users` WHERE id = " + userId;
-    }
-
     /**
      * Creates new form SettingFrom
      */
-    public SettingFrom(int userId) {
-        this.userId = userId;
+    public SettingFrom(int _userId) {
+        this._userId = _userId;
         initComponents();
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 dispose();
-                exitCallBack.exit();
+                _exitCallBack.exit();
             }
         });
         initUserInfo();
     }
+    
+    public void setLogOutCallBack(LogOutCallBack _logOutCallBack) {
+        this._logOutCallBack = _logOutCallBack;
+    }
 
-    private SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+    public interface LogOutCallBack {
+        void logout();
+    }
+    
+    public void setExitCallBack(ExitCallBack _exitCallBack) {
+        this._exitCallBack = _exitCallBack;
+    }
+
+    public interface ExitCallBack {
+        void exit();
+    }
 
     private void initUserInfo() {
         Connection connectDB = ConnectMysql.getConnectDB();
@@ -46,14 +53,18 @@ public class SettingFrom extends javax.swing.JFrame {
             ResultSet rs = connectDB.createStatement().executeQuery(userQuery());
             rs.next();
             fullNameLb.setText(rs.getString("firstName") + " " + rs.getString("lastName"));
-            birthDayLb.setText(format.format(rs.getDate("birthDay")));
+            birthDayLb.setText(_format.format(rs.getDate("birthDay")));
             emailLb.setText(rs.getString("email"));
             contactLb.setText(rs.getString("contactNumber"));
-            createLb.setText(format.format(rs.getDate("created_at")));
-            updateLb.setText(format.format(rs.getDate("updated_at")));
+            createLb.setText(_format.format(rs.getDate("created_at")));
+            updateLb.setText(_format.format(rs.getDate("updated_at")));
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+    }
+    
+    private String userQuery() {
+        return "SELECT * FROM `users` WHERE id = " + _userId;
     }
 
     /**
@@ -163,32 +174,15 @@ public class SettingFrom extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void logOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutBtnActionPerformed
-        logOutCallBack.logout();
+        _logOutCallBack.logout();
         dispose();
         LoginForm.create();
     }//GEN-LAST:event_logOutBtnActionPerformed
 
-    private ExitCallBack exitCallBack;
-
-    public void setExitCallBack(ExitCallBack exitCallBack) {
-        this.exitCallBack = exitCallBack;
-    }
-
-    public interface ExitCallBack {
-
-        void exit();
-    }
-    private LogOutCallBack logOutCallBack = null;
-
-    public void setLogOutCallBack(LogOutCallBack logOutCallBack) {
-        this.logOutCallBack = logOutCallBack;
-    }
-
-    public interface LogOutCallBack {
-
-        void logout();
-    }
-
+    private SimpleDateFormat _format = new SimpleDateFormat("dd/MM/yyyy");
+    private LogOutCallBack _logOutCallBack = null;
+    private ExitCallBack _exitCallBack;
+    private int _userId;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel birthDayLb;
     private javax.swing.JLabel contactLb;

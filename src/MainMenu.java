@@ -1,14 +1,26 @@
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -21,27 +33,30 @@ import javax.swing.table.DefaultTableModel;
  */
 public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCallBack, SettingFrom.ExitCallBack {
 
-    /**
-     * Creates new form MainMenu
-     */
+    //===========================||==========================================
+    //======================PUBLIC ZONE=====================================
+    //===========================V===========================================
+    
     public MainMenu(int userID, String role) {
         initComponents();
         setResizable(false);
-        
+
         _userID = userID;
         _role = role;
-        _deleter.setParentFrame(this);
-        
-        eC = new EquipmentDetailsController();
-        sC = new SupplierController();
-
-        lED = new ArrayList<>();
-        lS = new ArrayList<>();
-
-        lED = eC.getListEquipment();
-        lS = sC.getSuppliersInfo();
-        
         loadDatabase();
+    }
+    
+    @Override
+    public void exit() {
+        setEnabled(true);
+        setVisible(true);
+        _settingFrom = null;
+    }
+
+    @Override
+    public void logout() {
+        dispose();
+        _settingFrom = null;
     }
     
     public void loadDatabase()
@@ -53,8 +68,13 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         loadImportDetails();
     }
     
-    private void loadUserInfos()
-    {
+    
+    
+    //===========================||==========================================
+    //======================PRIVATE ZONE=====================================
+    //===========================V===========================================
+    
+    private void loadUserInfos() {
         DefaultTableModel tableModel = (DefaultTableModel) usersTable.getModel();
         tableModel.setNumRows(0);
 
@@ -82,7 +102,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void loadSuppliers() {
         DefaultTableModel tableModel = (DefaultTableModel) suppliersTable.getModel();
         tableModel.setNumRows(0);
@@ -109,8 +129,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         }
     }
     
-    private void loadImportDetails()
-    {
+    private void loadImportDetails() {
         DefaultTableModel tableModel = (DefaultTableModel) importDetailsTable.getModel();
         tableModel.setNumRows(0);
 
@@ -134,10 +153,11 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void loadEquipments() {
         DefaultTableModel tableModel = (DefaultTableModel) equipmentsTable.getModel();
         tableModel.setNumRows(0);
+        _imgGenerator.ImageColumnSetting(equipmentsTable);
 
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select * from gym_equipments";
@@ -146,10 +166,13 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
             PreparedStatement ps = connector.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                boolean isOdd = tableModel.getRowCount()+1 % 2 == 0 ? true : false;
+                String imagePath = getEquipmentImage(rs.getString("detail_id"));
+                
                 vector = new Vector();
                 vector.add(rs.getString("id"));
                 vector.add(rs.getString("status"));
-                vector.add("");
+                vector.add(_imgGenerator.createLabel(imagePath, isOdd));
                 vector.add(rs.getString("detail_id"));
                 vector.add(rs.getInt("import_id"));
                 vector.add(rs.getTimestamp("updated_at"));
@@ -162,17 +185,61 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
             Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void loadEquipmentDetails() {
         DefaultTableModel tblEquipDetails = (DefaultTableModel) categoriesTable.getModel();
-        tblEquipDetails.setNumRows(0);
+        tblEquipDetails.setRowCount(0);
+        List<Equipment_Details> lED = _eC.getListEquipment();
+        _imgGenerator.ImageColumnSetting(categoriesTable);
+
+        int dem = 1;
 
         for (Equipment_Details equipment_info : lED) {
+            boolean isOdd = dem % 2 != 0 ? true : false;
+            
             tblEquipDetails.addRow(new Object[]{equipment_info.getId(), equipment_info.getName(),
-                equipment_info.getPicture(), equipment_info.getPrice(), equipment_info.getWarranty_time(),
-                equipment_info.getSupplier_id()});
+                equipment_info.getPicture() == null ? _imgGenerator.createLabel("Không có hình ảnh", isOdd) : _imgGenerator.createLabel(equipment_info.getPicture(), isOdd),
+                equipment_info.getPrice(), equipment_info.getWarranty_time() + " năm",
+                equipment_info.getSupplier_id()
+            });
+            dem++;
         }
     }
+    
+    private String getEquipmentImage(String id)
+    {
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "select * from equipment_details where id = ?";
+        try {
+            PreparedStatement ps = connector.prepareStatement(sql);
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next())
+                return rs.getString("picture");
+        } catch (SQLException ex) {
+            Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
+    }
+    
+    private void tableImageCellCallback(MouseEvent evt, javax.swing.JTable table)
+    {
+        List<Equipment_Details> lED = _eC.getListEquipment();
+        table = (JTable) evt.getSource();
+        Point p = evt.getPoint();
+        int row = table.rowAtPoint(p);
+        int column = table.columnAtPoint(p);
+        if (column == 2 && row <= lED.size()) {
+            if (lED.get(row).getPicture() == null) {
+                return;
+            }
+            ShowImageFrame sIF = ShowImageFrame.getObj();
+            sIF.setVisible(true);
+            String image = _imageFolderPath + lED.get(row).getPicture();
+            sIF.showImageLbl.setIcon(_imgGenerator.ResizeImage(image, sIF.showImageLbl));
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -410,7 +477,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
                         .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(newImportButton, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+                            .addComponent(newImportButton, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
                             .addComponent(settingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(addCategoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(addSupplierButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -466,13 +533,13 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     }//GEN-LAST:event_newImportButtonActionPerformed
 
     private void addCategoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCategoryButtonActionPerformed
-        AddEquimentDetailsForm addEquipmentDetailsForm = new AddEquimentDetailsForm();
+        AddEquimentDetailsForm addEquipmentDetailsForm = new AddEquimentDetailsForm(this);
         addEquipmentDetailsForm.setLocationRelativeTo(this);
         addEquipmentDetailsForm.setVisible(true);
     }//GEN-LAST:event_addCategoryButtonActionPerformed
 
     private void addSupplierButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSupplierButtonActionPerformed
-        AddSupplier addSupplier = new AddSupplier(this,true);
+        AddSupplier addSupplier = new AddSupplier(this, true);
         addSupplier.setLocationRelativeTo(this);
         addSupplier.setVisible(true);
     }//GEN-LAST:event_addSupplierButtonActionPerformed
@@ -487,6 +554,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         _selectedTable = 4;
         editButton.setEnabled(true);
         removeButton.setEnabled(true);
+        tableImageCellCallback(evt,categoriesTable);
     }//GEN-LAST:event_categoriesTableMouseClicked
 
     private void suppliersTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_suppliersTableMouseClicked
@@ -529,36 +597,56 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
+        int result = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa?","Cảnh báo!",
+                                                           JOptionPane.YES_NO_OPTION);
         switch(_selectedTable)
         {
             case 1:
             {
-                String id = equipmentsTable.getValueAt(equipmentsTable.getSelectedRow(), 0).toString();
-                _deleter.deleteEquipment(id);
+                if(result == JOptionPane.YES_OPTION)
+                {
+                    String id = equipmentsTable.getValueAt(equipmentsTable.getSelectedRow(), 0).toString();
+                    _deleter.deleteEquipment(id);
+                }
                 break;
             }
             case 2:
             {
-                int id = Integer.valueOf(importDetailsTable.getValueAt(importDetailsTable.getSelectedRow(), 0).toString());
-                _deleter.deleteImport(id);
+                if(result == JOptionPane.YES_OPTION)
+                {
+                   int id = Integer.valueOf(importDetailsTable.getValueAt(importDetailsTable.getSelectedRow(), 0).toString());
+                    _deleter.deleteImport(id);
+                }
                 break;
             }
             case 3:
             {
-                int id = Integer.valueOf(usersTable.getValueAt(usersTable.getSelectedRow(), 0).toString());
-                _deleter.deleteUser(id);
+                if(result == JOptionPane.YES_OPTION)
+                {
+                   int id = Integer.valueOf(usersTable.getValueAt(usersTable.getSelectedRow(), 0).toString());
+                    _deleter.deleteUser(id);
+                }
+                
                 break;
             }
             case 4:
             {
-                String id = categoriesTable.getValueAt(categoriesTable.getSelectedRow(), 0).toString();
-                _deleter.deleteEquipmentDetail(id);
+                if(result == JOptionPane.YES_OPTION)
+                {
+                   String id = categoriesTable.getValueAt(categoriesTable.getSelectedRow(), 0).toString();
+                    _deleter.deleteEquipmentDetail(id);
+                }
+                
                 break;
             }
             case 5:
             {
-                int id = Integer.valueOf(suppliersTable.getValueAt(suppliersTable.getSelectedRow(), 0).toString());
-                _deleter.deleteSupplier(id);
+                if(result == JOptionPane.YES_OPTION)
+                {
+                   int id = Integer.valueOf(suppliersTable.getValueAt(suppliersTable.getSelectedRow(), 0).toString());
+                   _deleter.deleteSupplier(id);
+                }
+                
                 break;
             }
             default:
@@ -588,16 +676,15 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         setEnabled(false);
     }
     
+    final String _imageFolderPath = new File("").getAbsolutePath() + "/";
     private int _selectedTable = 0;
     private int _userID = 0;
     private String _role = "";
     private SettingFrom _settingFrom = null;
     private DeleteValue _deleter = new DeleteValue();
-    
-    private EquipmentDetailsController eC = null;
-    private SupplierController sC = null;
-    private List<Equipment_Details> lED;
-    private List<Supplier> lS;
+    private ImageGenerator _imgGenerator = new ImageGenerator();
+    private EquipmentDetailsController _eC = new EquipmentDetailsController();;
+    private SupplierController _sC = new SupplierController();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane MainDesktopPane;
     private javax.swing.JButton addCategoryButton;
@@ -619,18 +706,5 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     private javax.swing.JScrollPane usersScrollPane;
     private javax.swing.JTable usersTable;
     // End of variables declaration//GEN-END:variables
-
-    @Override
-    public void exit() {
-        setEnabled(true);
-        setVisible(true);
-        _settingFrom = null;
-    }
-
-    @Override
-    public void logout() {
-        dispose();
-        _settingFrom = null;
-    }
 
 }

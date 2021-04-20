@@ -16,17 +16,14 @@ import java.util.List;
  * @author skqist225
  */
 public class SupplierController {
-
-    private Connection con = null;
-    private EquipmentDetailsController eDC = null;
-
+    
     public List<Supplier> getSuppliersInfo() {
 
         List<Supplier> listOfSuppliers = new ArrayList<>();
         String query = "SELECT * FROM suppliers";
         try {
-            con = ConnectMysql.getConnectDB();
-            Statement st = con.createStatement();
+            _con = ConnectMysql.getConnectDB();
+            Statement st = _con.createStatement();
             ResultSet rs = st.executeQuery(query);
 
             while (rs.next()) {
@@ -45,8 +42,8 @@ public class SupplierController {
     public boolean addNewSupplier(Supplier supplier) {
         String query = "INSERT INTO suppliers(id,name,address,phone_number) VALUES(?,?,?,?)";
         try {
-            con = ConnectMysql.getConnectDB();
-            PreparedStatement ps = con.prepareStatement(query);
+            _con = ConnectMysql.getConnectDB();
+            PreparedStatement ps = _con.prepareStatement(query);
             ps.setInt(1, supplier.getSupplierId());
             ps.setString(2, supplier.getName());
             ps.setString(3, supplier.getAddress());
@@ -63,8 +60,8 @@ public class SupplierController {
     public boolean isIdExist(int id) {
         String query = "SELECT * FROM suppliers WHERE id = ?";
         try {
-            con = ConnectMysql.getConnectDB();
-            PreparedStatement ps = con.prepareStatement(query);
+            _con = ConnectMysql.getConnectDB();
+            PreparedStatement ps = _con.prepareStatement(query);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -78,7 +75,7 @@ public class SupplierController {
     public boolean updateSupplier(Supplier s) {
         String query = "UPDATE suppliers SET name = ?, address = ?, phone_number = ? where id = ?";
         try {
-            PreparedStatement ps = con.prepareStatement(query);
+            PreparedStatement ps = _con.prepareStatement(query);
             ps.setString(1, s.getName());
             ps.setString(2, s.getAddress());
             ps.setString(3, s.getPhoneNumber());
@@ -92,8 +89,8 @@ public class SupplierController {
     }
 
     public boolean deleteSupplier(int id) {
-        eDC = new EquipmentDetailsController();
-        for (int idd : eDC.getSupplierId()) {
+        _eDC = new EquipmentDetailsController();
+        for (int idd : _eDC.getSupplierId()) {
             if (idd == id) {
                 return false;
             }
@@ -101,8 +98,8 @@ public class SupplierController {
         String query = "DELETE FROM suppliers WHERE id = ?";
         try {
 
-            con = ConnectMysql.getConnectDB();
-            PreparedStatement ps = con.prepareStatement(query);
+            _con = ConnectMysql.getConnectDB();
+            PreparedStatement ps = _con.prepareStatement(query);
             ps.setInt(1, id);
             ps.executeUpdate();
             ps.close();
@@ -112,4 +109,7 @@ public class SupplierController {
         }
         return false;
     }
+    
+    private Connection _con = null;
+    private EquipmentDetailsController _eDC = null;
 }

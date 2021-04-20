@@ -1,78 +1,82 @@
+
+import java.util.Date;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author skqist225
  */
 public class Equipment_Details {
-     private String id;
-    private String name;
-    private String picture;
-    private int price;
-    private String warranty_time;
-    private int supplier_id;
 
-    public Equipment_Details(String id, String name, String picture, int price, String warranty_time, int supplier_id) {
-        this.id = id;
-        this.name = name;
-        this.picture = picture;
-        this.price = price;
-        this.warranty_time = warranty_time;
-        this.supplier_id = supplier_id;
+    public Equipment_Details(String _id, String _name, String _picture, int _price, int _warranty_time, int _supplier_id) {
+        this._id = _id;
+        this._name = _name;
+        this._picture = _picture;
+        this._price = _price;
+        this._warranty_time = _warranty_time;
+        this._supplier_id = _supplier_id;
+
     }
 
     public Equipment_Details() {
     }
-    
+
     public String getId() {
-        return id;
+        return _id;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public String getPicture() {
-        return picture;
+        return _picture;
     }
 
     public int getPrice() {
-        return price;
+        return _price;
     }
 
-    public String getWarranty_time() {
-        return warranty_time;
+    public int getWarranty_time() {
+        return _warranty_time;
     }
 
     public int getSupplier_id() {
-        return supplier_id;
+        return _supplier_id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setId(String _id) {
+        this._id = _id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String _name) {
+        this._name = _name;
     }
 
-    public void setPicture(String picture) {
-        this.picture = picture;
+    public void setPicture(String _picture) {
+        this._picture = _picture;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setPrice(int _price) {
+        this._price = _price;
     }
 
-    public void setWarranty_time(String warranty_time) {
-        this.warranty_time = warranty_time;
+    public void setWarranty_time(int _warranty_time) {
+        this._warranty_time = _warranty_time;
     }
 
-    public void setSupplier_id(int supplier_id) {
-        this.supplier_id = supplier_id;
+    public void setSupplier_id(int _supplier_id) {
+        this._supplier_id = _supplier_id;
     }
+    
+    private String _id;
+    private String _name;
+    private String _picture;
+    private int _price;
+    private int _warranty_time;
+    private int _supplier_id;
 }

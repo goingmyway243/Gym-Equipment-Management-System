@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 15, 2021 lúc 03:17 PM
+-- Thời gian đã tạo: Th4 20, 2021 lúc 07:50 PM
 -- Phiên bản máy phục vụ: 10.4.18-MariaDB
 -- Phiên bản PHP: 8.0.3
 
@@ -31,7 +31,7 @@ CREATE TABLE `equipment_details` (
   `id` varchar(5) NOT NULL,
   `name` varchar(100) NOT NULL,
   `picture` varchar(255) DEFAULT NULL,
-  `price` int(15) NOT NULL,
+  `price` int(15) NOT NULL CHECK (`price` >= 10000),
   `warranty_time` tinyint(2) DEFAULT NULL,
   `supplier_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -41,7 +41,8 @@ CREATE TABLE `equipment_details` (
 --
 
 INSERT INTO `equipment_details` (`id`, `name`, `picture`, `price`, `warranty_time`, `supplier_id`) VALUES
-('MCB01', 'Máy chạy bộ Kingsport', NULL, 13500000, 2, 1);
+('MCB01', 'Máy chạy bộ Kingsport', '/src/images/9.jpeg', 1350000, 2, 1),
+('TTT01', 'Tạ tập thể hình Gym Kingdom', '/src/images/8.jpeg', 100000, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -51,7 +52,7 @@ INSERT INTO `equipment_details` (`id`, `name`, `picture`, `price`, `warranty_tim
 
 CREATE TABLE `gym_equipments` (
   `id` varchar(7) NOT NULL,
-  `status` varchar(20) NOT NULL,
+  `status` varchar(20) NOT NULL CHECK (`status` in ('Đang hoạt động','Bảo trì','Bị hỏng')),
   `detail_id` varchar(5) NOT NULL,
   `import_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -63,8 +64,7 @@ CREATE TABLE `gym_equipments` (
 --
 
 INSERT INTO `gym_equipments` (`id`, `status`, `detail_id`, `import_id`, `created_at`, `updated_at`) VALUES
-('ASD-001', 'Đang hoạt động', 'MCB01', 1, '2021-04-07 15:48:53', '2021-04-14 16:13:16'),
-('TES-001', 'Bị hỏng', 'MCB01', 2, '2021-04-14 16:13:30', '2021-04-14 16:13:30');
+('ASD-001', 'Đang hoạt động', 'MCB01', 1, '2021-04-20 16:51:16', '2021-04-20 16:51:16');
 
 -- --------------------------------------------------------
 
@@ -83,8 +83,7 @@ CREATE TABLE `import_details` (
 --
 
 INSERT INTO `import_details` (`id`, `user_id`, `date_import`) VALUES
-(1, 1, '2021-04-07'),
-(2, 1, '2021-04-14');
+(1, 1, '2021-04-20');
 
 -- --------------------------------------------------------
 
@@ -232,7 +231,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `import_details`
 --
 ALTER TABLE `import_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT cho bảng `role`

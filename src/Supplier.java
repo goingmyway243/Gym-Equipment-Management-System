@@ -9,50 +9,50 @@
  * @author skqist225
  */
 public class Supplier {
-     private int supplierId;
-    private String name;
-    private String address;
-    private String phoneNumber;
-
-    public Supplier(int supplierId, String name, String address, String phoneNumber) {
-        this.supplierId = supplierId;
-        this.name = name;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
+    public Supplier(int _supplierId, String _name, String _address, String _phoneNumber) {
+        this._supplierId = _supplierId;
+        this._name = _name;
+        this._address = _address;
+        this._phoneNumber = _phoneNumber;
     }
 
     public Supplier() {
     }
 
     public int getSupplierId() {
-        return supplierId;
+        return _supplierId;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public String getAddress() {
-        return address;
+        return _address;
     }
 
     public String getPhoneNumber() {
-        return phoneNumber;
+        return _phoneNumber;
     }
 
-    public void setSupplierId(int supplierId) {
-        this.supplierId = supplierId;
+    public void setSupplierId(int _supplierId) {
+        this._supplierId = _supplierId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String _name) {
+        this._name = _name;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setAddress(String _address) {
+        this._address = _address;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhoneNumber(String _phoneNumber) {
+        this._phoneNumber = _phoneNumber;
     }
+    
+    private int _supplierId;
+    private String _name;
+    private String _address;
+    private String _phoneNumber;
 }

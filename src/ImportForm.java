@@ -1,4 +1,7 @@
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,7 +12,12 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -22,7 +30,7 @@ import javax.swing.table.DefaultTableModel;
  * @author Nguyen Hai Dang
  */
 public class ImportForm extends javax.swing.JFrame {
-
+    public Vector<String> checkIDList = new Vector<>();
     /**
      * Creates new form ImportForm
      */
@@ -37,16 +45,15 @@ public class ImportForm extends javax.swing.JFrame {
     public void addEquiment(String id, String name, String status, int price, String picture, String detailID)
     {
         DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-        Vector vector = new Vector();
-        vector.add(id);
-        vector.add(name);
-        vector.add(status);
-        vector.add(price);
-        vector.add(picture);
-        vector.add(detailID);
-        tableModel.addRow(vector);
+        boolean isOdd = _count % 2 == 0 ? true : false;
         
+        _imgGenerator.ImageColumnSetting(table);
+        
+        tableModel.addRow(new Object[]{id, name, status, price,
+                                       _imgGenerator.createLabel(picture,isOdd), 
+                                       detailID});
         checkIDList.add(id.substring(0, 3));
+        _count++;
     }
     
     private void saveEquipmentToDatabase(String id, String status, String detailID, int importID, java.sql.Timestamp timeStamp)
@@ -174,7 +181,15 @@ public class ImportForm extends javax.swing.JFrame {
             new String [] {
                 "Mã thiết bị", "Tên thiết bị", "Trạng thái", "Giá", "Hình ảnh", "Mã loại thiết bị"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         scrollPane.setViewportView(table);
 
         saveButton.setText("Lưu");
@@ -233,13 +248,13 @@ public class ImportForm extends javax.swing.JFrame {
                                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)))
+                                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 675, Short.MAX_VALUE)))
                         .addGap(19, 19, 19))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(importIDLabel)
                     .addComponent(importIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -255,8 +270,8 @@ public class ImportForm extends javax.swing.JFrame {
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
                         .addComponent(jButton2))
-                    .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
+                    .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(saveButton)
                     .addComponent(cancelButton)
@@ -287,6 +302,7 @@ public class ImportForm extends javax.swing.JFrame {
             }
             System.out.println("Lưu vào CSDL thành công");
         }
+        JOptionPane.showMessageDialog(null, "Lưu vào CSDL thành công");
         _mainMenuForm.loadDatabase();
         this.dispose();
     }//GEN-LAST:event_saveButtonActionPerformed
@@ -301,9 +317,10 @@ public class ImportForm extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
     
-    MainMenu _mainMenuForm = null;
+    private MainMenu _mainMenuForm = null;
+    private ImageGenerator _imgGenerator = new ImageGenerator();
     private int _userID = 0;
-    public Vector<String> checkIDList = new Vector<>();
+    private int _count = 0;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;

@@ -18,14 +18,7 @@ import javax.swing.JOptionPane;
  * @author Nguyen Hai Dang
  */
 public class DeleteValue {
-    private final Connection _connector = ConnectMysql.getConnectDB();
-    private javax.swing.JFrame _parentFrame = null;
-    
-    public void setParentFrame(javax.swing.JFrame parent)
-    {
-        _parentFrame = parent;
-    }
-    
+   
     public void deleteEquipment(String id)
     {
         String sql = "delete from gym_equipments where id = ?";
@@ -33,10 +26,7 @@ public class DeleteValue {
             PreparedStatement ps = _connector.prepareStatement(sql);
             ps.setString(1, id);
             ps.execute();
-            if(_parentFrame != null)
-            {
-                JOptionPane.showMessageDialog(_parentFrame, "Xóa thành công");
-            }
+            JOptionPane.showMessageDialog(null, "Xóa thành công");
             System.out.println("Xóa thành công");
         } catch (SQLException ex) {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
@@ -47,9 +37,7 @@ public class DeleteValue {
     {
         if(!checkImportDetail(id))
         {
-            if(_parentFrame != null)
-                JOptionPane.showMessageDialog(_parentFrame, "Không thể xóa phiếu nhập \n(tồn tại thiết bị đang quản lý thuộc phiếu này)");
-            
+            JOptionPane.showMessageDialog(null, "Không thể xóa phiếu nhập \n(tồn tại thiết bị đang quản lý thuộc phiếu này)");
             return;
         }
         String sql = "delete from import_details where id = ?";
@@ -57,10 +45,7 @@ public class DeleteValue {
             PreparedStatement ps = _connector.prepareStatement(sql);
             ps.setInt(1, id);
             ps.execute();
-            if(_parentFrame != null)
-            {
-                JOptionPane.showMessageDialog(_parentFrame, "Xóa thành công");
-            }
+            JOptionPane.showMessageDialog(null, "Xóa thành công");
             System.out.println("Xóa thành công");
         } catch (SQLException ex) {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
@@ -71,9 +56,7 @@ public class DeleteValue {
     {
         if(!checkEquipmentDetail(id))
         {
-            if(_parentFrame != null)
-                JOptionPane.showMessageDialog(_parentFrame, "Không thể xóa loại thiết bị \n(tồn tại thiết bị đang quản lý thuộc loại thiết bị này)");
-            
+            JOptionPane.showMessageDialog(null, "Không thể xóa loại thiết bị \n(tồn tại thiết bị đang quản lý thuộc loại thiết bị này)"); 
             return;
         }
         
@@ -82,10 +65,7 @@ public class DeleteValue {
             PreparedStatement ps = _connector.prepareStatement(sql);
             ps.setString(1, id);
             ps.execute();
-            if(_parentFrame != null)
-            {
-                JOptionPane.showMessageDialog(_parentFrame, "Xóa thành công");
-            }
+            JOptionPane.showMessageDialog(null, "Xóa thành công");
             System.out.println("Xóa thành công");
         } catch (SQLException ex) {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
@@ -96,9 +76,7 @@ public class DeleteValue {
     {
         if(!checkSupplier(id))
         {
-            if(_parentFrame != null)
-                JOptionPane.showMessageDialog(_parentFrame, "Không thể xóa nhà cung cấp \n(tồn tại loại thiết bị đang quản lý thuộc nhà cung cấp này)");
-            
+            JOptionPane.showMessageDialog(null, "Không thể xóa nhà cung cấp \n(tồn tại loại thiết bị đang quản lý thuộc nhà cung cấp này)");
             return;
         }
         String sql = "delete from supplier where id = ?";
@@ -106,10 +84,7 @@ public class DeleteValue {
             PreparedStatement ps = _connector.prepareStatement(sql);
             ps.setInt(1, id);
             ps.execute();
-            if(_parentFrame != null)
-            {
-                JOptionPane.showMessageDialog(_parentFrame, "Xóa thành công");
-            }
+            JOptionPane.showMessageDialog(null, "Xóa thành công");
             System.out.println("Xóa thành công");
         } catch (SQLException ex) {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
@@ -120,9 +95,7 @@ public class DeleteValue {
     {
         if(!checkUser(id))
         {
-            if(_parentFrame != null)
-                JOptionPane.showMessageDialog(_parentFrame, "Không thể xóa thông tin nhân viên hiện tại \n(tồn tại phiếu nhập do nhân viên này quản lý)");
-            
+            JOptionPane.showMessageDialog(null, "Không thể xóa thông tin nhân viên hiện tại \n(tồn tại phiếu nhập do nhân viên này quản lý)");
             return;
         }
         String sql = "delete from equipment_details where id = ?";
@@ -130,10 +103,7 @@ public class DeleteValue {
             PreparedStatement ps = _connector.prepareStatement(sql);
             ps.setInt(1, id);
             ps.execute();
-            if(_parentFrame != null)
-            {
-                JOptionPane.showMessageDialog(_parentFrame, "Xóa thành công");
-            }
+            JOptionPane.showMessageDialog(null, "Xóa thành công");
             System.out.println("Xóa thành công");
         } catch (SQLException ex) {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
@@ -199,4 +169,6 @@ public class DeleteValue {
         }
         return true;
     }
+    
+    private final Connection _connector = ConnectMysql.getConnectDB();
 }

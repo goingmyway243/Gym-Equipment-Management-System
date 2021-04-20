@@ -20,17 +20,90 @@ public class LoginForm extends javax.swing.JFrame {
     /**
      * Creates new form LoginForm
      */
-    private LoginForm() {
-        initComponents();
+    
+    public static void create() {
+        java.awt.EventQueue.invokeLater(() -> {
+            javax.swing.JFrame frame = new LoginForm();
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
     }
 
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        LoginForm.create();
+        /* Create and display the form */
+    }
+    
     @Override
     public JRootPane getRootPane() {
         JRootPane rootPane = super.getRootPane();
         rootPane.setDefaultButton(loginBtn);
         return rootPane;
     }
-
+    
+    private LoginForm() {
+        initComponents();
+    }
+    
+    private boolean loginAction(String username, String password) {
+        Connection connectDB = ConnectMysql.getConnectDB();
+        String sql = "SELECT * FROM `login_info` WHERE userName = '" + username + "' and password = '" + password + "'";
+        int roleID = 0;
+        try {
+            ResultSet rs = connectDB.createStatement().executeQuery(sql);
+            if (rs.next()) { 
+                roleID = rs.getInt("role_id");
+                _userID = rs.getInt("userId");
+                _role = getRole(roleID);
+                return true;
+            }
+            return false;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+    
+    private String getRole(int roleID)
+    {
+        Connection connectDB = ConnectMysql.getConnectDB();
+        String sql = "SELECT * FROM `role` WHERE id = '" + roleID + "'";
+        try {
+            ResultSet rs = connectDB.createStatement().executeQuery(sql);
+            if (rs.next()) {
+                return rs.getString("role");
+            }
+            return "Nhân viên";
+        } catch (SQLException ex) {
+            return "Nhân viên";
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -139,80 +212,7 @@ public class LoginForm extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_loginBtnActionPerformed
-
-    private boolean loginAction(String username, String password) {
-        Connection connectDB = ConnectMysql.getConnectDB();
-        String sql = "SELECT * FROM `login_info` WHERE userName = '" + username + "' and password = '" + password + "'";
-        int roleID = 0;
-        try {
-            ResultSet rs = connectDB.createStatement().executeQuery(sql);
-            if (rs.next()) { 
-                roleID = rs.getInt("role_id");
-                _userID = rs.getInt("userId");
-                _role = getRole(roleID);
-                return true;
-            }
-            return false;
-        } catch (SQLException ex) {
-            return false;
-        }
-    }
-    
-    private String getRole(int roleID)
-    {
-        Connection connectDB = ConnectMysql.getConnectDB();
-        String sql = "SELECT * FROM `role` WHERE id = '" + roleID + "'";
-        try {
-            ResultSet rs = connectDB.createStatement().executeQuery(sql);
-            if (rs.next()) {
-                return rs.getString("role");
-            }
-            return "Nhân viên";
-        } catch (SQLException ex) {
-            return "Nhân viên";
-        }
-    }
-
-    public static void create() {
-        java.awt.EventQueue.invokeLater(() -> {
-            javax.swing.JFrame frame = new LoginForm();
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        LoginForm.create();
-        /* Create and display the form */
-    }
-    
-    
+ 
     private int _userID = 0;
     private String _role = "";
     // Variables declaration - do not modify//GEN-BEGIN:variables
