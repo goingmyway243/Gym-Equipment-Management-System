@@ -171,7 +171,7 @@ public class AddEquimentForm extends javax.swing.JFrame {
         warrantyTextField.setText(warrantyTime+" năm");
         priceTextField.setText(price+"");
         supplierTextField.setText(supplier);
-        pictureFieldLabel.setIcon(AddEquimentDetailsForm.ResizeImage(picture, pictureFieldLabel));
+        pictureFieldLabel.setIcon(ImageGenerator.ResizeImage(picture, pictureFieldLabel));
     }
     
     private void editEquipment(String id, String status, String detailID)

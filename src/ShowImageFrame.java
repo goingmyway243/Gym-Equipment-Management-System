@@ -1,5 +1,8 @@
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -21,13 +24,27 @@ public class ShowImageFrame extends javax.swing.JFrame {
         }
         return _obj;
     }
-    
+
     private ShowImageFrame() {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.pack();
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                showImageLbl.setIcon(null);
+                ShowImageFrame._obj = null;
+            }
+
+        });
     }
+
+    public JLabel getShowImageLbl() {
+        return showImageLbl;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -47,23 +64,22 @@ public class ShowImageFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(showImageLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 681, Short.MAX_VALUE)
+                .addComponent(showImageLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(showImageLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 527, Short.MAX_VALUE)
+                .addComponent(showImageLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
     private static ShowImageFrame _obj = null;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JLabel showImageLbl;
+    private javax.swing.JLabel showImageLbl;
     // End of variables declaration//GEN-END:variables
 }

@@ -25,7 +25,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="showImageLbl" pref="681" max="32767" attributes="0"/>
+              <Component id="showImageLbl" pref="508" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -34,7 +34,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="showImageLbl" pref="527" max="32767" attributes="0"/>
+              <Component id="showImageLbl" pref="385" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -42,9 +42,6 @@
   </Layout>
   <SubComponents>
     <Component class="javax.swing.JLabel" name="showImageLbl">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

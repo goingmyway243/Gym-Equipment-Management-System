@@ -1,4 +1,7 @@
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 /**
@@ -14,9 +17,28 @@ public class AddSupplier extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         this.setLocationRelativeTo(null);
-        _sC = new SupplierController();
-        _parent = parent;
         this.setTitle("Thêm nhà cung cấp");
+
+        _sC = new SupplierController();
+        List<Supplier> _lS = _sC.getSuppliersInfo();
+        _parent = parent;
+
+        txtMaNCC.setText(_lS.get(_lS.size() - 1).getSupplierId() + 1 + "");
+        txtMaNCC.setEditable(false);
+        txtMaNCC.setFocusable(false);
+        txtTenNCC.requestFocus();
+        initAlert();
+    }
+
+    public final void initAlert() {
+        initAlertLabel(alertTNCC);
+        initAlertLabel(alertDCNCC);
+        initAlertLabel(alertSDTNCC);
+    }
+
+    public void initAlertLabel(JLabel label) {
+        label.setText("");
+        label.setSize(0, 0);
     }
 
     /**
@@ -41,6 +63,9 @@ public class AddSupplier extends javax.swing.JDialog {
         jButton3 = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        alertTNCC = new javax.swing.JLabel();
+        alertDCNCC = new javax.swing.JLabel();
+        alertSDTNCC = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -57,7 +82,24 @@ public class AddSupplier extends javax.swing.JDialog {
         jLabel4.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel4.setText("Số điện thoại:");
 
+        txtTenNCC.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtTenNCCKeyReleased(evt);
+            }
+        });
+
         txtSDT.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtSDT.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSDTKeyReleased(evt);
+            }
+        });
+
+        txtDiaChiNCC.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtDiaChiNCCKeyReleased(evt);
+            }
+        });
 
         jButton1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(51, 153, 0));
@@ -94,6 +136,15 @@ public class AddSupplier extends javax.swing.JDialog {
         jLabel5.setForeground(new java.awt.Color(102, 153, 255));
         jLabel5.setText("THÊM NHÀ CUNG CẤP");
 
+        alertTNCC.setForeground(new java.awt.Color(255, 0, 0));
+        alertTNCC.setText("Tên NCC alert");
+
+        alertDCNCC.setForeground(new java.awt.Color(255, 0, 0));
+        alertDCNCC.setText("Địa chỉ NCC alert");
+
+        alertSDTNCC.setForeground(new java.awt.Color(255, 0, 0));
+        alertSDTNCC.setText("SDT NCC alert");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -105,33 +156,32 @@ public class AddSupplier extends javax.swing.JDialog {
                         .addComponent(jLabel6))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(147, 147, 147)
-                        .addComponent(jLabel5))
+                        .addComponent(jLabel5)))
+                .addContainerGap(177, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(44, 44, 44)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel2)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(27, 27, 27)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(44, 44, 44)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel2)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(31, 31, 31)
-                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(28, 28, 28)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(27, 27, 27)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(txtDiaChiNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtTenNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtMaNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(30, 30, 30)))))
-                .addContainerGap(19, Short.MAX_VALUE))
+                        .addComponent(txtMaNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18))
+                    .addComponent(alertSDTNCC)
+                    .addComponent(txtDiaChiNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTenNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(alertTNCC)
+                    .addComponent(alertDCNCC)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -141,108 +191,92 @@ public class AddSupplier extends javax.swing.JDialog {
                 .addComponent(jLabel5)
                 .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtMaNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtMaNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addGap(38, 38, 38)
+                .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtTenNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTenNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(38, 38, 38)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(alertTNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtDiaChiNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtDiaChiNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addGap(43, 43, 43)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(alertDCNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                    .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(alertSDTNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
-                .addGap(64, 64, 64))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        initAlert();
         String maNCCs = txtMaNCC.getText();
         String tenNCC = txtTenNCC.getText();
         String diaChiNCC = txtDiaChiNCC.getText();
         String sdtNCC = txtSDT.getText();
-        boolean isOk = true;
+        boolean check = true;
 
-        if (maNCCs.length() == 0) {
-            JOptionPane.showMessageDialog(this, "Mã nhà cung cấp không được để trống");
-            isOk = false;
-        } else if (tenNCC.length() == 0) {
-            JOptionPane.showMessageDialog(this, "Tên nhà cung cấp không được để trống");
-            isOk = false;
-        } else if (diaChiNCC.equals("")) {
-            JOptionPane.showMessageDialog(this, "Địa chỉ nhà cung cấp không được để trống");
-            isOk = false;
-        } else if (sdtNCC.equals("")) {
-            JOptionPane.showMessageDialog(this, "Số điện thoại nhà cung cấp không được để trống");
-            isOk = false;
+        if (tenNCC.length() == 0) {
+            createAlert(alertTNCC, "Tên NCC không được để trống");
+            check = false;
+        }
+        if (diaChiNCC.equals("")) {
+            createAlert(alertDCNCC, "Địa chỉ NCC không được để trống");
+            check = false;
+        }
+        if (sdtNCC.equals("")) {
+            createAlert(alertSDTNCC, "SDT NCC không được để trống");
+            check = false;
         }
 
-        if (!maNCCs.matches("\\d+") && maNCCs.length() > 0) {
-            JOptionPane.showMessageDialog(this, "Mã nhà cung cấp phải là chữ số ");
-            isOk = false;
-        } else if (tenNCC.length() > 0 && tenNCC.matches("[^a-zA-Z]+")) {
-            JOptionPane.showMessageDialog(this, "Tên nhà cung cấp cấp phải là chữ cái");
-            isOk = false;
-        } else if (!sdtNCC.matches("\\d+") && sdtNCC.length() > 0) {
-            JOptionPane.showMessageDialog(this, "SDT nhà cung cấp phải là chữ số");
-            isOk = false;
-        } else if (!maNCCs.matches("^[0-9]{1,3}$") && maNCCs.length() > 0) {
-            JOptionPane.showMessageDialog(this, "Mã nhà cung cấp không được vượt quá 3 ký tự");
-            isOk = false;
-        } else if (!sdtNCC.matches("^[0-9]{10}$") && sdtNCC.length() > 0) {
-            JOptionPane.showMessageDialog(this, "SDT nhà cung cấp phải là 10 ký tự");
-            isOk = false;
+        if (tenNCC.length() > 0 && tenNCC.matches("[^a-zA-Z]+")) {
+            createAlert(alertTNCC, "Tên NCC cấp phải là chữ cái");
+            check = false;
+        }
+        if (!sdtNCC.matches("\\d+") && sdtNCC.length() > 0) {
+            createAlert(alertSDTNCC, "SDT nhà cung cấp phải là chữ số");
+            check = false;
+        }
+        if (!sdtNCC.matches("^[0-9]{10}$") && sdtNCC.length() > 0) {
+            createAlert(alertSDTNCC, "SDT NCC phải là 10 chữ số");
+            check = false;
         }
 
-        if (isOk) {
+        if (check) {
             int maNCC = Integer.parseInt(maNCCs);
             Supplier s = new Supplier(maNCC, tenNCC, diaChiNCC, sdtNCC);
-            if (_sC.isIdExist(maNCC)) {
-                int option = JOptionPane.showConfirmDialog(this, "Mã nhà cung cấp đã tồn tại, bạn có muốn cập nhật thông tin không?");
-                if (option == 0) {
-                    if (_sC.updateSupplier(s)) {
-                        JOptionPane.showMessageDialog(this, "Cập nhật thành công");
-                        if (_parent.getClass().getName().equals("AddEquimentDetailsForm")) {
-                            AddEquimentDetailsForm aEF = (AddEquimentDetailsForm) _parent;
-                            aEF.getSupplierList();
-                            aEF.getParent().loadDatabase();
-                        }
-                        if (_parent.getClass().getName().equals("MainMenu")) {
-                            MainMenu mainMenu = (MainMenu) _parent;
-                            mainMenu.loadDatabase();
-                        }
-                        resetField();
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Cập nhật thất  bại");
-                    }
+
+            if (_sC.addNewSupplier(s)) {
+                JOptionPane.showMessageDialog(this, "Thêm thành công");
+                if (_parent.getClass().getName().equals("AddEquimentDetailsForm")) {
+                    AddEquimentDetailsForm aEF = (AddEquimentDetailsForm) _parent;
+                    aEF.getSupplierList();
+                    aEF.getParent().loadDatabase();
                 }
+                if (_parent.getClass().getName().equals("MainMenu")) {
+                    MainMenu mainMenu = (MainMenu) _parent;
+                    mainMenu.loadDatabase();
+                }
+                resetField();
+                this.dispose();
             } else {
-                if (_sC.addNewSupplier(s)) {
-                    JOptionPane.showMessageDialog(this, "Thêm thành công");
-                    if (_parent.getClass().getName().equals("AddEquimentDetailsForm")) {
-                        AddEquimentDetailsForm aEF = (AddEquimentDetailsForm) _parent;
-                        aEF.getSupplierList();
-                        aEF.getParent().loadDatabase();
-                    }
-                    if (_parent.getClass().getName().equals("MainMenu")) {
-                        MainMenu mainMenu = (MainMenu) _parent;
-                        mainMenu.loadDatabase();
-                    }
-                    resetField();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Thêm thất  bại");
-                }
+                JOptionPane.showMessageDialog(this, "Thêm thất  bại");
             }
+
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -252,19 +286,48 @@ public class AddSupplier extends javax.swing.JDialog {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         resetField();
+        initAlert();
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void txtTenNCCKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTenNCCKeyReleased
+        String tenNCC = txtTenNCC.getText();
+        if (tenNCC.matches("[a-zA-Z]+")) {
+            initAlertLabel(alertTNCC);
+        }
+    }//GEN-LAST:event_txtTenNCCKeyReleased
+
+    private void txtDiaChiNCCKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDiaChiNCCKeyReleased
+        String diaChiNCC = txtDiaChiNCC.getText();
+        if (diaChiNCC.length() > 0) {
+            initAlertLabel(alertDCNCC);
+        }
+    }//GEN-LAST:event_txtDiaChiNCCKeyReleased
+
+    private void txtSDTKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSDTKeyReleased
+        String sdtNCC = txtSDT.getText();
+        if (sdtNCC.matches("^[0-9]{10}$")) {
+            initAlertLabel(alertSDTNCC);
+        }
+    }//GEN-LAST:event_txtSDTKeyReleased
+
+    public void createAlert(JLabel label, String alertContent) {
+        label.setSize(alertContent.length(), 17);
+        label.setText(alertContent);
+        label.setVisible(true);
+    }
+
     public void resetField() {
-        txtMaNCC.setText("");
         txtTenNCC.setText("");
         txtDiaChiNCC.setText("");
         txtSDT.setText("");
     }
 
-    
     private SupplierController _sC = null;
     private java.awt.Frame _parent;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel alertDCNCC;
+    private javax.swing.JLabel alertSDTNCC;
+    private javax.swing.JLabel alertTNCC;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;

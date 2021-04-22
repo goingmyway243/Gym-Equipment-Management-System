@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class EquipmentDetailsController {
 
-    public List<Equipment_Details> getListEquipment() {
+    public List<Equipment_Details> getListEquipmentDetails() {
 
         List<Equipment_Details> lEI = new ArrayList<>();
         String query = "SELECT * FROM equipment_details";

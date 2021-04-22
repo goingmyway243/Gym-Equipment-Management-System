@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -29,9 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 
-import javax.swing.filechooser.FileFilter;
-
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -41,7 +39,7 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author Nguyen Hai Dang
  */
-public class AddEquimentDetailsForm extends javax.swing.JFrame {
+public final class AddEquimentDetailsForm extends javax.swing.JFrame {
 
     @Override
     public MainMenu getParent() {
@@ -63,7 +61,10 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
      */
     public AddEquimentDetailsForm(java.awt.Frame parent) {
         initComponents();
+        this.setTitle("Thêm chi tiết thiết bị");
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
+
         _eC = new EquipmentDetailsController();
         _sC = new SupplierController();
         _listOfSuppliers = new ArrayList<>();
@@ -73,40 +74,57 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
         _imageFolderPath = new File("").getAbsolutePath().concat("/src/images/");
         listFilesForFolder(new File(_imageFolderPath));
         getSupplierList();
-        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.setTitle("Thêm chi tiết thiết bị");
 
+        initAlert();
+    }
+
+    public void initAlert() {
+        initAlertLabel(alertMCTTB);
+        initAlertLabel(alertTTB);
+        initAlertLabel(alertGia);
+        initAlertLabel(alertNCC);
+        initAlertLabel(alertTGBH);
+    }
+
+    public void initAlertLabel(JLabel label) {
+        label.setText("");
+        label.setSize(0, 0);
     }
 
     public void getSupplierList() {
         cbNhaCungCap.removeAllItems();
         _listOfSuppliers = _sC.getSuppliersInfo();
-        for (Supplier supplier : _listOfSuppliers) {
+        _listOfSuppliers.forEach((supplier) -> {
             cbNhaCungCap.addItem("Tên: " + supplier.getName() + ", Địa chỉ: " + supplier.getAddress());
-        }
+        });
         cbNhaCungCap.addItem("Thêm nhà cung cấp");
     }
-    
+
     public void createWindow() {
-        JFrame frame = new JFrame("Choose Image");
+        JFrame frame = new JFrame("Chọn hình ảnh thiết bị");
+        frame.setSize(720, 460);
         frame.setResizable(false);
         frame.setLayout(null);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(720, 460);
         frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
         createUI(frame);
     }
 
     public void createUI(final JFrame frame) {
-        JButton browseButton = new JButton("Chọn ảnh khác...");
-        browseButton.setBounds(200, 380, 160, 40);
+
+        ImageIcon imgIcon = new ImageIcon(new File("").getAbsolutePath().concat("/src/icon/") + "add-image.png");
+        Image newImage = imgIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        ImageIcon imgIconn = new ImageIcon(newImage);
+
+        JButton browseButton = new JButton(imgIconn);
+        browseButton.setBounds(200, 380, 100, 40);
 
         JButton selectButton = new JButton("Chọn");
-        selectButton.setBounds(380, 380, 100, 40);
+        selectButton.setBounds(320, 380, 100, 40);
 
         JButton cancelButton = new JButton("Thoát");
-        cancelButton.setBounds(500, 380, 100, 40);
+        cancelButton.setBounds(440, 380, 100, 40);
 
         JLabel labelImage = new JLabel();
         labelImage.setBounds(10, 10, 720, 340);
@@ -125,7 +143,7 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
                 if (dem > _fileNameList.size() - 1) {
                     break;
                 }
-                labelImg.setIcon(ResizeImage(_imageFolderPath + "/" + _fileNameList.get(dem), labelImg));
+                labelImg.setIcon(ImageGenerator.ResizeImage(_imageFolderPath + "/" + _fileNameList.get(dem), labelImg));
                 panel.add(labelImg);
                 arrayLabel.add(labelImg);
                 dem++;
@@ -166,21 +184,17 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
             });
         }
 
-        selectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                int x = 0;
-                for (JLabel label : arrayLabel) {
-                    if (label.getBorder() != null) {
-                        break;
-                    }
-                    x++;
+        selectButton.addActionListener((ActionEvent ae) -> {
+            int x = 0;
+            for (JLabel label : arrayLabel) {
+                if (label.getBorder() != null) {
+                    break;
                 }
-                btnGetImage.setText(_fileNameList.get(x));
-                setImagePath("/src/images/" + _fileNameList.get(x));
-
-                frame.dispose();
+                x++;
             }
+            btnGetImage.setText(_fileNameList.get(x));
+            setImagePath("/src/images/" + _fileNameList.get(x));
+            frame.dispose();
         });
 
         cancelButton.addActionListener(new ActionListener() {
@@ -196,77 +210,68 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
         JButton selectButton2 = new JButton("Chọn");
         selectButton2.setBounds(380, 380, 100, 40);
 
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
+        backButton.addActionListener((ActionEvent ae) -> {
+            contentPane.removeAll();
+            frame.remove(contentPane);
+            frame.repaint();
+
+            contentPane.add(scrollPane);
+            contentPane.add(selectButton);
+            browseButton.setBounds(200, 380, 100, 40);
+            contentPane.add(browseButton);
+            contentPane.add(cancelButton);
+            setImagePath(null);
+            btnGetImage.setText("Chọn hình ảnh!");
+        });
+
+        browseButton.addActionListener((ActionEvent e) -> {
+            contentPane.remove(selectButton);
+            contentPane.remove(cancelButton);
+            frame.repaint();
+            browseButton.setBounds(250, 380, 160, 40);
+
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File(_imageFolderPath));
+            fileChooser.addChoosableFileFilter(new ImageFilter());
+            fileChooser.setAcceptAllFileFilterUsed(false);
+
+            int result = fileChooser.showSaveDialog(null);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                String path = selectedFile.getAbsolutePath();
+
                 contentPane.removeAll();
                 frame.remove(contentPane);
                 frame.repaint();
+                contentPane.add(labelImage);
+                contentPane.add(backButton);
+                contentPane.add(selectButton2);
+                labelImage.setIcon(ImageGenerator.ResizeImage(path, labelImage));
 
-                contentPane.add(scrollPane);
-                contentPane.add(selectButton);
-                browseButton.setBounds(200, 380, 160, 40);
-                contentPane.add(browseButton);
-                setImagePath(null);
-                System.out.println(_imagePath);
-                btnGetImage.setText("Chọn hình ảnh!");
-
+                selectButton2.addActionListener((ActionEvent ae) -> {
+                    setImagePath("/src/images/" + selectedFile.getName());
+                    btnGetImage.setText(selectedFile.getName());
+                    System.out.println(selectedFile.getAbsolutePath());
+                    File dest = new File(_imageFolderPath, selectedFile.getName());
+                    try {
+                        if (!(selectedFile.getParent() + "/").equals(_imageFolderPath)) {
+                            copyFileUsingStream(selectedFile, dest);
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(AddEquimentDetailsForm.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    frame.dispose();
+                });
+            } else if (result == JFileChooser.CANCEL_OPTION) {
+                System.out.println("\"Không có file nào được chọn\"");
+                frame.repaint();
+                browseButton.setBounds(200, 380, 100, 40);
+                frame.add(selectButton);
+                frame.add(cancelButton);
             }
         });
-
-        browseButton.addActionListener(
-                new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e
-            ) {
-                contentPane.remove(selectButton);
-                contentPane.remove(cancelButton);
-                frame.repaint();
-                browseButton.setBounds(250, 380, 160, 40);
-
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(new File(_imageFolderPath));
-                fileChooser.addChoosableFileFilter(new ImageFilter());
-                fileChooser.setAcceptAllFileFilterUsed(false);
-
-                int result = fileChooser.showSaveDialog(null);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    String path = selectedFile.getAbsolutePath();
-
-                    contentPane.removeAll();
-                    frame.remove(contentPane);
-                    frame.repaint();
-                    contentPane.add(labelImage);
-                    contentPane.add(backButton);
-                    contentPane.add(selectButton2);
-                    labelImage.setIcon(ResizeImage(path, labelImage));
-
-                    selectButton2.addActionListener((ActionEvent ae) -> {
-                        setImagePath("/src/images/" + selectedFile.getName());
-                        btnGetImage.setText(selectedFile.getName());
-                        System.out.println(selectedFile.getAbsolutePath());
-                        File dest = new File(_imageFolderPath, selectedFile.getName());
-                        try {
-                            if (!(selectedFile.getParent() + "/").equals(_imageFolderPath)) {
-                                copyFileUsingStream(selectedFile, dest);
-                            }
-                        } catch (IOException ex) {
-                            Logger.getLogger(AddEquimentDetailsForm.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        frame.dispose();
-                    });
-                } else if (result == JFileChooser.CANCEL_OPTION) {
-                    System.out.println("\"Không có file nào được chọn\"");
-                    frame.repaint();
-                    browseButton.setBounds(200, 380, 160, 40);
-                    frame.add(selectButton);
-                }
-            }
-        }
-        );
     }
-    
+
     public void listFilesForFolder(final File folder) {
         for (final File fileEntry : folder.listFiles()) {
             if (fileEntry.isDirectory()) {
@@ -275,14 +280,6 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
                 _fileNameList.add(fileEntry.getName());
             }
         }
-    }
-
-    static public ImageIcon ResizeImage(String _imagePath, JLabel label) {
-        ImageIcon myImage = new ImageIcon(_imagePath);
-        Image img = myImage.getImage();
-        Image newImg = img.getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
-        ImageIcon image = new ImageIcon(newImg);
-        return image;
     }
 
     public void resetField() {
@@ -318,36 +315,84 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
         cbNhaCungCap = new javax.swing.JComboBox<>();
         btnGetImage = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        alertMCTTB = new javax.swing.JLabel();
+        alertTTB = new javax.swing.JLabel();
+        alertNCC = new javax.swing.JLabel();
+        alertGia = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        alertTGBH = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jLabel1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel1.setText("Mã chi tiết thiết bị :");
 
+        txtMaChiTietTB.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtMaChiTietTBKeyReleased(evt);
+            }
+        });
+
+        jLabel4.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel4.setText("Tên thiết bị :");
 
+        txtTenThietBi.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtTenThietBiKeyReleased(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel5.setText("Nhà cung cấp :");
         jLabel5.setToolTipText("");
 
+        txtGia.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtGiaKeyReleased(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel6.setText("Giá :");
 
+        jButton1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/plus.png"))); // NOI18N
         jButton1.setText("Xác nhận");
+        jButton1.setToolTipText("");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Hủy");
+        jButton2.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/cancel.png"))); // NOI18N
+        jButton2.setText("Hủy bỏ");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
+        jLabel8.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel8.setText("Thời gian bảo hành:");
 
+        txtThoiGianBH.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtThoiGianBHKeyReleased(evt);
+            }
+        });
+
+        jLabel9.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel9.setText("Hình ảnh:");
 
+        cbNhaCungCap.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbNhaCungCapItemStateChanged(evt);
+            }
+        });
         cbNhaCungCap.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbNhaCungCapActionPerformed(evt);
@@ -361,6 +406,8 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/refresh.png"))); // NOI18N
         jButton3.setText("Làm mới");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -368,133 +415,200 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
             }
         });
 
+        alertMCTTB.setForeground(new java.awt.Color(255, 0, 0));
+        alertMCTTB.setLabelFor(txtMaChiTietTB);
+        alertMCTTB.setText("Mã CTBB alert");
+
+        alertTTB.setForeground(new java.awt.Color(255, 0, 0));
+        alertTTB.setText("Tên TB alert");
+
+        alertNCC.setForeground(new java.awt.Color(255, 0, 0));
+        alertNCC.setText("NCC alert");
+
+        alertGia.setForeground(new java.awt.Color(255, 0, 0));
+        alertGia.setText("Giá TB alert");
+
+        jLabel2.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel2.setText("THÊM CHI TIẾT THIẾT BỊ");
+
+        alertTGBH.setForeground(new java.awt.Color(255, 0, 0));
+        alertTGBH.setText("TGBH alert");
+
+        jLabel3.setText("VND");
+
+        jLabel7.setText("năm");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel5))
-                .addGap(35, 35, 35)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnGetImage, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(txtTenThietBi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
-                                    .addComponent(txtMaChiTietTB, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(txtGia, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addGap(144, 144, 144))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtThoiGianBH)
-                                .addGap(45, 45, 45))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton3)
-                                .addGap(34, 34, 34)
-                                .addComponent(jButton1)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                        .addGap(185, 185, 185)
+                        .addComponent(alertMCTTB))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(cbNhaCungCap, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel4)
+                        .addGap(86, 86, 86)
+                        .addComponent(txtTenThietBi, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(185, 185, 185)
+                        .addComponent(alertTTB))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(185, 185, 185)
+                        .addComponent(alertNCC))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel8)
+                        .addGap(35, 35, 35)
+                        .addComponent(txtThoiGianBH, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel7))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel1)
+                        .addGap(38, 38, 38)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(txtMaChiTietTB, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGap(45, 45, 45)
+                            .addComponent(jButton3)
+                            .addGap(30, 30, 30)
+                            .addComponent(jButton1)
+                            .addGap(26, 26, 26)
+                            .addComponent(jButton2))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(12, 12, 12)
+                            .addComponent(jLabel5)
+                            .addGap(71, 71, 71)
+                            .addComponent(cbNhaCungCap, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel9)
+                        .addGap(106, 106, 106)
+                        .addComponent(btnGetImage, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(185, 185, 185)
+                        .addComponent(alertTGBH))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel6)
+                        .addGap(143, 143, 143)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(alertGia)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtGia, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel3)))))
+                .addGap(8, 8, 8))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGap(12, 12, 12)
+                .addComponent(jLabel2)
+                .addGap(28, 28, 28)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(txtMaChiTietTB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(36, 36, 36)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(alertMCTTB, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(txtTenThietBi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(alertTTB, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(btnGetImage))
-                .addGap(39, 39, 39)
+                    .addComponent(btnGetImage)
+                    .addComponent(jLabel9))
+                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtGia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
-                .addGap(32, 32, 32)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(alertGia, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(cbNhaCungCap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(41, 41, 41)
+                    .addComponent(cbNhaCungCap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(alertNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtThoiGianBH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
-                    .addComponent(txtThoiGianBH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(alertTGBH, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
-                .addGap(27, 27, 27))
+                .addGap(20, 20, 20))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        initAlert();
         String maChiTietTB = txtMaChiTietTB.getText();
         String tenThietbi = txtTenThietBi.getText();
         String hinhAnh = getImagePath();
         String gia = txtGia.getText();
-        int selectedNhaCungCap = cbNhaCungCap.getSelectedIndex();
         String thoigianBH = txtThoiGianBH.getText();
+        int selectedNhaCungCap = cbNhaCungCap.getSelectedIndex();
         int nhaCungCapId = 0;
 
-        boolean isSatisfied = true;
+        boolean check = true;
 
         if (maChiTietTB.length() == 0) {
-            JOptionPane.showMessageDialog(this, "Mã chi tiết thiết bị không được để trống!");
-            isSatisfied = false;
-        } else if (tenThietbi.length() == 0) {
-            JOptionPane.showMessageDialog(this, "Tên thiết bị không được để trống!");
-            isSatisfied = false;
-        } else if (gia.length() == 0) {
-            JOptionPane.showMessageDialog(this, "Giá thiết bị không được để trống!");
-            isSatisfied = false;
-        } else if (thoigianBH.length() == 0) {
-            JOptionPane.showMessageDialog(this, "Thời gian bảo hành không được để trống!");
-            isSatisfied = false;
+            createAlert(alertMCTTB, "Mã CTTB không được để trống");
+            check = false;
+        }
+        if (tenThietbi.length() == 0) {
+            createAlert(alertTTB, "Tên thiết bị không được để trống");
+            check = false;
+        }
+        if (gia.length() == 0) {
+            createAlert(alertGia, "Giá TB không được để trống");
+            check = false;
         }
 
-        if (maChiTietTB.length() > 0 && maChiTietTB.matches("\\d+")) {
-            JOptionPane.showMessageDialog(this, "Mã chi tiết thiết bị phải là kí tự chữ và số");
-            isSatisfied = false;
-        } else if (tenThietbi.length() > 0 && tenThietbi.matches("[^a-zA-Z]+")) {
-            JOptionPane.showMessageDialog(this, "Tên thiết bị phải là chữ cái ");
-            isSatisfied = false;
-        } else if (gia.length() > 0 && !gia.matches("\\d+")) {
-            JOptionPane.showMessageDialog(this, "Gía thiết bị phải là chữ số ");
-            isSatisfied = false;
-        } else if (cbNhaCungCap.getSelectedItem().toString().equals("Thêm nhà cung cấp")) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn nhà cung cấp ");
-            isSatisfied = false;
+        if (maChiTietTB.length() > 0 && !maChiTietTB.matches("^[a-zA-Z]{3}[\\d]{2}$")) {
+            createAlert(alertMCTTB, "Mã CTTB phải đúng định dạng 3 ký tự chữ và 2 ký tự số");
+            check = false;
+        }
+        if (tenThietbi.length() > 0 && tenThietbi.matches("[^a-zA-Z]+")) {
+            createAlert(alertTTB, "Tên TB không để trống và phải là ký tự chữ");
+            check = false;
+        }
+        if (gia.length() > 0 && !gia.matches("\\d+")) {
+            createAlert(alertGia, "Giá TB ít nhất là 10000 và là ký tự số");
+            check = false;
+        }
+        if (cbNhaCungCap.getSelectedItem().toString().equals("Thêm nhà cung cấp")) {
+            createAlert(alertNCC, "Chọn 1 nhà cung cấp");
+            check = false;
         }
 
         if (maChiTietTB.length() > 5) {
-            JOptionPane.showMessageDialog(this, "Mã chi tiết thiết bị không được vượt quá 5 ký tự");
-            isSatisfied = false;
+            createAlert(alertMCTTB, "Mã CTTB không được vượt quá 5 ký tự");
+            check = false;
         } else if (thoigianBH.length() > 0 && Integer.parseInt(thoigianBH) > 10 && Integer.parseInt(thoigianBH) > 0) {
-            JOptionPane.showMessageDialog(this, "Thời gian bảo hành không được vượt quá 10 năm và phải ít nhất là 1 năm");
-            isSatisfied = false;
+            createAlert(alertTGBH, "TGBH tối đa 10 năm");
+            check = false;
         }
 
-        if (isSatisfied) {
+        if (check) {
             nhaCungCapId = _listOfSuppliers.get(selectedNhaCungCap).getSupplierId();
             int price = Integer.parseInt(gia);
             Equipment_Details eD = new Equipment_Details();
@@ -503,7 +617,9 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
             eD.setPicture(hinhAnh);
             eD.setPrice(price);
             eD.setSupplier_id(nhaCungCapId);
-            eD.setWarranty_time(Integer.parseInt(thoigianBH));
+            if (thoigianBH.length() > 0) {
+                eD.setWarranty_time(Integer.parseInt(thoigianBH));
+            }
 
             if (_eC.isIdExist(maChiTietTB)) {
                 int option = JOptionPane.showConfirmDialog(this, "Mã chi tiết thiết bị đã tồn tại, bạn có muốn cập nhật thông tin không?");
@@ -512,6 +628,7 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(this, "Cập nhật thành công");
                         _mainMenu.loadDatabase();
                         resetField();
+                        this.dispose();
                     } else {
                         JOptionPane.showMessageDialog(this, "Cập nhật thất  bại");
                     }
@@ -521,6 +638,7 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Thêm thành công");
                     _mainMenu.loadDatabase();
                     resetField();
+                    this.dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "Thêm thất  bại");
                 }
@@ -547,11 +665,47 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
     }//GEN-LAST:event_cbNhaCungCapActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        this.resetField();
+        resetField();
+        initAlert();
         if (_listOfSuppliers.size() != _sC.getSuppliersInfo().size()) {
             this.getSupplierList();
         }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtMaChiTietTBKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMaChiTietTBKeyReleased
+        String maCTTB = txtMaChiTietTB.getText();
+
+        if (maCTTB.matches("^[a-zA-Z]{3}[\\d]{2}$") && txtMaChiTietTB.getText().length() > 0) {
+            initAlertLabel(alertMCTTB);
+        }
+    }//GEN-LAST:event_txtMaChiTietTBKeyReleased
+
+    private void txtTenThietBiKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTenThietBiKeyReleased
+        String tenTB = txtTenThietBi.getText();
+
+        if (tenTB.matches("^[a-zA-Z]+$") && tenTB.length() > 0) {
+            initAlertLabel(alertTTB);
+        }
+    }//GEN-LAST:event_txtTenThietBiKeyReleased
+
+    private void txtGiaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtGiaKeyReleased
+        String gia = txtGia.getText();
+        if (gia.matches("^[\\d]+$") && Integer.parseInt(gia) >= 10000) {
+            initAlertLabel(alertGia);
+        }
+    }//GEN-LAST:event_txtGiaKeyReleased
+
+    private void cbNhaCungCapItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbNhaCungCapItemStateChanged
+        if (!cbNhaCungCap.getSelectedItem().equals("Thêm nhà cung cấp")) {
+            initAlertLabel(alertNCC);
+        }
+    }//GEN-LAST:event_cbNhaCungCapItemStateChanged
+
+    private void txtThoiGianBHKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtThoiGianBHKeyReleased
+        if (Integer.parseInt(txtThoiGianBH.getText()) <= 10 && Integer.parseInt(txtThoiGianBH.getText()) >= 1) {
+            initAlertLabel(alertTGBH);
+        }
+    }//GEN-LAST:event_txtThoiGianBHKeyReleased
 
     private static void copyFileUsingStream(File source, File dest) throws IOException {
         InputStream is = null;
@@ -570,25 +724,38 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
         }
     }
 
+    private void createAlert(JLabel label, String alertContent) {
+        label.setSize(alertContent.length(), 17);
+        label.setText(alertContent);
+        label.setVisible(true);
+    }
 
     private EquipmentDetailsController _eC = null;
     private SupplierController _sC = null;
     private List<Supplier> _listOfSuppliers;
-    private List<String> _fileNameList;
+    private final List<String> _fileNameList;
     private String _imagePath;
-    private String _imageFolderPath;
+    private final String _imageFolderPath;
     private int _size;
     private final MainMenu _mainMenu;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel alertGia;
+    private javax.swing.JLabel alertMCTTB;
+    private javax.swing.JLabel alertNCC;
+    private javax.swing.JLabel alertTGBH;
+    private javax.swing.JLabel alertTTB;
     private javax.swing.JButton btnGetImage;
     private javax.swing.JComboBox<String> cbNhaCungCap;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField txtGia;
@@ -596,52 +763,4 @@ public class AddEquimentDetailsForm extends javax.swing.JFrame {
     private javax.swing.JTextField txtTenThietBi;
     private javax.swing.JTextField txtThoiGianBH;
     // End of variables declaration//GEN-END:variables
-}
-
-class ImageFilter extends FileFilter {
-
-    public final static String JPEG = "jpeg";
-    public final static String JPG = "jpg";
-    public final static String GIF = "gif";
-    public final static String TIFF = "tiff";
-    public final static String TIF = "tif";
-    public final static String PNG = "png";
-
-    @Override
-    public boolean accept(File f) {
-        if (f.isDirectory()) {
-            return true;
-        }
-
-        String extension = getExtension(f);
-        if (extension != null) {
-            if (extension.equals(TIFF)
-                    || extension.equals(TIF)
-                    || extension.equals(GIF)
-                    || extension.equals(JPEG)
-                    || extension.equals(JPG)
-                    || extension.equals(PNG)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public String getDescription() {
-        return "Image Only";
-    }
-
-    String getExtension(File f) {
-        String ext = null;
-        String s = f.getName();
-        int i = s.lastIndexOf('.');
-
-        if (i > 0 && i < s.length() - 1) {
-            ext = s.substring(i + 1).toLowerCase();
-        }
-        return ext;
-    }
 }
