@@ -41,6 +41,18 @@ public class AddSupplier extends javax.swing.JDialog {
         label.setSize(0, 0);
     }
 
+    public void createAlert(JLabel label, String alertContent) {
+        label.setSize(alertContent.length(), 17);
+        label.setText(alertContent);
+        label.setVisible(true);
+    }
+
+    public void resetField() {
+        txtTenNCC.setText("");
+        txtDiaChiNCC.setText("");
+        txtSDT.setText("");
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -231,28 +243,20 @@ public class AddSupplier extends javax.swing.JDialog {
         boolean check = true;
 
         if (tenNCC.length() == 0) {
-            createAlert(alertTNCC, "Tên NCC không được để trống");
+            createAlert(alertTNCC, "Tên không được để trống");
             check = false;
         }
         if (diaChiNCC.equals("")) {
-            createAlert(alertDCNCC, "Địa chỉ NCC không được để trống");
+            createAlert(alertDCNCC, "Địa chỉ không được để trống");
             check = false;
         }
-        if (sdtNCC.equals("")) {
-            createAlert(alertSDTNCC, "SDT NCC không được để trống");
-            check = false;
-        }
-
-        if (tenNCC.length() > 0 && tenNCC.matches("[^a-zA-Z]+")) {
+        
+        if (tenNCC.length() < 0 || tenNCC.matches("[^a-zA-Z]+")) {
             createAlert(alertTNCC, "Tên NCC cấp phải là chữ cái");
             check = false;
         }
-        if (!sdtNCC.matches("\\d+") && sdtNCC.length() > 0) {
-            createAlert(alertSDTNCC, "SDT nhà cung cấp phải là chữ số");
-            check = false;
-        }
-        if (!sdtNCC.matches("^[0-9]{10}$") && sdtNCC.length() > 0) {
-            createAlert(alertSDTNCC, "SDT NCC phải là 10 chữ số");
+        if (!sdtNCC.matches("^[0-9]{10}$") || sdtNCC.length() < 0) {
+            createAlert(alertSDTNCC, "SDT không hợp lệ (10 chữ số)");
             check = false;
         }
 
@@ -309,18 +313,6 @@ public class AddSupplier extends javax.swing.JDialog {
             initAlertLabel(alertSDTNCC);
         }
     }//GEN-LAST:event_txtSDTKeyReleased
-
-    public void createAlert(JLabel label, String alertContent) {
-        label.setSize(alertContent.length(), 17);
-        label.setText(alertContent);
-        label.setVisible(true);
-    }
-
-    public void resetField() {
-        txtTenNCC.setText("");
-        txtDiaChiNCC.setText("");
-        txtSDT.setText("");
-    }
 
     private SupplierController _sC = null;
     private java.awt.Frame _parent;

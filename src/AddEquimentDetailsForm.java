@@ -238,6 +238,7 @@ public final class AddEquimentDetailsForm extends javax.swing.JFrame {
             int result = fileChooser.showSaveDialog(null);
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
+
                 String path = selectedFile.getAbsolutePath();
 
                 contentPane.removeAll();
@@ -249,17 +250,8 @@ public final class AddEquimentDetailsForm extends javax.swing.JFrame {
                 labelImage.setIcon(ImageGenerator.ResizeImage(path, labelImage));
 
                 selectButton2.addActionListener((ActionEvent ae) -> {
-                    setImagePath("/src/images/" + selectedFile.getName());
+                    _selectedFile = selectedFile;
                     btnGetImage.setText(selectedFile.getName());
-                    System.out.println(selectedFile.getAbsolutePath());
-                    File dest = new File(_imageFolderPath, selectedFile.getName());
-                    try {
-                        if (!(selectedFile.getParent() + "/").equals(_imageFolderPath)) {
-                            copyFileUsingStream(selectedFile, dest);
-                        }
-                    } catch (IOException ex) {
-                        Logger.getLogger(AddEquimentDetailsForm.class.getName()).log(Level.SEVERE, null, ex);
-                    }
                     frame.dispose();
                 });
             } else if (result == JFileChooser.CANCEL_OPTION) {
@@ -270,6 +262,22 @@ public final class AddEquimentDetailsForm extends javax.swing.JFrame {
                 frame.add(cancelButton);
             }
         });
+    }
+
+    private void saveImage(File selectedFile) {
+        setImagePath("/src/images/" + selectedFile.getName());
+        File dest = new File(_imageFolderPath, selectedFile.getName());
+        try {
+            if (_fileNameList.contains(selectedFile.getName())) {
+                dest = new File(_imageFolderPath, selectedFile.getName() + "(copy)");
+
+            }
+            if (!(selectedFile.getParent() + "/").equals(_imageFolderPath)) {
+                copyFileUsingStream(selectedFile, dest);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(AddEquimentDetailsForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void listFilesForFolder(final File folder) {
@@ -583,7 +591,7 @@ public final class AddEquimentDetailsForm extends javax.swing.JFrame {
             check = false;
         }
 
-        if (maChiTietTB.length() > 0 && !maChiTietTB.matches("^[a-zA-Z]{3}[\\d]{2}$")) {
+        if (!maChiTietTB.matches("^[a-zA-Z]{3}[\\d]{2}$")) {
             createAlert(alertMCTTB, "Mã CTTB phải đúng định dạng 3 ký tự chữ và 2 ký tự số");
             check = false;
         }
@@ -591,7 +599,7 @@ public final class AddEquimentDetailsForm extends javax.swing.JFrame {
             createAlert(alertTTB, "Tên TB không để trống và phải là ký tự chữ");
             check = false;
         }
-        if (gia.length() > 0 && !gia.matches("\\d+")) {
+        if (!gia.matches("\\d+") || Integer.parseInt(gia) < 10000) {
             createAlert(alertGia, "Giá TB ít nhất là 10000 và là ký tự số");
             check = false;
         }
@@ -603,8 +611,13 @@ public final class AddEquimentDetailsForm extends javax.swing.JFrame {
         if (maChiTietTB.length() > 5) {
             createAlert(alertMCTTB, "Mã CTTB không được vượt quá 5 ký tự");
             check = false;
-        } else if (thoigianBH.length() > 0 && Integer.parseInt(thoigianBH) > 10 && Integer.parseInt(thoigianBH) > 0) {
-            createAlert(alertTGBH, "TGBH tối đa 10 năm");
+        }
+
+        if (!thoigianBH.matches("[\\d]{1,2}")) {
+            createAlert(alertTGBH, "Vui lòng nhập năm từ 0 đến 10");
+            check = false;
+        } else if (Integer.parseInt(thoigianBH) > 10 || Integer.parseInt(thoigianBH) < 0) {
+            createAlert(alertTGBH, "Vui lòng nhập năm từ 0 đến 10");
             check = false;
         }
 
@@ -626,6 +639,7 @@ public final class AddEquimentDetailsForm extends javax.swing.JFrame {
                 if (option == 0) {
                     if (_eC.updateEquipmentDetails(eD)) {
                         JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+                        saveImage(_selectedFile);
                         _mainMenu.loadDatabase();
                         resetField();
                         this.dispose();
@@ -636,6 +650,7 @@ public final class AddEquimentDetailsForm extends javax.swing.JFrame {
             } else {
                 if (_eC.addNewEquipmentDetails(eD)) {
                     JOptionPane.showMessageDialog(this, "Thêm thành công");
+                    saveImage(_selectedFile);
                     _mainMenu.loadDatabase();
                     resetField();
                     this.dispose();
@@ -702,8 +717,11 @@ public final class AddEquimentDetailsForm extends javax.swing.JFrame {
     }//GEN-LAST:event_cbNhaCungCapItemStateChanged
 
     private void txtThoiGianBHKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtThoiGianBHKeyReleased
-        if (Integer.parseInt(txtThoiGianBH.getText()) <= 10 && Integer.parseInt(txtThoiGianBH.getText()) >= 1) {
-            initAlertLabel(alertTGBH);
+        String thoigianBH = txtThoiGianBH.getText();
+        if (thoigianBH.matches("^[\\d]{1,2}$")) {
+            if (Integer.parseInt(thoigianBH) <= 10 && Integer.parseInt(thoigianBH) >= 1) {
+                initAlertLabel(alertTGBH);
+            }
         }
     }//GEN-LAST:event_txtThoiGianBHKeyReleased
 
@@ -738,6 +756,7 @@ public final class AddEquimentDetailsForm extends javax.swing.JFrame {
     private final String _imageFolderPath;
     private int _size;
     private final MainMenu _mainMenu;
+    private File _selectedFile;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel alertGia;
     private javax.swing.JLabel alertMCTTB;
