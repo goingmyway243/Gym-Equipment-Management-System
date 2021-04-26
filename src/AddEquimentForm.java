@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Nguyen Hai Dang
@@ -25,39 +24,34 @@ public class AddEquimentForm extends javax.swing.JFrame {
     /**
      * Creates new form AddEquimentForm
      */
-    
-    public AddEquimentForm(MainMenu parent, String id)
-    {
+    public AddEquimentForm(MainMenu parent, String id) {
         _mainMenuForm = parent;
         _id = id;
-        
-        initComponents();     
+
+        initComponents();
         initRendererForEdit();
         loadCurrentData();
     }
-    
-    public AddEquimentForm(ImportForm parent) 
-    {
+
+    public AddEquimentForm(ImportForm parent) {
         _importForm = parent;
-        
-        initComponents();     
-        initRenderer();  
+
+        initComponents();
+        initRenderer();
     }
-    
-    private void initRenderer()
-    {
+
+    private void initRenderer() {
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
+
         confirmEditButton.setVisible(false);
-        
+
         setAlertVisible(false);
         loadStatusComboBox();
         loadDetailIDComboBox();
     }
-    
-    private void initRendererForEdit()
-    {
+
+    private void initRendererForEdit() {
         initRenderer();
         equipmentIDTextField.setText(_id);
         equipmentIDTextField.setEditable(false);
@@ -66,80 +60,71 @@ public class AddEquimentForm extends javax.swing.JFrame {
         confirmEditButton.setVisible(true);
         confirmButton.setVisible(false);
     }
-    
-    private void loadCurrentData()
-    {
+
+    private void loadCurrentData() {
         String status = "", detailID = "";
         Connection connector = ConnectMysql.getConnectDB();
-        String sql = "select * from gym_equipments where id = '"+ _id +"'";
+        String sql = "select * from gym_equipments where id = '" + _id + "'";
         try {
             ResultSet rs = connector.createStatement().executeQuery(sql);
-            if(rs.next())
-            {
+            if (rs.next()) {
                 status = rs.getString("status");
                 detailID = rs.getString("detail_id");
             }
         } catch (SQLException ex) {
             Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        if(!status.equals("") && !detailID.equals(""))
-        {
-            for(int i=0;i<statusComboBox.getItemCount();i++)
-            {
-                if(statusComboBox.getItemAt(i).toString().equals(status))
-                {
+
+        if (!status.equals("") && !detailID.equals("")) {
+            for (int i = 0; i < statusComboBox.getItemCount(); i++) {
+                if (statusComboBox.getItemAt(i).toString().equals(status)) {
                     statusComboBox.setSelectedIndex(i);
                 }
             }
-            
-            for(int i=0;i<detailIDComboBox.getItemCount();i++)
-            {
-                if(detailIDComboBox.getItemAt(i).toString().equals(detailID))
-                {
+
+            for (int i = 0; i < detailIDComboBox.getItemCount(); i++) {
+                if (detailIDComboBox.getItemAt(i).toString().equals(detailID)) {
                     detailIDComboBox.setSelectedIndex(i);
                 }
             }
         }
     }
-            
-    private void loadStatusComboBox()
-    {
+
+    private void loadStatusComboBox() {
         statusComboBox.removeAllItems();
         statusComboBox.addItem("Đang hoạt động");
         statusComboBox.addItem("Bảo trì");
         statusComboBox.addItem("Bị hỏng");
     }
-    
-    private void loadDetailIDComboBox()
-    {
+
+    private void loadDetailIDComboBox() {
         detailIDComboBox.removeAllItems();
         detailIDComboBox.addItem("");
-        
+
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select distinct id from equipment_details";
-        
+
         try {
             PreparedStatement ps = connector.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            
-            while(rs.next())
-            {
+
+            while (rs.next()) {
                 detailIDComboBox.addItem(rs.getString("id"));
             }
+
+            detailIDComboBox.addItem("Thêm loại thiết bị...");
         } catch (SQLException ex) {
             Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void loadDetailInfo(String detailID)
-    {
+
+    private void loadDetailInfo(String detailID) {
         String name = "", picture = "", supplier = "";
         int price = 0, warrantyTime = 0, supplierID = 0;
-        
+
         Connection connector = ConnectMysql.getConnectDB();
-        String sql  = "select * from equipment_details where id = '"+detailID+"'";
-        
+        String sql = "select * from equipment_details where id = '" + detailID + "'";
+
         try {
             PreparedStatement ps = connector.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -148,12 +133,12 @@ public class AddEquimentForm extends javax.swing.JFrame {
             picture = rs.getString("picture");
             price = rs.getInt("price");
             warrantyTime = rs.getInt("warranty_time");
-            supplierID = rs.getInt("supplier_id");   
+            supplierID = rs.getInt("supplier_id");
         } catch (SQLException ex) {
             Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        sql = "select name from suppliers where id = '"+supplierID+"'";
+
+        sql = "select name from suppliers where id = '" + supplierID + "'";
         try {
             PreparedStatement ps = connector.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -162,27 +147,27 @@ public class AddEquimentForm extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         _imagePath = picture;
-        if(!picture.equals(""))
+        if (!picture.equals("")) {
             picture = new File("").getAbsolutePath().concat(picture);
-        
+        }
+
         equipmentNameTextField.setText(name);
-        warrantyTextField.setText(warrantyTime+" năm");
-        priceTextField.setText(price+"");
+        warrantyTextField.setText(warrantyTime + " năm");
+        priceTextField.setText(price + "");
         supplierTextField.setText(supplier);
         pictureFieldLabel.setIcon(ImageGenerator.ResizeImage(picture, pictureFieldLabel));
     }
-    
-    private void editEquipment(String id, String status, String detailID)
-    {
+
+    private void editEquipment(String id, String status, String detailID) {
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "update gym_equipments SET status = ?, detail_id = ?, updated_at = ? WHERE id = ?";
         try {
             PreparedStatement ps = connector.prepareStatement(sql);
             ps.setString(1, status);
             ps.setString(2, detailID);
-            ps.setTimestamp(3,  new java.sql.Timestamp(new Date().getTime()));
+            ps.setTimestamp(3, new java.sql.Timestamp(new Date().getTime()));
             ps.setString(4, id);
             ps.execute();
             System.out.println("Chỉnh sửa thành công");
@@ -190,66 +175,57 @@ public class AddEquimentForm extends javax.swing.JFrame {
             Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private int getMaxEquimentID(String equipmentID)
-    {
+
+    private int getMaxEquimentID(String equipmentID) {
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select count(id) as countID from gym_equipments where substring(id,1,3) = '" + equipmentID + "'";
         int idCount = 1;
         try {
             ResultSet rs = connector.createStatement().executeQuery(sql);
-            if(rs.next())
-            {
+            if (rs.next()) {
                 idCount = rs.getInt("countID");
             }
         } catch (SQLException ex) {
             Logger.getLogger(AddEquimentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        for(int i=0;i<_importForm.checkIDList.size();i++)
-        {
-            if(equipmentID.equals(_importForm.checkIDList.get(i)))
-            {
+
+        for (int i = 0; i < _importForm.checkIDList.size(); i++) {
+            if (equipmentID.equals(_importForm.checkIDList.get(i))) {
                 idCount++;
             }
         }
-        
+
         return idCount;
     }
-    
-    private void setAlertVisible(boolean visible)
-    {
+
+    private void setAlertVisible(boolean visible) {
         equipmentIDAlertLabel.setVisible(visible);
         amountAlertLabel.setVisible(visible);
         detailIDAlertLabel.setVisible(visible);
     }
-    
-    private boolean checkValues(String id, String amount, String detailID)
-    {
+
+    private boolean checkValues(String id, String amount, String detailID) {
         setAlertVisible(false);
         boolean check = true;
         String amountPattern = "\\d{1,2}";
         String idPattern = "[a-zA-Z]{3}";
-        
-        
-        if(!id.matches(idPattern))
-        {
+
+        if (!id.matches(idPattern)) {
             equipmentIDAlertLabel.setVisible(true);
             check = false;
         }
-        if(!amount.matches(amountPattern))
-        {
+        if (!amount.matches(amountPattern)) {
             amountAlertLabel.setVisible(true);
             check = false;
         }
-        if(detailID.equals(""))
-        {
+        if (detailID.equals("")) {
             detailIDAlertLabel.setVisible(true);
             check = false;
         }
-        
+
         return check;
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -474,9 +450,13 @@ public class AddEquimentForm extends javax.swing.JFrame {
 
     private void detailIDComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_detailIDComboBoxItemStateChanged
         String detailID = detailIDComboBox.getSelectedItem().toString();
-        if(!detailID.equals(""))
-        {
-            loadDetailInfo(detailID);
+        if (!detailID.equals("")) {
+            if (detailID.equals("Thêm loại thiết bị...")) {
+                
+            } else {
+                loadDetailInfo(detailID);
+            }
+
         }
     }//GEN-LAST:event_detailIDComboBoxItemStateChanged
 
@@ -491,42 +471,40 @@ public class AddEquimentForm extends javax.swing.JFrame {
         String status = statusComboBox.getSelectedItem().toString();
         String picture = _imagePath;
         String detailID = detailIDComboBox.getSelectedItem().toString();
-        
-        if(!checkValues(id, amountTextField.getText(), detailID))
+
+        if (!checkValues(id, amountTextField.getText(), detailID)) {
             return;
-        
+        }
+
         amount = Integer.valueOf(amountTextField.getText());
         price = Integer.valueOf(priceTextField.getText());
 
         int incID = getMaxEquimentID(id);
-        
-        for(int i = 0; i < amount; i++)
-        {
+
+        for (int i = 0; i < amount; i++) {
             incID++;
             String equipmentID = id + String.format("-%03d", incID);
             _importForm.addEquiment(equipmentID, name, status, price, picture, detailID);
         }
-        
-        this.dispose(); 
+
+        this.dispose();
     }//GEN-LAST:event_confirmButtonActionPerformed
 
     private void confirmEditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmEditButtonActionPerformed
-        if(detailIDComboBox.getSelectedItem().toString().equals(""))
-        {
+        if (detailIDComboBox.getSelectedItem().toString().equals("")) {
             detailIDAlertLabel.setVisible(true);
             return;
         }
-        
+
         String id = equipmentIDTextField.getText();
         String status = statusComboBox.getSelectedItem().toString();
         String detailID = detailIDComboBox.getSelectedItem().toString();
-        
+
         editEquipment(id, status, detailID);
         JOptionPane.showMessageDialog(null, "Chỉnh sửa thành công");
-        _mainMenuForm.loadDatabase();   
+        _mainMenuForm.loadDatabase();
         this.dispose();
     }//GEN-LAST:event_confirmEditButtonActionPerformed
-
 
     private ImportForm _importForm = null;
     private MainMenu _mainMenuForm = null;

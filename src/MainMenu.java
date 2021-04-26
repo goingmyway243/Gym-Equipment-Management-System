@@ -242,6 +242,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         MainDesktopPane = new javax.swing.JDesktopPane();
         titleLabel = new javax.swing.JLabel();
         addCategoryButton = new javax.swing.JButton();
@@ -261,6 +262,12 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         suppliersTable = new javax.swing.JTable();
         editButton = new javax.swing.JButton();
         removeButton = new javax.swing.JButton();
+        searchTextField = new javax.swing.JTextField();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton3 = new javax.swing.JRadioButton();
+        searchLabel = new javax.swing.JLabel();
+        sortLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -299,6 +306,12 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         settingButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 settingButtonActionPerformed(evt);
+            }
+        });
+
+        mainTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                mainTabbedPaneStateChanged(evt);
             }
         });
 
@@ -447,6 +460,36 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
             }
         });
 
+        searchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                searchTextFieldKeyPressed(evt);
+            }
+        });
+
+        jRadioButton1.setBackground(new java.awt.Color(102, 102, 102));
+        buttonGroup1.add(jRadioButton1);
+        jRadioButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jRadioButton1.setText("Tăng dần");
+
+        jRadioButton2.setBackground(new java.awt.Color(102, 102, 102));
+        buttonGroup1.add(jRadioButton2);
+        jRadioButton2.setForeground(new java.awt.Color(255, 255, 255));
+        jRadioButton2.setText("Giảm dần");
+
+        jRadioButton3.setBackground(new java.awt.Color(153, 153, 153));
+        buttonGroup1.add(jRadioButton3);
+        jRadioButton3.setForeground(new java.awt.Color(255, 255, 255));
+        jRadioButton3.setSelected(true);
+        jRadioButton3.setText("Toàn bộ");
+
+        searchLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        searchLabel.setForeground(new java.awt.Color(204, 204, 255));
+        searchLabel.setText("Tìm kiếm");
+
+        sortLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        sortLabel.setForeground(new java.awt.Color(255, 255, 204));
+        sortLabel.setText("Sắp xếp");
+
         MainDesktopPane.setLayer(titleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         MainDesktopPane.setLayer(addCategoryButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
         MainDesktopPane.setLayer(addSupplierButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -455,37 +498,71 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         MainDesktopPane.setLayer(mainTabbedPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         MainDesktopPane.setLayer(editButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
         MainDesktopPane.setLayer(removeButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(searchTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(jRadioButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(jRadioButton2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(jRadioButton3, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(searchLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(sortLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout MainDesktopPaneLayout = new javax.swing.GroupLayout(MainDesktopPane);
         MainDesktopPane.setLayout(MainDesktopPaneLayout);
         MainDesktopPaneLayout.setHorizontalGroup(
             MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
+                .addContainerGap(199, Short.MAX_VALUE)
+                .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(MainDesktopPaneLayout.createSequentialGroup()
+                            .addComponent(settingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addContainerGap())
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
+                            .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(removeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                                .addComponent(editButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(addSupplierButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(newImportButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(addCategoryButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGap(17, 17, 17)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
+                        .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(MainDesktopPaneLayout.createSequentialGroup()
+                                    .addComponent(jRadioButton1)
+                                    .addGap(138, 138, 138)
+                                    .addComponent(jRadioButton2)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jRadioButton3))
+                                .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 501, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(197, 197, 197))))
+            .addGroup(MainDesktopPaneLayout.createSequentialGroup()
+                .addGap(85, 85, 85)
+                .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(searchLabel)
+                    .addComponent(sortLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(MainDesktopPaneLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(mainTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 725, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 157, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
-                        .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(newImportButton, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-                            .addComponent(settingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(addCategoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(addSupplierButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(editButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(removeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(17, 17, 17))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
-                        .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(197, 197, 197))))
+                .addGap(0, 152, Short.MAX_VALUE))
         );
         MainDesktopPaneLayout.setVerticalGroup(
             MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MainDesktopPaneLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
+                .addGap(29, 29, 29)
+                .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchLabel))
+                .addGap(19, 19, 19)
+                .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRadioButton3)
+                    .addComponent(jRadioButton2)
+                    .addComponent(jRadioButton1)
+                    .addComponent(sortLabel))
+                .addGap(29, 29, 29)
                 .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(MainDesktopPaneLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
@@ -501,7 +578,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(settingButton))
                     .addComponent(mainTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -512,7 +589,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(MainDesktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(MainDesktopPane)
         );
 
         pack();
@@ -537,20 +614,20 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     }//GEN-LAST:event_addSupplierButtonActionPerformed
 
     private void equipmentsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_equipmentsTableMouseClicked
-        _selectedTable = 1;
+
         editButton.setEnabled(true);
         removeButton.setEnabled(true);
     }//GEN-LAST:event_equipmentsTableMouseClicked
 
     private void categoriesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categoriesTableMouseClicked
-        _selectedTable = 4;
+
         editButton.setEnabled(true);
         removeButton.setEnabled(true);
         tableImageCellCallback(evt, categoriesTable);
     }//GEN-LAST:event_categoriesTableMouseClicked
 
     private void suppliersTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_suppliersTableMouseClicked
-        _selectedTable = 5;
+
         editButton.setEnabled(true);
         removeButton.setEnabled(true);
     }//GEN-LAST:event_suppliersTableMouseClicked
@@ -631,16 +708,27 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void importDetailsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_importDetailsTableMouseClicked
-        _selectedTable = 2;
+
         editButton.setEnabled(false);
         removeButton.setEnabled(true);
     }//GEN-LAST:event_importDetailsTableMouseClicked
 
     private void usersTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_usersTableMouseClicked
-        _selectedTable = 3;
         editButton.setEnabled(false);
         removeButton.setEnabled(false);
     }//GEN-LAST:event_usersTableMouseClicked
+
+    private void searchTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyPressed
+        if(searchTextField.getText().equals(""))
+        {
+            loadDatabase();
+        }
+        
+    }//GEN-LAST:event_searchTextFieldKeyPressed
+
+    private void mainTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_mainTabbedPaneStateChanged
+        _selectedTable = mainTabbedPane.getSelectedIndex() + 1;
+    }//GEN-LAST:event_mainTabbedPaneStateChanged
 
     private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {
         _settingFrom = new SettingFrom(_userID);
@@ -665,6 +753,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     private javax.swing.JDesktopPane MainDesktopPane;
     private javax.swing.JButton addCategoryButton;
     private javax.swing.JButton addSupplierButton;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JScrollPane categoriesScrollPane;
     private javax.swing.JTable categoriesTable;
     private javax.swing.JButton editButton;
@@ -672,10 +761,16 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     private javax.swing.JTable equipmentsTable;
     private javax.swing.JScrollPane importDetailsScrollPane;
     private javax.swing.JTable importDetailsTable;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JTabbedPane mainTabbedPane;
     private javax.swing.JButton newImportButton;
     private javax.swing.JButton removeButton;
+    private javax.swing.JLabel searchLabel;
+    private javax.swing.JTextField searchTextField;
     private javax.swing.JButton settingButton;
+    private javax.swing.JLabel sortLabel;
     private javax.swing.JScrollPane suppliersScrollPane;
     private javax.swing.JTable suppliersTable;
     private javax.swing.JLabel titleLabel;
