@@ -13,7 +13,7 @@ public class AddSupplier extends javax.swing.JDialog {
     /**
      * Creates new form AddSupplier
      */
-    public AddSupplier(java.awt.Frame parent, boolean modal) {
+    public AddSupplier(java.awt.Frame parent, int id, boolean isUpdate, boolean modal) {
         super(parent, modal);
         initComponents();
         this.setLocationRelativeTo(null);
@@ -23,10 +23,17 @@ public class AddSupplier extends javax.swing.JDialog {
         List<Supplier> _lS = _sC.getSuppliersInfo();
         _parent = parent;
 
-        txtMaNCC.setText(_lS.get(_lS.size() - 1).getSupplierId() + 1 + "");
+        if (isUpdate && id >= 0) {
+            txtMaNCC.setText(id + "");
+            btnConfirm.setText("Cập nhật");
+        } else {
+            txtMaNCC.setText(_lS.get(_lS.size() - 1).getSupplierId() + 1 + "");
+        }
+
         txtMaNCC.setEditable(false);
         txtMaNCC.setFocusable(false);
         txtTenNCC.requestFocus();
+
         initAlert();
     }
 
@@ -70,7 +77,7 @@ public class AddSupplier extends javax.swing.JDialog {
         txtTenNCC = new javax.swing.JTextField();
         txtSDT = new javax.swing.JTextField();
         txtDiaChiNCC = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        btnConfirm = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
@@ -113,13 +120,13 @@ public class AddSupplier extends javax.swing.JDialog {
             }
         });
 
-        jButton1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(51, 153, 0));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/plus.png"))); // NOI18N
-        jButton1.setText("Thêm");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnConfirm.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        btnConfirm.setForeground(new java.awt.Color(51, 153, 0));
+        btnConfirm.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/plus.png"))); // NOI18N
+        btnConfirm.setText("Thêm");
+        btnConfirm.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnConfirmActionPerformed(evt);
             }
         });
 
@@ -181,19 +188,20 @@ public class AddSupplier extends javax.swing.JDialog {
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtMaNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18))
-                    .addComponent(alertSDTNCC)
-                    .addComponent(txtDiaChiNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTenNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(alertTNCC)
-                    .addComponent(alertDCNCC)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtMaNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(alertSDTNCC)
+                            .addComponent(txtDiaChiNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtTenNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(alertTNCC)
+                            .addComponent(alertDCNCC))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -226,7 +234,7 @@ public class AddSupplier extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
-                    .addComponent(jButton1)
+                    .addComponent(btnConfirm)
                     .addComponent(jButton2))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
@@ -234,7 +242,7 @@ public class AddSupplier extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmActionPerformed
         initAlert();
         String maNCCs = txtMaNCC.getText();
         String tenNCC = txtTenNCC.getText();
@@ -250,12 +258,12 @@ public class AddSupplier extends javax.swing.JDialog {
             createAlert(alertDCNCC, "Địa chỉ không được để trống");
             check = false;
         }
-        
+
         if (tenNCC.length() < 0 || tenNCC.matches("[^a-zA-Z]+")) {
             createAlert(alertTNCC, "Tên NCC cấp phải là chữ cái");
             check = false;
         }
-        if (!sdtNCC.matches("^[0-9]{10}$") || sdtNCC.length() < 0) {
+        if (!sdtNCC.matches("^[0]{1}[0-9]{9}$") || sdtNCC.length() < 0) {
             createAlert(alertSDTNCC, "SDT không hợp lệ (10 chữ số)");
             check = false;
         }
@@ -263,26 +271,43 @@ public class AddSupplier extends javax.swing.JDialog {
         if (check) {
             int maNCC = Integer.parseInt(maNCCs);
             Supplier s = new Supplier(maNCC, tenNCC, diaChiNCC, sdtNCC);
-
-            if (_sC.addNewSupplier(s)) {
-                JOptionPane.showMessageDialog(this, "Thêm thành công");
-                if (_parent.getClass().getName().equals("AddEquimentDetailsForm")) {
-                    AddEquimentDetailsForm aEF = (AddEquimentDetailsForm) _parent;
-                    aEF.getSupplierList();
-                    aEF.getParent().loadDatabase();
+            if (_sC.isIdExist(maNCC)) {
+                if (_sC.updateSupplier(s)) {
+                    JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+                    if (_parent.getClass().getName().equals("AddEquimentDetailsForm")) {
+                        AddEquimentDetailsForm aEF = (AddEquimentDetailsForm) _parent;
+                        aEF.getSupplierList();
+                        aEF.getParent().loadDatabase();
+                    }
+                    if (_parent.getClass().getName().equals("MainMenu")) {
+                        MainMenu mainMenu = (MainMenu) _parent;
+                        mainMenu.loadDatabase();
+                    }
+                    resetField();
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Cập nhật thất  bại");
                 }
-                if (_parent.getClass().getName().equals("MainMenu")) {
-                    MainMenu mainMenu = (MainMenu) _parent;
-                    mainMenu.loadDatabase();
-                }
-                resetField();
-                this.dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Thêm thất  bại");
+                if (_sC.addNewSupplier(s)) {
+                    JOptionPane.showMessageDialog(this, "Thêm thành công");
+                    if (_parent.getClass().getName().equals("AddEquimentDetailsForm")) {
+                        AddEquimentDetailsForm aEF = (AddEquimentDetailsForm) _parent;
+                        aEF.getSupplierList();
+                        aEF.getParent().loadDatabase();
+                    }
+                    if (_parent.getClass().getName().equals("MainMenu")) {
+                        MainMenu mainMenu = (MainMenu) _parent;
+                        mainMenu.loadDatabase();
+                    }
+                    resetField();
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm thất  bại");
+                }
             }
-
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnConfirmActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         this.dispose();
@@ -320,7 +345,7 @@ public class AddSupplier extends javax.swing.JDialog {
     private javax.swing.JLabel alertDCNCC;
     private javax.swing.JLabel alertSDTNCC;
     private javax.swing.JLabel alertTNCC;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnConfirm;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;

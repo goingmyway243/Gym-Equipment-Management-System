@@ -20,7 +20,6 @@ public class LoginForm extends javax.swing.JFrame {
     /**
      * Creates new form LoginForm
      */
-    
     public static void create() {
         java.awt.EventQueue.invokeLater(() -> {
             javax.swing.JFrame frame = new LoginForm();
@@ -59,25 +58,25 @@ public class LoginForm extends javax.swing.JFrame {
         LoginForm.create();
         /* Create and display the form */
     }
-    
+
     @Override
     public JRootPane getRootPane() {
         JRootPane rootPane = super.getRootPane();
         rootPane.setDefaultButton(loginBtn);
         return rootPane;
     }
-    
+
     private LoginForm() {
         initComponents();
     }
-    
+
     private boolean loginAction(String username, String password) {
         Connection connectDB = ConnectMysql.getConnectDB();
         String sql = "SELECT * FROM `login_info` WHERE userName = '" + username + "' and password = '" + password + "'";
         int roleID = 0;
         try {
             ResultSet rs = connectDB.createStatement().executeQuery(sql);
-            if (rs.next()) { 
+            if (rs.next()) {
                 roleID = rs.getInt("role_id");
                 _userID = rs.getInt("userId");
                 _role = getRole(roleID);
@@ -88,9 +87,8 @@ public class LoginForm extends javax.swing.JFrame {
             return false;
         }
     }
-    
-    private String getRole(int roleID)
-    {
+
+    private String getRole(int roleID) {
         Connection connectDB = ConnectMysql.getConnectDB();
         String sql = "SELECT * FROM `role` WHERE id = '" + roleID + "'";
         try {
@@ -103,7 +101,7 @@ public class LoginForm extends javax.swing.JFrame {
             return "Nhân viên";
         }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -212,7 +210,7 @@ public class LoginForm extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_loginBtnActionPerformed
- 
+
     private int _userID = 0;
     private String _role = "";
     // Variables declaration - do not modify//GEN-BEGIN:variables

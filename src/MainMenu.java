@@ -1,8 +1,4 @@
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -14,13 +10,9 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -160,8 +152,10 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         try {
             PreparedStatement ps = connector.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
+            int dem = 1;
+            boolean isOdd;
             while (rs.next()) {
-                boolean isOdd = tableModel.getRowCount() + 1 % 2 == 0 ? true : false;
+                isOdd = dem % 2 != 0;
                 String imagePath = getEquipmentImage(rs.getString("detail_id"));
 
                 vector = new Vector();
@@ -172,6 +166,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 vector.add(rs.getInt("import_id"));
                 vector.add(rs.getTimestamp("updated_at"));
                 tableModel.addRow(vector);
+                dem++;
             }
             equipmentsTable.setModel(tableModel);
             rs.close();
@@ -188,9 +183,9 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         _imgGenerator.ImageColumnSetting(categoriesTable);
 
         int dem = 1;
-
+        boolean isOdd;
         for (Equipment_Details equipment_info : lED) {
-            boolean isOdd = dem % 2 != 0;
+            isOdd = dem % 2 != 0;
 
             tblEquipDetails.addRow(new Object[]{equipment_info.getId(), equipment_info.getName(),
                 equipment_info.getPicture() == null ? _imgGenerator.createLabel("Không có hình ảnh", isOdd) : _imgGenerator.createLabel(equipment_info.getPicture(), isOdd),
@@ -525,13 +520,13 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     }//GEN-LAST:event_newImportButtonActionPerformed
 
     private void addCategoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCategoryButtonActionPerformed
-        AddEquimentDetailsForm addEquipmentDetailsForm = new AddEquimentDetailsForm(this);
+        AddEquimentDetailsForm addEquipmentDetailsForm = AddEquimentDetailsForm.getObj(this, -1, false);
         addEquipmentDetailsForm.setLocationRelativeTo(this);
         addEquipmentDetailsForm.setVisible(true);
     }//GEN-LAST:event_addCategoryButtonActionPerformed
 
     private void addSupplierButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSupplierButtonActionPerformed
-        AddSupplier addSupplier = new AddSupplier(this, true);
+        AddSupplier addSupplier = new AddSupplier(this, -1, false, rootPaneCheckingEnabled);
         addSupplier.setLocationRelativeTo(this);
         addSupplier.setVisible(true);
     }//GEN-LAST:event_addSupplierButtonActionPerformed
@@ -571,9 +566,15 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 break;
             }
             case 4: {
+                int index = categoriesTable.getSelectedRow();
+                AddEquimentDetailsForm addEquimentDetailsForm = new AddEquimentDetailsForm(this, index, true);
+                addEquimentDetailsForm.setVisible(true);
                 break;
             }
             case 5: {
+                int id = Integer.parseInt(suppliersTable.getValueAt(suppliersTable.getSelectedRow(), 0).toString());
+                AddSupplier addSupplier = new AddSupplier(this, id, true, rootPaneCheckingEnabled);
+                addSupplier.setVisible(true);
                 break;
             }
             default:
