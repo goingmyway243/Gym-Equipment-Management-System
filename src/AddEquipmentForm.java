@@ -43,6 +43,7 @@ public class AddEquipmentForm extends javax.swing.JFrame {
     public void loadDetailIDComboBox() {
         detailIDComboBox.removeAllItems();
         detailIDComboBox.addItem("");
+        _detailUpdated = true;
 
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select id from equipment_details";
@@ -75,6 +76,7 @@ public class AddEquipmentForm extends javax.swing.JFrame {
         setAlertVisible(false);
         loadStatusComboBox();
         loadDetailIDComboBox();
+        _detailUpdated = false;
     }
 
     private void initRendererForEdit() {
@@ -483,6 +485,13 @@ public class AddEquipmentForm extends javax.swing.JFrame {
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.dispose();
+        if (_detailUpdated) {
+            if (_importForm != null) {
+                _importForm.getParent().loadDatabase();
+            } else if (_mainMenuForm != null) {
+                _mainMenuForm.loadDatabase();
+            }
+        }
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
@@ -507,7 +516,7 @@ public class AddEquipmentForm extends javax.swing.JFrame {
             String equipmentID = id + String.format("-%03d", incID);
             _importForm.addEquiment(equipmentID, name, status, price, picture, detailID);
         }
-
+        _importForm.getParent().loadDatabase();
         this.dispose();
     }//GEN-LAST:event_confirmButtonActionPerformed
 
@@ -531,6 +540,7 @@ public class AddEquipmentForm extends javax.swing.JFrame {
     private MainMenu _mainMenuForm = null;
     private String _id;
     private String _imagePath = "";
+    private boolean _detailUpdated = false;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel amountAlertLabel;
     private javax.swing.JLabel amountLabel;

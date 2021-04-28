@@ -48,6 +48,11 @@ public class ImportForm extends javax.swing.JFrame {
         checkIDList.add(id.substring(0, 3));
         _count++;
     }
+    
+    public MainMenu getParent()
+    {
+        return _mainMenuForm;
+    }
 
     private void saveEquipmentToDatabase(String id, String status, String detailID, int importID, java.sql.Timestamp timeStamp) {
         Connection connector = ConnectMysql.getConnectDB();
