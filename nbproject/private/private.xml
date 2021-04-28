@@ -3,20 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/AddSupplier.java</file>
-            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/LoginForm.java</file>
-            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/DeleteValue.java</file>
-            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/EquipmentDetailsController.java</file>
-            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/MainMenu.java</file>
-            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/ConnectMysql.java</file>
+            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/AddSupplierForm.java</file>
             <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/SettingFrom.java</file>
-            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/SupplierController.java</file>
-            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/AddEquimentDetailsForm.java</file>
-            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/AddEquimentForm.java</file>
+            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/LoginForm.java</file>
+            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/AddEquipmentDetailsForm.java</file>
             <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/ImportForm.java</file>
-            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/ImageGenerator.java</file>
-            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/Supplier.java</file>
-            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/ShowImageFrame.java</file>
+            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/AddEquipmentForm.java</file>
+            <file>file:/S:/NguyenHaiDang_N18DCCN040/NMCNPM/Gym%20Equipment%20Management%20System%20-%20Group%2010/src/MainMenu.java</file>
         </group>
     </open-files>
 </project-private>

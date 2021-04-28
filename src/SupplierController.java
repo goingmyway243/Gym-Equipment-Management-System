@@ -16,7 +16,7 @@ import java.util.List;
  * @author skqist225
  */
 public class SupplierController {
-    
+
     public List<Supplier> getSuppliersInfo() {
 
         List<Supplier> listOfSuppliers = new ArrayList<>();
@@ -109,7 +109,7 @@ public class SupplierController {
         }
         return false;
     }
-    
+
     private Connection _con = null;
     private EquipmentDetailsController _eDC = null;
 }

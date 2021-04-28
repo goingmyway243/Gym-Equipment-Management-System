@@ -29,6 +29,6 @@ public class ConnectMysql {
         }
         return _myConnect;
     }
-    
+
     private static Connection _myConnect = null;
 }

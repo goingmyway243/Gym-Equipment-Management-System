@@ -15,20 +15,23 @@ import javax.swing.table.TableColumn;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Nguyen Hai Dang
  */
 public class ImageGenerator {
+
     public JLabel createLabel(String imageIcon, boolean isOdd) {
+        if (imageIcon == null) {
+            imageIcon = "";
+        }
         JLabel label = new JLabel();
         label.setSize(50, 50);
         label.setHorizontalAlignment(JLabel.CENTER);
         label.setVerticalAlignment(JLabel.CENTER);
         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
         label.setBackground(javax.swing.UIManager.getColor("Table.dropCellForeground"));
-        if(isOdd) {
+        if (isOdd) {
             label.setBackground(Color.white);
         }
         label.setOpaque(true);
@@ -42,7 +45,7 @@ public class ImageGenerator {
         label.setIcon(ResizeImage(_imageFolderPath + imageIcon, label));
         return label;
     }
-    
+
     public void ImageColumnSetting(javax.swing.JTable table) {
         table.getColumn("Hình ảnh").setCellRenderer(new imageTableCellRenderer());
     }
@@ -67,6 +70,6 @@ public class ImageGenerator {
         ImageIcon image = new ImageIcon(newImg);
         return image;
     }
-    
+
     final String _imageFolderPath = new File("").getAbsolutePath() + "/";
 }

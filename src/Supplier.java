@@ -9,6 +9,7 @@
  * @author skqist225
  */
 public class Supplier {
+
     public Supplier(int _supplierId, String _name, String _address, String _phoneNumber) {
         this._supplierId = _supplierId;
         this._name = _name;
@@ -50,7 +51,7 @@ public class Supplier {
     public void setPhoneNumber(String _phoneNumber) {
         this._phoneNumber = _phoneNumber;
     }
-    
+
     private int _supplierId;
     private String _name;
     private String _address;

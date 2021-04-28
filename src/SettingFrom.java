@@ -1,3 +1,4 @@
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
@@ -15,6 +16,7 @@ import java.text.SimpleDateFormat;
  * @author Dell
  */
 public class SettingFrom extends javax.swing.JFrame {
+
     /**
      * Creates new form SettingFrom
      */
@@ -30,20 +32,22 @@ public class SettingFrom extends javax.swing.JFrame {
         });
         initUserInfo();
     }
-    
+
     public void setLogOutCallBack(LogOutCallBack _logOutCallBack) {
         this._logOutCallBack = _logOutCallBack;
     }
 
     public interface LogOutCallBack {
+
         void logout();
     }
-    
+
     public void setExitCallBack(ExitCallBack _exitCallBack) {
         this._exitCallBack = _exitCallBack;
     }
 
     public interface ExitCallBack {
+
         void exit();
     }
 
@@ -62,7 +66,7 @@ public class SettingFrom extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }
-    
+
     private String userQuery() {
         return "SELECT * FROM `users` WHERE id = " + _userId;
     }
@@ -89,10 +93,11 @@ public class SettingFrom extends javax.swing.JFrame {
         contactLb = new javax.swing.JLabel();
         createLb = new javax.swing.JLabel();
         updateLb = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        logOutBtn.setText("Logout");
+        logOutBtn.setText("Đăng xuất");
         logOutBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 logOutBtnActionPerformed(evt);
@@ -111,39 +116,49 @@ public class SettingFrom extends javax.swing.JFrame {
 
         jLabel6.setText("Ngày cập nhật:");
 
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(102, 51, 0));
+        jLabel7.setText("CÀI ĐẶT");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(190, 190, 190)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel6))
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(fullNameLb)
-                    .addComponent(birthDayLb)
-                    .addComponent(emailLb)
-                    .addComponent(contactLb)
-                    .addComponent(createLb)
-                    .addComponent(updateLb))
-                .addContainerGap(306, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(logOutBtn)
-                .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(191, 191, 191)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel6))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(fullNameLb)
+                                    .addComponent(birthDayLb)
+                                    .addComponent(emailLb)
+                                    .addComponent(contactLb)
+                                    .addComponent(createLb)
+                                    .addComponent(updateLb)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(52, 52, 52)
+                                .addComponent(jLabel7))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(logOutBtn)))
+                .addContainerGap(270, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(logOutBtn)
-                .addGap(50, 50, 50)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7)
+                .addGap(61, 61, 61)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(fullNameLb))
@@ -167,7 +182,9 @@ public class SettingFrom extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(updateLb))
-                .addContainerGap(91, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addComponent(logOutBtn)
+                .addContainerGap())
         );
 
         pack();
@@ -195,6 +212,7 @@ public class SettingFrom extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JButton logOutBtn;
     private javax.swing.JLabel updateLb;
     // End of variables declaration//GEN-END:variables

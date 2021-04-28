@@ -1,5 +1,4 @@
 
-import java.util.Date;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -72,7 +71,7 @@ public class Equipment_Details {
     public void setSupplier_id(int _supplier_id) {
         this._supplier_id = _supplier_id;
     }
-    
+
     private String _id;
     private String _name;
     private String _picture;

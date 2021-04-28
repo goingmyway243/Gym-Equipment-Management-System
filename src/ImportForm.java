@@ -17,40 +17,39 @@ import javax.swing.table.DefaultTableModel;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Nguyen Hai Dang
  */
 public class ImportForm extends javax.swing.JFrame {
+
     public Vector<String> checkIDList = new Vector<>();
+
     /**
      * Creates new form ImportForm
      */
     public ImportForm(MainMenu mainMenu, int userID) {
         _mainMenuForm = mainMenu;
         _userID = userID;
-        
+
         initComponents();
         initRenderer();
     }
-    
-    public void addEquiment(String id, String name, String status, int price, String picture, String detailID)
-    {
+
+    public void addEquiment(String id, String name, String status, int price, String picture, String detailID) {
         DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
         boolean isOdd = _count % 2 == 0 ? true : false;
-        
+
         _imgGenerator.ImageColumnSetting(table);
-        
+
         tableModel.addRow(new Object[]{id, name, status, price,
-                                       _imgGenerator.createLabel(picture,isOdd), 
-                                       detailID});
+            _imgGenerator.createLabel(picture, isOdd),
+            detailID});
         checkIDList.add(id.substring(0, 3));
         _count++;
     }
-    
-    private void saveEquipmentToDatabase(String id, String status, String detailID, int importID, java.sql.Timestamp timeStamp)
-    {
+
+    private void saveEquipmentToDatabase(String id, String status, String detailID, int importID, java.sql.Timestamp timeStamp) {
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "insert into gym_equipments values (?,?,?,?,?,?)";
         try {
@@ -66,9 +65,8 @@ public class ImportForm extends javax.swing.JFrame {
             Logger.getLogger(ImportForm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void saveImportDetailToDatabase(int importID, int userID, java.sql.Date date)
-    {
+
+    private void saveImportDetailToDatabase(int importID, int userID, java.sql.Date date) {
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "insert into import_details values (?,?,?)";
         try {
@@ -81,26 +79,23 @@ public class ImportForm extends javax.swing.JFrame {
             Logger.getLogger(ImportForm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void initRenderer()
-    {
+
+    private void initRenderer() {
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
+
         loadImportID();
         loadUserName();
         importDateTextField.setText(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
     }
-    
-    private void loadUserName()
-    {
+
+    private void loadUserName() {
         Connection connector = ConnectMysql.getConnectDB();
-        String sql = "select * from users where id = '"+_userID+"'";
+        String sql = "select * from users where id = '" + _userID + "'";
         String userName = "";
         try {
             ResultSet rs = connector.createStatement().executeQuery(sql);
-            if(rs.next())
-            {
+            if (rs.next()) {
                 userName = rs.getString("lastName") + " " + rs.getString("firstName");
             }
         } catch (SQLException ex) {
@@ -108,24 +103,21 @@ public class ImportForm extends javax.swing.JFrame {
         }
         userNameTextField.setText(userName);
     }
-    
-    private void loadImportID()
-    {
+
+    private void loadImportID() {
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select count(id) as countID from import_details";
         int id = 1;
         try {
             ResultSet rs = connector.createStatement().executeQuery(sql);
-            if(rs.next())
-            {
-                id = rs.getInt("countID")+1;
+            if (rs.next()) {
+                id = rs.getInt("countID") + 1;
             }
         } catch (SQLException ex) {
             Logger.getLogger(ImportForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        importIDTextField.setText(id+"");
+        importIDTextField.setText(id + "");
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -149,6 +141,7 @@ public class ImportForm extends javax.swing.JFrame {
         importDateTextField = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -209,6 +202,10 @@ public class ImportForm extends javax.swing.JFrame {
         jButton2.setText("Xóa");
         jButton2.setEnabled(false);
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel1.setText("TẠO PHIẾU NHẬP");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -243,11 +240,17 @@ public class ImportForm extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 675, Short.MAX_VALUE)))
                         .addGap(19, 19, 19))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(320, 320, 320))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(22, 22, 22)
+                .addComponent(jLabel1)
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(importIDLabel)
                     .addComponent(importIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -264,7 +267,7 @@ public class ImportForm extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jButton2))
                     .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(saveButton)
                     .addComponent(cancelButton)
@@ -281,13 +284,11 @@ public class ImportForm extends javax.swing.JFrame {
         java.sql.Timestamp timeStamp = new java.sql.Timestamp(new Date().getTime());
         java.sql.Date date = new java.sql.Date(new Date().getTime());
         int importID = Integer.valueOf(importIDTextField.getText());
-        
-        if(table.getRowCount()>0)
-        {
-            saveImportDetailToDatabase(importID,_userID,date);
-        
-            for(int i=0; i<table.getRowCount(); i++)
-            {
+
+        if (table.getRowCount() > 0) {
+            saveImportDetailToDatabase(importID, _userID, date);
+
+            for (int i = 0; i < table.getRowCount(); i++) {
                 id = table.getValueAt(i, 0).toString();
                 status = table.getValueAt(i, 2).toString();
                 detailID = table.getValueAt(i, 5).toString();
@@ -301,7 +302,7 @@ public class ImportForm extends javax.swing.JFrame {
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        AddEquimentForm addEquimentForm = new AddEquimentForm(this);
+        AddEquipmentForm addEquimentForm = new AddEquipmentForm(this);
         addEquimentForm.setVisible(true);
         addEquimentForm.setLocationRelativeTo(this);
     }//GEN-LAST:event_addButtonActionPerformed
@@ -309,7 +310,7 @@ public class ImportForm extends javax.swing.JFrame {
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
-    
+
     private MainMenu _mainMenuForm = null;
     private ImageGenerator _imgGenerator = new ImageGenerator();
     private int _userID = 0;
@@ -323,6 +324,7 @@ public class ImportForm extends javax.swing.JFrame {
     private javax.swing.JTextField importIDTextField;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JButton saveButton;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JTable table;

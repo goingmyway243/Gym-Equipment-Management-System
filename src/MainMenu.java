@@ -1,8 +1,4 @@
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -10,17 +6,19 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -39,10 +37,10 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     public MainMenu(int userID, String role) {
         initComponents();
         setResizable(false);
+        initTables();
 
         _userID = userID;
         _role = role;
-        loadDatabase();
     }
 
     @Override
@@ -69,10 +67,98 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     //===========================||==========================================
     //======================PRIVATE ZONE=====================================
     //===========================V===========================================
+    private void initTables() {
+        initSorter();
+        initFilter(equipmentsTable);
+        initFilter(importDetailsTable);
+        initFilter(usersTable);
+        initFilter(categoriesTable);
+        initFilter(suppliersTable);
+        loadDatabase();
+    }
+
+    private void initSorter() {
+        equipmentsTable.setAutoCreateRowSorter(true);
+        importDetailsTable.setAutoCreateRowSorter(true);
+        usersTable.setAutoCreateRowSorter(true);
+        categoriesTable.setAutoCreateRowSorter(true);
+        suppliersTable.setAutoCreateRowSorter(true);
+    }
+
+    private void initFilter(JTable table) {
+        TableRowSorter<TableModel> rowSorter = new TableRowSorter<>(table.getModel());
+        table.setRowSorter(rowSorter);
+
+        searchTextField.getDocument().addDocumentListener(new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = searchTextField.getText();
+
+                if (text.trim().length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    if (filterComboBox.getSelectedItem().toString().equals("Toàn bộ")) {
+                        rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                    } else {
+                        int column = filterComboBox.getSelectedIndex() - 1;
+                        if (_selectedTable == 1 || _selectedTable == 4) {
+                            column = column > 1 ? column + 1 : column;
+                        }
+                        rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, column));
+                    }
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = searchTextField.getText();
+
+                if (text.trim().length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+    }
+
+    private void initFilterComboBox(int currentTableIndex) {
+        filterComboBox.removeAllItems();
+        filterComboBox.addItem("Toàn bộ");
+
+        JTable table;
+        if (currentTableIndex == 1) {
+            table = equipmentsTable;
+        } else if (currentTableIndex == 2) {
+            table = importDetailsTable;
+        } else if (currentTableIndex == 3) {
+            table = usersTable;
+        } else if (currentTableIndex == 4) {
+            table = categoriesTable;
+        } else {
+            table = suppliersTable;
+        }
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            String columnName = table.getColumnName(i);
+            if (columnName.equals("Hình ảnh")) {
+                continue;
+            }
+            filterComboBox.addItem(columnName);
+        }
+    }
+
     private void loadUserInfos() {
         DefaultTableModel tableModel = (DefaultTableModel) usersTable.getModel();
         tableModel.setNumRows(0);
 
+        SimpleDateFormat dateFormater = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select * from users";
         Vector vector;
@@ -87,7 +173,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 vector.add(rs.getString("email"));
                 vector.add(rs.getString("contactNumber"));
                 vector.add(rs.getString("profilePicture"));
-                vector.add(rs.getTimestamp("updated_at"));
+                vector.add(dateFormater.format(rs.getTimestamp("updated_at")));
                 tableModel.addRow(vector);
             }
             usersTable.setModel(tableModel);
@@ -128,6 +214,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         DefaultTableModel tableModel = (DefaultTableModel) importDetailsTable.getModel();
         tableModel.setNumRows(0);
 
+        SimpleDateFormat dateFormater = new SimpleDateFormat("dd-MM-yyyy");
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select * from import_details";
         Vector vector;
@@ -138,7 +225,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 vector = new Vector();
                 vector.add(rs.getInt("id"));
                 vector.add(rs.getInt("user_id"));
-                vector.add(rs.getDate("date_import"));
+                vector.add(dateFormater.format(rs.getDate("date_import")));
                 tableModel.addRow(vector);
             }
             importDetailsTable.setModel(tableModel);
@@ -154,14 +241,17 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         tableModel.setNumRows(0);
         _imgGenerator.ImageColumnSetting(equipmentsTable);
 
+        SimpleDateFormat dateFormater = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select * from gym_equipments";
         Vector vector;
         try {
             PreparedStatement ps = connector.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
+            int dem = 1;
+            boolean isOdd;
             while (rs.next()) {
-                boolean isOdd = tableModel.getRowCount() + 1 % 2 == 0 ? true : false;
+                isOdd = dem % 2 != 0;
                 String imagePath = getEquipmentImage(rs.getString("detail_id"));
 
                 vector = new Vector();
@@ -170,8 +260,9 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 vector.add(_imgGenerator.createLabel(imagePath, isOdd));
                 vector.add(rs.getString("detail_id"));
                 vector.add(rs.getInt("import_id"));
-                vector.add(rs.getTimestamp("updated_at"));
+                vector.add(dateFormater.format(rs.getTimestamp("updated_at")));
                 tableModel.addRow(vector);
+                dem++;
             }
             equipmentsTable.setModel(tableModel);
             rs.close();
@@ -188,9 +279,9 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         _imgGenerator.ImageColumnSetting(categoriesTable);
 
         int dem = 1;
-
+        boolean isOdd;
         for (Equipment_Details equipment_info : lED) {
-            boolean isOdd = dem % 2 != 0;
+            isOdd = dem % 2 != 0;
 
             tblEquipDetails.addRow(new Object[]{equipment_info.getId(), equipment_info.getName(),
                 equipment_info.getPicture() == null ? _imgGenerator.createLabel("Không có hình ảnh", isOdd) : _imgGenerator.createLabel(equipment_info.getPicture(), isOdd),
@@ -223,14 +314,29 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         Point p = evt.getPoint();
         int row = table.rowAtPoint(p);
         int column = table.columnAtPoint(p);
-        if (column == 2 && row <= lED.size()) {
-            if (lED.get(row).getPicture() != null) {
-                ShowImageFrame sIF = ShowImageFrame.getObj();
-                sIF.setVisible(true);
-                String image = _imageFolderPath + lED.get(row).getPicture();
-                sIF.getShowImageLbl().setIcon(ImageGenerator.ResizeImage(image, sIF.getShowImageLbl()));
+
+        if (table == categoriesTable) {
+            if (column == 2 && row <= lED.size()) {
+                if (lED.get(row).getPicture() != null) {
+                    ShowImageFrame sIF = ShowImageFrame.getObj();
+                    sIF.setVisible(true);
+                    String image = _imageFolderPath + lED.get(row).getPicture();
+                    sIF.getShowImageLbl().setIcon(ImageGenerator.ResizeImage(image, sIF.getShowImageLbl()));
+                }
+            }
+        } else if (table == equipmentsTable) {
+            if (column == 2) {
+                String imagePath = getEquipmentImage(table.getValueAt(row, 3).toString());
+                imagePath = imagePath == null ? "" : imagePath;
+                if (!imagePath.equals("")) {
+                    ShowImageFrame sIF = ShowImageFrame.getObj();
+                    sIF.setVisible(true);
+                    String image = _imageFolderPath + imagePath;
+                    sIF.getShowImageLbl().setIcon(ImageGenerator.ResizeImage(image, sIF.getShowImageLbl()));
+                }
             }
         }
+
     }
 
     /**
@@ -242,7 +348,6 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
         MainDesktopPane = new javax.swing.JDesktopPane();
         titleLabel = new javax.swing.JLabel();
         addCategoryButton = new javax.swing.JButton();
@@ -263,11 +368,8 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         editButton = new javax.swing.JButton();
         removeButton = new javax.swing.JButton();
         searchTextField = new javax.swing.JTextField();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
         searchLabel = new javax.swing.JLabel();
-        sortLabel = new javax.swing.JLabel();
+        filterComboBox = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -460,35 +562,15 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
             }
         });
 
-        searchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                searchTextFieldKeyPressed(evt);
-            }
-        });
-
-        jRadioButton1.setBackground(new java.awt.Color(102, 102, 102));
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jRadioButton1.setText("Tăng dần");
-
-        jRadioButton2.setBackground(new java.awt.Color(102, 102, 102));
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jRadioButton2.setText("Giảm dần");
-
-        jRadioButton3.setBackground(new java.awt.Color(153, 153, 153));
-        buttonGroup1.add(jRadioButton3);
-        jRadioButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jRadioButton3.setSelected(true);
-        jRadioButton3.setText("Toàn bộ");
-
         searchLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         searchLabel.setForeground(new java.awt.Color(204, 204, 255));
         searchLabel.setText("Tìm kiếm");
 
-        sortLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        sortLabel.setForeground(new java.awt.Color(255, 255, 204));
-        sortLabel.setText("Sắp xếp");
+        filterComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                filterComboBoxItemStateChanged(evt);
+            }
+        });
 
         MainDesktopPane.setLayer(titleLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         MainDesktopPane.setLayer(addCategoryButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -499,19 +581,29 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         MainDesktopPane.setLayer(editButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
         MainDesktopPane.setLayer(removeButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
         MainDesktopPane.setLayer(searchTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(jRadioButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(jRadioButton2, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(jRadioButton3, javax.swing.JLayeredPane.DEFAULT_LAYER);
         MainDesktopPane.setLayer(searchLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainDesktopPane.setLayer(sortLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainDesktopPane.setLayer(filterComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout MainDesktopPaneLayout = new javax.swing.GroupLayout(MainDesktopPane);
         MainDesktopPane.setLayout(MainDesktopPaneLayout);
         MainDesktopPaneLayout.setHorizontalGroup(
             MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
-                .addContainerGap(199, Short.MAX_VALUE)
+            .addGroup(MainDesktopPaneLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
                 .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(MainDesktopPaneLayout.createSequentialGroup()
+                        .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(MainDesktopPaneLayout.createSequentialGroup()
+                                .addComponent(searchLabel)
+                                .addGap(18, 18, 18)
+                                .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 485, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(filterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(mainTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 725, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 152, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
+                        .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(197, 197, 197))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(MainDesktopPaneLayout.createSequentialGroup()
                             .addComponent(settingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -523,29 +615,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                                 .addComponent(addSupplierButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(newImportButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(addCategoryButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGap(17, 17, 17)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainDesktopPaneLayout.createSequentialGroup()
-                        .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(MainDesktopPaneLayout.createSequentialGroup()
-                                    .addComponent(jRadioButton1)
-                                    .addGap(138, 138, 138)
-                                    .addComponent(jRadioButton2)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jRadioButton3))
-                                .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 501, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(197, 197, 197))))
-            .addGroup(MainDesktopPaneLayout.createSequentialGroup()
-                .addGap(85, 85, 85)
-                .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchLabel)
-                    .addComponent(sortLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(MainDesktopPaneLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(mainTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 725, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 152, Short.MAX_VALUE))
+                            .addGap(17, 17, 17)))))
         );
         MainDesktopPaneLayout.setVerticalGroup(
             MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -555,14 +625,9 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 .addGap(29, 29, 29)
                 .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchLabel))
-                .addGap(19, 19, 19)
-                .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton3)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jRadioButton1)
-                    .addComponent(sortLabel))
-                .addGap(29, 29, 29)
+                    .addComponent(searchLabel)
+                    .addComponent(filterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(35, 35, 35)
                 .addGroup(MainDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(MainDesktopPaneLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
@@ -602,32 +667,30 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     }//GEN-LAST:event_newImportButtonActionPerformed
 
     private void addCategoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCategoryButtonActionPerformed
-        AddEquimentDetailsForm addEquipmentDetailsForm = new AddEquimentDetailsForm(this);
+        AddEquipmentDetailsForm addEquipmentDetailsForm = AddEquipmentDetailsForm.getObj(this, -1, false);
         addEquipmentDetailsForm.setLocationRelativeTo(this);
         addEquipmentDetailsForm.setVisible(true);
     }//GEN-LAST:event_addCategoryButtonActionPerformed
 
     private void addSupplierButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSupplierButtonActionPerformed
-        AddSupplier addSupplier = new AddSupplier(this, true);
+        AddSupplierForm addSupplier = new AddSupplierForm(this, -1, false, rootPaneCheckingEnabled);
         addSupplier.setLocationRelativeTo(this);
         addSupplier.setVisible(true);
     }//GEN-LAST:event_addSupplierButtonActionPerformed
 
     private void equipmentsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_equipmentsTableMouseClicked
-
         editButton.setEnabled(true);
         removeButton.setEnabled(true);
+        tableImageCellCallback(evt, equipmentsTable);
     }//GEN-LAST:event_equipmentsTableMouseClicked
 
     private void categoriesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categoriesTableMouseClicked
-
         editButton.setEnabled(true);
         removeButton.setEnabled(true);
         tableImageCellCallback(evt, categoriesTable);
     }//GEN-LAST:event_categoriesTableMouseClicked
 
     private void suppliersTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_suppliersTableMouseClicked
-
         editButton.setEnabled(true);
         removeButton.setEnabled(true);
     }//GEN-LAST:event_suppliersTableMouseClicked
@@ -636,7 +699,7 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         switch (_selectedTable) {
             case 1: {
                 String id = equipmentsTable.getValueAt(equipmentsTable.getSelectedRow(), 0).toString();
-                AddEquimentForm addEquimentForm = new AddEquimentForm(this, id);
+                AddEquipmentForm addEquimentForm = new AddEquipmentForm(this, id);
                 addEquimentForm.setVisible(true);
                 addEquimentForm.setLocationRelativeTo(this);
                 break;
@@ -648,9 +711,15 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 break;
             }
             case 4: {
+                int index = categoriesTable.getSelectedRow();
+                AddEquipmentDetailsForm addEquimentDetailsForm = new AddEquipmentDetailsForm(this, index, true);
+                addEquimentDetailsForm.setVisible(true);
                 break;
             }
             case 5: {
+                int id = Integer.parseInt(suppliersTable.getValueAt(suppliersTable.getSelectedRow(), 0).toString());
+                AddSupplierForm addSupplier = new AddSupplierForm(this, id, true, rootPaneCheckingEnabled);
+                addSupplier.setVisible(true);
                 break;
             }
             default:
@@ -708,7 +777,6 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void importDetailsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_importDetailsTableMouseClicked
-
         editButton.setEnabled(false);
         removeButton.setEnabled(true);
     }//GEN-LAST:event_importDetailsTableMouseClicked
@@ -718,17 +786,16 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         removeButton.setEnabled(false);
     }//GEN-LAST:event_usersTableMouseClicked
 
-    private void searchTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyPressed
-        if(searchTextField.getText().equals(""))
-        {
-            loadDatabase();
-        }
-        
-    }//GEN-LAST:event_searchTextFieldKeyPressed
-
     private void mainTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_mainTabbedPaneStateChanged
         _selectedTable = mainTabbedPane.getSelectedIndex() + 1;
+        initFilterComboBox(_selectedTable);
+        editButton.setEnabled(false);
+        removeButton.setEnabled(false);
     }//GEN-LAST:event_mainTabbedPaneStateChanged
+
+    private void filterComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_filterComboBoxItemStateChanged
+        searchTextField.setText("");
+    }//GEN-LAST:event_filterComboBoxItemStateChanged
 
     private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {
         _settingFrom = new SettingFrom(_userID);
@@ -736,7 +803,6 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
         _settingFrom.setExitCallBack(this);
         _settingFrom.setLocationRelativeTo(null);
         _settingFrom.setVisible(true);
-        setEnabled(false);
     }
 
     final String _imageFolderPath = new File("").getAbsolutePath() + "/";
@@ -747,30 +813,25 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
     private DeleteValue _deleter = new DeleteValue();
     private ImageGenerator _imgGenerator = new ImageGenerator();
     private EquipmentDetailsController _eC = new EquipmentDetailsController();
-    ;
     private SupplierController _sC = new SupplierController();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane MainDesktopPane;
     private javax.swing.JButton addCategoryButton;
     private javax.swing.JButton addSupplierButton;
-    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JScrollPane categoriesScrollPane;
     private javax.swing.JTable categoriesTable;
     private javax.swing.JButton editButton;
     private javax.swing.JScrollPane equipmentsScrollPane;
     private javax.swing.JTable equipmentsTable;
+    private javax.swing.JComboBox<String> filterComboBox;
     private javax.swing.JScrollPane importDetailsScrollPane;
     private javax.swing.JTable importDetailsTable;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JTabbedPane mainTabbedPane;
     private javax.swing.JButton newImportButton;
     private javax.swing.JButton removeButton;
     private javax.swing.JLabel searchLabel;
     private javax.swing.JTextField searchTextField;
     private javax.swing.JButton settingButton;
-    private javax.swing.JLabel sortLabel;
     private javax.swing.JScrollPane suppliersScrollPane;
     private javax.swing.JTable suppliersTable;
     private javax.swing.JLabel titleLabel;

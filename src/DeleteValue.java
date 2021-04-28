@@ -12,15 +12,13 @@ import javax.swing.JOptionPane;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Nguyen Hai Dang
  */
 public class DeleteValue {
-   
-    public void deleteEquipment(String id)
-    {
+
+    public void deleteEquipment(String id) {
         String sql = "delete from gym_equipments where id = ?";
         try {
             PreparedStatement ps = _connector.prepareStatement(sql);
@@ -32,11 +30,9 @@ public class DeleteValue {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void deleteImport(int id)
-    {
-        if(!checkImportDetail(id))
-        {
+
+    public void deleteImport(int id) {
+        if (!checkImportDetail(id)) {
             JOptionPane.showMessageDialog(null, "Không thể xóa phiếu nhập \n(tồn tại thiết bị đang quản lý thuộc phiếu này)");
             return;
         }
@@ -51,15 +47,13 @@ public class DeleteValue {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void deleteEquipmentDetail(String id)
-    {
-        if(!checkEquipmentDetail(id))
-        {
-            JOptionPane.showMessageDialog(null, "Không thể xóa loại thiết bị \n(tồn tại thiết bị đang quản lý thuộc loại thiết bị này)"); 
+
+    public void deleteEquipmentDetail(String id) {
+        if (!checkEquipmentDetail(id)) {
+            JOptionPane.showMessageDialog(null, "Không thể xóa loại thiết bị \n(tồn tại thiết bị đang quản lý thuộc loại thiết bị này)");
             return;
         }
-        
+
         String sql = "delete from equipment_details where id = ?";
         try {
             PreparedStatement ps = _connector.prepareStatement(sql);
@@ -71,11 +65,9 @@ public class DeleteValue {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void deleteSupplier(int id)
-    {
-        if(!checkSupplier(id))
-        {
+
+    public void deleteSupplier(int id) {
+        if (!checkSupplier(id)) {
             JOptionPane.showMessageDialog(null, "Không thể xóa nhà cung cấp \n(tồn tại loại thiết bị đang quản lý thuộc nhà cung cấp này)");
             return;
         }
@@ -90,11 +82,9 @@ public class DeleteValue {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void deleteUser(int id)
-    {
-        if(!checkUser(id))
-        {
+
+    public void deleteUser(int id) {
+        if (!checkUser(id)) {
             JOptionPane.showMessageDialog(null, "Không thể xóa thông tin nhân viên hiện tại \n(tồn tại phiếu nhập do nhân viên này quản lý)");
             return;
         }
@@ -109,66 +99,66 @@ public class DeleteValue {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private boolean checkImportDetail(int id)
-    {
+
+    private boolean checkImportDetail(int id) {
         String sql = "select * from gym_equipments where import_id = ?";
         try {
             PreparedStatement ps = _connector.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            if(rs.next())
+            if (rs.next()) {
                 return false;
+            }
         } catch (SQLException ex) {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
     }
-    
-    private boolean checkEquipmentDetail(String id)
-    {
+
+    private boolean checkEquipmentDetail(String id) {
         String sql = "select * from gym_equipments where detail_id = ?";
         try {
             PreparedStatement ps = _connector.prepareStatement(sql);
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
-            if(rs.next())
+            if (rs.next()) {
                 return false;
+            }
         } catch (SQLException ex) {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
     }
-    
-    private boolean checkUser(int id)
-    {
+
+    private boolean checkUser(int id) {
         String sql = "select * from import_details where user_id = ?";
         try {
             PreparedStatement ps = _connector.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            if(rs.next())
+            if (rs.next()) {
                 return false;
+            }
         } catch (SQLException ex) {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
     }
-    
-    private boolean checkSupplier(int id)
-    {
+
+    private boolean checkSupplier(int id) {
         String sql = "select * from equipment_details where supplier_id = ?";
         try {
             PreparedStatement ps = _connector.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            if(rs.next())
+            if (rs.next()) {
                 return false;
+            }
         } catch (SQLException ex) {
             Logger.getLogger(DeleteValue.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
     }
-    
+
     private final Connection _connector = ConnectMysql.getConnectDB();
 }

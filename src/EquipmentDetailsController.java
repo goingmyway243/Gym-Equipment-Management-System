@@ -127,6 +127,6 @@ public class EquipmentDetailsController {
 
         return listOfSuppliersId;
     }
-    
+
     private Connection _con = null;
 }
