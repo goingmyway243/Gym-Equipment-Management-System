@@ -717,8 +717,8 @@ public class MainMenu extends javax.swing.JFrame implements SettingFrom.LogOutCa
                 break;
             }
             case 5: {
-                int id = Integer.parseInt(suppliersTable.getValueAt(suppliersTable.getSelectedRow(), 0).toString());
-                AddSupplierForm addSupplier = new AddSupplierForm(this, id, true, rootPaneCheckingEnabled);
+                int index = suppliersTable.getSelectedRow();
+                AddSupplierForm addSupplier = new AddSupplierForm(this, index, true, rootPaneCheckingEnabled);
                 addSupplier.setVisible(true);
                 break;
             }

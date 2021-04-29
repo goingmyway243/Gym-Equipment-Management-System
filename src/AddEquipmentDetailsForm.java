@@ -403,7 +403,6 @@ public final class AddEquipmentDetailsForm extends javax.swing.JFrame {
         String hinhAnh;
 
         if (_isUpdate) {
-            System.out.println("update");
             if (btnGetImage.getText().equals("Chọn hình ảnh!")) {
                 hinhAnh = null;
             } else if (btnGetImage.getText().contains("/")) {
@@ -412,9 +411,7 @@ public final class AddEquipmentDetailsForm extends javax.swing.JFrame {
                 hinhAnh = "/src/images/" + btnGetImage.getText();
             }
         } else {
-            System.out.println("add");
             if (btnGetImage.getText().equals("Chọn hình ảnh!")) {
-                System.out.println("chọn hình ảnh");
                 hinhAnh = null;
             } else {
                 hinhAnh = "/src/images/" + btnGetImage.getText();
