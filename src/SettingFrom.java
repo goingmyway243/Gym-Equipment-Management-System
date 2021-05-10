@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
  *
  * @author Dell
  */
-public class SettingFrom extends javax.swing.JFrame {
+public class SettingFrom extends javax.swing.JFrame implements CreateLoginInfoForm.ExitCallBack, CreateUserForm.ExitCallBack {
 
     /**
      * Creates new form SettingFrom
@@ -35,6 +35,12 @@ public class SettingFrom extends javax.swing.JFrame {
 
     public void setLogOutCallBack(LogOutCallBack _logOutCallBack) {
         this._logOutCallBack = _logOutCallBack;
+    }
+
+    @Override
+    public void exit() {
+        setEnabled(true);
+        setVisible(true);
     }
 
     public interface LogOutCallBack {
@@ -94,6 +100,8 @@ public class SettingFrom extends javax.swing.JFrame {
         createLb = new javax.swing.JLabel();
         updateLb = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        createUserBtn = new javax.swing.JButton();
+        createLoginBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -119,6 +127,20 @@ public class SettingFrom extends javax.swing.JFrame {
         jLabel7.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(102, 51, 0));
         jLabel7.setText("CÀI ĐẶT");
+
+        createUserBtn.setText("Create user");
+        createUserBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createUserBtnActionPerformed(evt);
+            }
+        });
+
+        createLoginBtn.setText("Create login");
+        createLoginBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createLoginBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -150,8 +172,12 @@ public class SettingFrom extends javax.swing.JFrame {
                                 .addComponent(jLabel7))))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(logOutBtn)))
-                .addContainerGap(270, Short.MAX_VALUE))
+                        .addComponent(logOutBtn)
+                        .addGap(18, 18, 18)
+                        .addComponent(createUserBtn)
+                        .addGap(18, 18, 18)
+                        .addComponent(createLoginBtn)))
+                .addContainerGap(249, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -183,7 +209,10 @@ public class SettingFrom extends javax.swing.JFrame {
                     .addComponent(jLabel6)
                     .addComponent(updateLb))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
-                .addComponent(logOutBtn)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(logOutBtn)
+                    .addComponent(createUserBtn)
+                    .addComponent(createLoginBtn))
                 .addContainerGap())
         );
 
@@ -196,6 +225,22 @@ public class SettingFrom extends javax.swing.JFrame {
         LoginForm.create();
     }//GEN-LAST:event_logOutBtnActionPerformed
 
+    private void createUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createUserBtnActionPerformed
+        CreateUserForm createUserForm = new CreateUserForm();
+        createUserForm.setLocationRelativeTo(null);
+        createUserForm.setVisible(true);
+        createUserForm.setExitCallBack(this);
+        setEnabled(false);
+    }//GEN-LAST:event_createUserBtnActionPerformed
+
+    private void createLoginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createLoginBtnActionPerformed
+        CreateLoginInfoForm createLoginInfoForm = new CreateLoginInfoForm();
+        createLoginInfoForm.setLocationRelativeTo(null);
+        createLoginInfoForm.setVisible(true);
+        createLoginInfoForm.setExitCallBack(this);
+        setEnabled(false);
+    }//GEN-LAST:event_createLoginBtnActionPerformed
+
     private SimpleDateFormat _format = new SimpleDateFormat("dd/MM/yyyy");
     private LogOutCallBack _logOutCallBack = null;
     private ExitCallBack _exitCallBack;
@@ -204,6 +249,8 @@ public class SettingFrom extends javax.swing.JFrame {
     private javax.swing.JLabel birthDayLb;
     private javax.swing.JLabel contactLb;
     private javax.swing.JLabel createLb;
+    private javax.swing.JButton createLoginBtn;
+    private javax.swing.JButton createUserBtn;
     private javax.swing.JLabel emailLb;
     private javax.swing.JLabel fullNameLb;
     private javax.swing.JLabel jLabel1;

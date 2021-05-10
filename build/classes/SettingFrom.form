@@ -56,9 +56,13 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="logOutBtn" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="createUserBtn" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="createLoginBtn" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="270" max="32767" attributes="0"/>
+              <EmptySpace pref="249" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -98,7 +102,11 @@
                   <Component id="updateLb" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="40" max="32767" attributes="0"/>
-              <Component id="logOutBtn" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="logOutBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="createUserBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="createLoginBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -165,6 +173,22 @@
         </Property>
         <Property name="text" type="java.lang.String" value="C&#xc0;I &#x110;&#x1eb6;T"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="createUserBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Create user"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="createUserBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="createLoginBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Create login"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="createLoginBtnActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
