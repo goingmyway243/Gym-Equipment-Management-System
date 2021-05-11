@@ -24,8 +24,8 @@ public class AddEquipmentForm extends javax.swing.JFrame {
     /**
      * Creates new form AddEquimentForm
      */
-    public AddEquipmentForm(MainMenu parent, String id) {
-        _mainMenuForm = parent;
+    public AddEquipmentForm(AdminDashBoard parent, String id) {
+        _admDb = parent;
         _id = id;
 
         initComponents();
@@ -488,8 +488,8 @@ public class AddEquipmentForm extends javax.swing.JFrame {
         if (_detailUpdated) {
             if (_importForm != null) {
                 _importForm.getParent().loadDatabase();
-            } else if (_mainMenuForm != null) {
-                _mainMenuForm.loadDatabase();
+            } else if (_admDb != null) {
+                _admDb.loadDatabase();
             }
         }
     }//GEN-LAST:event_cancelButtonActionPerformed
@@ -532,12 +532,12 @@ public class AddEquipmentForm extends javax.swing.JFrame {
 
         editEquipment(id, status, detailID);
         JOptionPane.showMessageDialog(null, "Chỉnh sửa thành công");
-        _mainMenuForm.loadDatabase();
+        _admDb.loadDatabase();
         this.dispose();
     }//GEN-LAST:event_confirmEditButtonActionPerformed
 
     private ImportForm _importForm = null;
-    private MainMenu _mainMenuForm = null;
+    private AdminDashBoard _admDb = null;
     private String _id;
     private String _imagePath = "";
     private boolean _detailUpdated = false;

@@ -21,6 +21,10 @@ import javax.swing.table.TableColumn;
  */
 public class ImageGenerator {
 
+    public String getImageFolderPath() {
+        return _imageFolderPath;
+    }
+
     public JLabel createLabel(String imageIcon, boolean isOdd) {
         if (imageIcon == null) {
             imageIcon = "";

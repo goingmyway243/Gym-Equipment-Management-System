@@ -1,4 +1,7 @@
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
@@ -30,6 +33,7 @@ public class ShowImageFrame extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.pack();
+        this.setResizable(false);
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -37,7 +41,15 @@ public class ShowImageFrame extends javax.swing.JFrame {
                 showImageLbl.setIcon(null);
                 ShowImageFrame._obj = null;
             }
+        });
 
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent ke) {
+                if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    dispose();
+                }
+            }
         });
     }
 
@@ -55,31 +67,61 @@ public class ShowImageFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         showImageLbl = new javax.swing.JLabel();
+        lbl_close_hover = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
+
+        lbl_close_hover.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_close_hover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close1.png"))); // NOI18N
+        lbl_close_hover.setMaximumSize(new java.awt.Dimension(32, 32));
+        lbl_close_hover.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lbl_close_hoverMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbl_close_hoverMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbl_close_hoverMouseEntered(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(showImageLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(showImageLbl, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(showImageLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(showImageLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void lbl_close_hoverMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_close_hoverMousePressed
+        dispose();
+    }//GEN-LAST:event_lbl_close_hoverMousePressed
+
+    private void lbl_close_hoverMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_close_hoverMouseExited
+        lbl_close_hover.setSize(24, 24);
+        lbl_close_hover.setIcon(ImageGenerator.ResizeImage(new ImageGenerator().getImageFolderPath() + "/src/icon/close1.png", lbl_close_hover));
+    }//GEN-LAST:event_lbl_close_hoverMouseExited
+
+    private void lbl_close_hoverMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_close_hoverMouseEntered
+        lbl_close_hover.setSize(36, 36);
+        lbl_close_hover.setIcon(ImageGenerator.ResizeImage(new ImageGenerator().getImageFolderPath() + "/src/icon/close2.png", lbl_close_hover));
+    }//GEN-LAST:event_lbl_close_hoverMouseEntered
+
     private static ShowImageFrame _obj = null;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lbl_close_hover;
     private javax.swing.JLabel showImageLbl;
     // End of variables declaration//GEN-END:variables
 }

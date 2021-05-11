@@ -504,14 +504,8 @@ public final class AddEquipmentDetailsForm extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Thêm thất  bại");
                 }
             }
-
-            if (_parent.getClass().getName().equals("MainMenu")) {
-                MainMenu mainMenu = (MainMenu) _parent;
-                mainMenu.loadDatabase();
-            } else if (_parent.getClass().getName().equals("AddEquipmentForm")) {
-                AddEquipmentForm addEquipment = (AddEquipmentForm) _parent;
-                addEquipment.loadDetailIDComboBox(maChiTietTB);
-            }
+            AdminDashBoard admDb = (AdminDashBoard) _parent;
+            admDb.loadDatabase();
 
             clearScreen();
             resetField();

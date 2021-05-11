@@ -18,53 +18,53 @@ public class AddSupplierForm extends javax.swing.JDialog {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setTitle("Thêm nhà cung cấp");
-        
+
         _sC = new SupplierController();
         _lS = _sC.getSuppliersInfo();
         _parent = parent;
-        
+
         if (isUpdate && index >= 0) {
             this.setTitle("Cập nhật nhà cung cấp");
             fillOutInfo(index);
         } else {
             txtMaNCC.setText(_lS.get(_lS.size() - 1).getSupplierId() + 1 + "");
         }
-        
+
         txtMaNCC.setEditable(false);
         txtMaNCC.setFocusable(false);
         txtTenNCC.requestFocus();
-        
+
         initAlert();
     }
-    
+
     public final void initAlert() {
         initAlertLabel(alertTNCC);
         initAlertLabel(alertDCNCC);
         initAlertLabel(alertSDTNCC);
     }
-    
+
     public void fillOutInfo(int index) {
         Supplier s = _lS.get(index);
-        
+
         txtMaNCC.setText(s.getSupplierId() + "");
         txtTenNCC.setText(s.getName());
         txtDiaChiNCC.setText(s.getAddress());
         txtSDT.setText(s.getPhoneNumber());
-        
+
         btnConfirm.setText("Cập nhật");
     }
-    
+
     public void initAlertLabel(JLabel label) {
         label.setText("");
         label.setSize(0, 0);
     }
-    
+
     public void createAlert(JLabel label, String alertContent) {
         label.setSize(alertContent.length(), 17);
         label.setText(alertContent);
         label.setVisible(true);
     }
-    
+
     public void resetField() {
         txtTenNCC.setText("");
         txtDiaChiNCC.setText("");
@@ -260,7 +260,7 @@ public class AddSupplierForm extends javax.swing.JDialog {
         String diaChiNCC = txtDiaChiNCC.getText();
         String sdtNCC = txtSDT.getText();
         boolean check = true;
-        
+
         if (tenNCC.length() == 0) {
             createAlert(alertTNCC, "Tên không được để trống");
             check = false;
@@ -269,7 +269,7 @@ public class AddSupplierForm extends javax.swing.JDialog {
             createAlert(alertDCNCC, "Địa chỉ không được để trống");
             check = false;
         }
-        
+
         if (tenNCC.length() < 0 || tenNCC.matches("[^a-zA-Z]+")) {
             createAlert(alertTNCC, "Tên NCC phải là chữ cái");
             check = false;
@@ -278,47 +278,30 @@ public class AddSupplierForm extends javax.swing.JDialog {
             createAlert(alertSDTNCC, "SDT không hợp lệ (10 chữ số)");
             check = false;
         }
-        
+
         if (check) {
             int maNCC = Integer.parseInt(maNCCs);
             Supplier s = new Supplier(maNCC, tenNCC, diaChiNCC, sdtNCC);
             if (_sC.isIdExist(maNCC)) {
                 if (_sC.updateSupplier(s)) {
                     JOptionPane.showMessageDialog(this, "Cập nhật thành công");
-                    if (_parent.getClass().getName().equals("AddEquipmentDetailsForm")) {
-                        AddEquipmentDetailsForm aEF = (AddEquipmentDetailsForm) _parent;
-                        aEF.getSupplierList();
-                        MainMenu mainMenu = (MainMenu) aEF.getParent();
-                        mainMenu.loadDatabase();
-                    }
-                    if (_parent.getClass().getName().equals("MainMenu")) {
-                        MainMenu mainMenu = (MainMenu) _parent;
-                        mainMenu.loadDatabase();
-                    }
-                    resetField();
-                    this.dispose();
+                    AdminDashBoard admDb = (AdminDashBoard) _parent;
+                    admDb.loadDatabase();
                 } else {
                     JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
                 }
             } else {
                 if (_sC.addNewSupplier(s)) {
                     JOptionPane.showMessageDialog(this, "Thêm thành công");
-                    if (_parent.getClass().getName().equals("AddEquipmentDetailsForm")) {
-                        AddEquipmentDetailsForm aEF = (AddEquipmentDetailsForm) _parent;
-                        aEF.getSupplierList();
-                        MainMenu mainMenu = (MainMenu) aEF.getParent();
-                        mainMenu.loadDatabase();
-                    }
-                    if (_parent.getClass().getName().equals("MainMenu")) {
-                        MainMenu mainMenu = (MainMenu) _parent;
-                        mainMenu.loadDatabase();
-                    }
-                    resetField();
-                    this.dispose();
+                    AdminDashBoard admDb = (AdminDashBoard) _parent;
+                    admDb.loadDatabase();
+                    admDb.getSupplierList();
                 } else {
                     JOptionPane.showMessageDialog(this, "Thêm thất bại");
                 }
             }
+            resetField();
+            this.dispose();
         }
     }//GEN-LAST:event_btnConfirmActionPerformed
 
@@ -351,10 +334,11 @@ public class AddSupplierForm extends javax.swing.JDialog {
             initAlertLabel(alertSDTNCC);
         }
     }//GEN-LAST:event_txtSDTKeyReleased
-    
+
     private SupplierController _sC = null;
     private List<Supplier> _lS;
     private java.awt.Frame _parent;
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel alertDCNCC;
     private javax.swing.JLabel alertSDTNCC;

@@ -28,8 +28,8 @@ public class ImportForm extends javax.swing.JFrame {
     /**
      * Creates new form ImportForm
      */
-    public ImportForm(MainMenu mainMenu, int userID) {
-        _mainMenuForm = mainMenu;
+    public ImportForm(AdminDashBoard admDb, int userID) {
+        _admDb = admDb;
         _userID = userID;
 
         initComponents();
@@ -49,9 +49,9 @@ public class ImportForm extends javax.swing.JFrame {
         _count++;
     }
     
-    public MainMenu getParent()
+    public AdminDashBoard getParent()
     {
-        return _mainMenuForm;
+        return _admDb;
     }
 
     private void saveEquipmentToDatabase(String id, String status, String detailID, int importID, java.sql.Timestamp timeStamp) {
@@ -302,7 +302,7 @@ public class ImportForm extends javax.swing.JFrame {
             System.out.println("Lưu vào CSDL thành công");
         }
         JOptionPane.showMessageDialog(null, "Lưu vào CSDL thành công");
-        _mainMenuForm.loadDatabase();
+        _admDb.loadDatabase();
         this.dispose();
     }//GEN-LAST:event_saveButtonActionPerformed
 
@@ -316,7 +316,7 @@ public class ImportForm extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    private MainMenu _mainMenuForm = null;
+    private AdminDashBoard _admDb = null;
     private ImageGenerator _imgGenerator = new ImageGenerator();
     private int _userID = 0;
     private int _count = 0;
