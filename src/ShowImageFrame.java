@@ -1,7 +1,6 @@
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
@@ -33,15 +32,6 @@ public class ShowImageFrame extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.pack();
-        this.setResizable(false);
-
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent we) {
-                showImageLbl.setIcon(null);
-                ShowImageFrame._obj = null;
-            }
-        });
 
         addKeyListener(new KeyAdapter() {
             @Override
@@ -106,6 +96,10 @@ public class ShowImageFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void lbl_close_hoverMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_close_hoverMousePressed
+        showImageLbl.setIcon(null);
+        ShowImageFrame._obj = null;
+        remove(lbl_close_hover);
+        repaint();
         dispose();
     }//GEN-LAST:event_lbl_close_hoverMousePressed
 

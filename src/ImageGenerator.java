@@ -52,6 +52,7 @@ public class ImageGenerator {
 
     public void ImageColumnSetting(javax.swing.JTable table) {
         table.getColumn("Hình ảnh").setCellRenderer(new imageTableCellRenderer());
+
     }
 
     class imageTableCellRenderer implements TableCellRenderer {
@@ -61,6 +62,7 @@ public class ImageGenerator {
             TableColumn tb = table.getColumn("Hình ảnh");
             tb.setMaxWidth(150);
             tb.setMinWidth(120);
+
             table.setRowHeight(50);
 
             return (Component) value;

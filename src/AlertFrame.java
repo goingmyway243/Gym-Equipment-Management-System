@@ -21,7 +21,6 @@ public class AlertFrame extends javax.swing.JFrame {
      */
     public AlertFrame(String text) {
         initComponents();
-        System.out.println("hey");
 
         setAlwaysOnTop(true);
         Insets toolHeight = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
@@ -35,9 +34,8 @@ public class AlertFrame extends javax.swing.JFrame {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < srcSize.height * 1 / 2 - getHeight(); i++) {
+                for (int i = 0; i < srcSize.height * 1 / 2 - getHeight()*2 - 36; i++) {
                     setLocation(srcSize.width - toolHeight.top - getWidth() + 10, srcSize.height - toolHeight.top - getHeight() - i);
-//                    repaint();
                     try {
                         Thread.sleep(10);
                     } catch (InterruptedException ex) {

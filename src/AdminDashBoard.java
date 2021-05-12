@@ -8,6 +8,7 @@ import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,24 +18,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.RowFilter;
 import javax.swing.border.Border;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -50,40 +46,110 @@ public class AdminDashBoard extends javax.swing.JFrame {
     /**
      * Creates new form AdminDashBoard
      */
-    Border defaultBorder = BorderFactory.createMatteBorder(1, 0, 1, 0, new Color(120, 128, 181));
-    //yellow border form menu items        
-    Border borderColor = BorderFactory.createMatteBorder(1, 0, 1, 0, new Color(215, 220, 234));
+    Border defaultBorder = BorderFactory.createMatteBorder(1, 0, 1, 0, new Color(45, 53, 60));
+    Border borderColor = BorderFactory.createMatteBorder(1, 0, 1, 0, new Color(255, 255, 255));
 
-    JLabel[] menuLabels = new JLabel[10];
-
+    JLabel[] menuLabels = new JLabel[8];
     JPanel[] panels = new JPanel[7];
-
     int hour, minute, second;
 
-    public AdminDashBoard() {
+    public JPanel getPnl_eqsDetail() {
+        return pnl_eqsDetail;
+    }
+
+    public JPanel getPnl_suppliers() {
+        return pnl_suppliers;
+    }
+
+    public int getSelectedTable() {
+        return _selectedTable;
+    }
+
+    public JLabel getLbl_menuItem_4() {
+        return lbl_menuItem_4;
+    }
+
+    public JLabel getLbl_menuItem_5() {
+        return lbl_menuItem_5;
+    }
+
+    public JTable getCategoriesTable() {
+        return categoriesTable;
+    }
+
+    public JTable getSuppliersTable() {
+        return suppliersTable;
+    }
+
+    public DeleteValue getDeleter() {
+        return _deleter;
+    }
+
+    public JTable getEquipmentsTable() {
+        return equipmentsTable;
+    }
+
+    public JTable getImportDetailsTable() {
+        return importDetailsTable;
+    }
+
+    public JTable getUsersTable() {
+        return usersTable;
+    }
+
+    public JButton getBtnSupplierConfirm() {
+        return btnSupplierConfirm;
+    }
+
+    public Button getBtn_confirmCategories() {
+        return btn_confirmCategories;
+    }
+
+    public JLabel getLbl_themCTTB() {
+        return lbl_themCTTB;
+    }
+
+    public JLabel getLbl_themNCC() {
+        return lbl_themNCC;
+    }
+
+    public void setIsCategoriesUpdate(boolean _isCategoriesUpdate) {
+        this._isCategoriesUpdate = _isCategoriesUpdate;
+    }
+
+    public int getUserID() {
+        return _userID;
+    }
+
+    public Button getButton6() {
+        return button6;
+    }
+
+    public boolean isIsPopupShow() {
+        return _isPopupShow;
+    }
+
+    public void setIsPopupShow(boolean _isPopupShow) {
+        this._isPopupShow = _isPopupShow;
     }
 
     public AdminDashBoard(int userID, String role) {
-
         initComponents();
-        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+        Dimension srcSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(srcSize.width / 2 - getWidth() / 2 - 100, srcSize.height / 2 - getHeight() / 2);
 
         _userID = userID;
         _role = role;
         _listOfSuppliers = _sC.getSuppliersInfo();
 
-        lbl_appLogo.setIcon(ImageGenerator.ResizeImage(new ImageGenerator().getImageFolderPath() + "/src/icon/appLogo.jpg", lbl_appLogo));
+        lbl_appLogo.setIcon(ImageGenerator.ResizeImage(new ImageGenerator().getImageFolderPath() + "/src/icon/appLogo.png", lbl_appLogo));
 
-        Border panelBorder = BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(242, 243, 248));
+        Border panelBorder = BorderFactory.createMatteBorder(0, 0, 6, 0, new Color(242, 243, 248));
         pnl_logoAndName.setBorder(panelBorder);
 
-        Border containerBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(120, 128, 181));
-        pnl_container.setBorder(containerBorder);
-
-        //populate the menuLabels array
+        //populate the menuLabels array        
         menuLabels[0] = lbl_menuItem_1;
         menuLabels[1] = lbl_menuItem_2;
         menuLabels[2] = lbl_menuItem_3;
@@ -92,8 +158,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         menuLabels[5] = lbl_menuItem_6;
         menuLabels[6] = lbl_menuItem_7;
         menuLabels[7] = lbl_menuItem_8;
-        menuLabels[8] = lbl_time;
-        menuLabels[9] = lbl_date;
 
         panels[0] = pnl_dashboard;
         panels[1] = pnl_users;
@@ -103,19 +167,17 @@ public class AdminDashBoard extends javax.swing.JFrame {
         panels[5] = pnl_imports;
         panels[6] = pnl_settings;
 
-        panels[0].setVisible(
-                true);
-        for (int i = 1;
-                i < panels.length;
-                i++) {
+        panels[0].setVisible(true);
+
+        for (int i = 1; i < panels.length; i++) {
             panels[i].setVisible(false);
         }
 
-        addActionToMenuLabels();
+        addActionToLabelsInAppBarPanel();
 
-        initTables();
-
+        _this = this;
         loadUserInfo();
+        initTables();
 
         theader(categoriesTable);
         theader(usersTable);
@@ -130,7 +192,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
         initCategoriesAlert();
         initSuppliersAlert();
-        btnConfirm.setText("Thêm");
+        btn_confirmCategories.setText("Thêm");
         btnGetImage.setText("Chọn hình ảnh!");
 
         getSupplierList();
@@ -165,10 +227,10 @@ public class AdminDashBoard extends javax.swing.JFrame {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         lbl_date.setText("     " + sdf.format(date));
-
+        lbl_close_hover.setIcon(ImageGenerator.ResizeImage(new ImageGenerator().getImageFolderPath() + "/src/icon/close3.png", lbl_close_hover));
     }
 
-    private void initRendererForEdit(String id) {
+    public void initRendererForEdit(String id) {
         initRenderer();
         loadCurrentData(id);
         equipmentIDTextField.setText(id);
@@ -360,10 +422,12 @@ public class AdminDashBoard extends javax.swing.JFrame {
     }
 
     public void fillOutCategoriesInfo(String id) {
-
         int dem = 0;
+        _listOfEquipmentDetails = _eC.getListEquipmentDetails();
+
         for (Equipment_Details eD : _listOfEquipmentDetails) {
             if (eD.getId().equals(id)) {
+                System.out.println("true");
                 for (Supplier s : _listOfSuppliers) {
                     if (s.getSupplierId() == eD.getSupplier_id()) {
                         cbNhaCungCap.setSelectedIndex(dem);
@@ -387,7 +451,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
                 txtGia.setText(eD.getPrice() + "");
                 txtThoiGianBH.setText(eD.getWarranty_time() + "");
-                btnConfirm.setText("Cập nhật");
+                btn_confirmCategories.setText("Cập nhật");
                 break;
             }
         }
@@ -414,19 +478,16 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
     public void setLabelBackground(JLabel label) {
         for (JLabel menuLabel : menuLabels) {
-            menuLabel.setBackground(new Color(120, 128, 181));
-            menuLabel.setForeground(Color.white);
+            menuLabel.setBackground(new Color(45, 53, 60));
+            menuLabel.setForeground(new Color(255, 255, 255));
         }
 
-        label.setBackground(Color.white);
-        label.setForeground(new Color(120, 128, 181));
+        label.setBackground(new Color(255, 255, 255));
+        label.setForeground(new Color(45, 53, 60));
     }
 
-    public void addActionToMenuLabels() {
-        //get labels in the appBar menu
-        Component[] components = pnl_appBar.getComponents();
-
-        for (Component component : components) {
+    public void addActionToLabelsInAppBarPanel() {
+        for (Component component : menuLabels) {
             if (component instanceof JLabel) {
 
                 JLabel label = (JLabel) component;
@@ -438,36 +499,53 @@ public class AdminDashBoard extends javax.swing.JFrame {
                         switch (label.getText().trim()) {
                             case "Trang chủ":
                                 showPanel(pnl_dashboard);
-                                filterComboBox.removeAllItems();
+                                if (_sideBarFunctionFrm != null) {
+                                    _sideBarFunctionFrm.getFilterComboBox().removeAllItems();
+                                }
                                 break;
                             case "Nhân viên":
                                 showPanel(pnl_users);
                                 _selectedTable = 3;
-                                initFilterComboBox(_selectedTable);
+                                if (_sideBarFunctionFrm != null) {
+                                    _sideBarFunctionFrm.initFilterComboBox(_selectedTable);
+                                }
                                 break;
                             case "Thiết bị":
                                 showPanel(pnl_equipments);
                                 _selectedTable = 1;
-                                initFilterComboBox(_selectedTable);
+                                if (_sideBarFunctionFrm != null) {
+                                    _sideBarFunctionFrm.initFilterComboBox(_selectedTable);
+                                }
+
                                 break;
                             case "Chi tiết thiết bị":
                                 showPanel(pnl_eqsDetail);
                                 _selectedTable = 4;
-                                initFilterComboBox(_selectedTable);
+                                if (_sideBarFunctionFrm != null) {
+                                    _sideBarFunctionFrm.initFilterComboBox(_selectedTable);
+                                }
+
                                 break;
                             case "Nhà cung cấp":
                                 showPanel(pnl_suppliers);
                                 _selectedTable = 5;
-                                initFilterComboBox(_selectedTable);
+                                if (_sideBarFunctionFrm != null) {
+                                    _sideBarFunctionFrm.initFilterComboBox(_selectedTable);
+                                }
                                 break;
                             case "Đơn nhập":
                                 showPanel(pnl_imports);
                                 _selectedTable = 2;
-                                initFilterComboBox(_selectedTable);
+                                if (_sideBarFunctionFrm != null) {
+                                    _sideBarFunctionFrm.initFilterComboBox(_selectedTable);
+                                }
                                 break;
                             case "Thống kê":
-                                DrawGraph.createAndShowGui();
-                                new PieChart();
+                                if (!_isPopupShow) {
+                                    DrawGraph.createAndShowGui();
+                                    new PieChart(_this).start();
+                                    _isPopupShow = true;
+                                }
                                 break;
                             case "Cài đặt":
                                 showPanel(pnl_settings);
@@ -538,13 +616,8 @@ public class AdminDashBoard extends javax.swing.JFrame {
         cbNhaCungCap.setSelectedIndex(0);
     }
 
-    private void initTables() {
+    public void initTables() {
         initSorter();
-        initFilter(equipmentsTable);
-        initFilter(importDetailsTable);
-        initFilter(usersTable);
-        initFilter(categoriesTable);
-        initFilter(suppliersTable);
         loadDatabase();
     }
 
@@ -554,81 +627,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         usersTable.setAutoCreateRowSorter(true);
         categoriesTable.setAutoCreateRowSorter(true);
         suppliersTable.setAutoCreateRowSorter(true);
-    }
-
-    private void initFilter(JTable table) {
-        TableRowSorter<TableModel> rowSorter = new TableRowSorter<>(table.getModel());
-        table.setRowSorter(rowSorter);
-
-        searchTextField.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                String text = searchTextField.getText();
-
-                if (text.trim().length() == 0) {
-                    rowSorter.setRowFilter(null);
-                } else {
-                    if (filterComboBox.getSelectedItem().toString().equals("Toàn bộ")) {
-                        rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                    } else {
-                        int column = filterComboBox.getSelectedIndex() - 1;
-                        if (_selectedTable == 1 || _selectedTable == 4) {
-                            column = column > 1 ? column + 1 : column;
-                        }
-                        rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, column));
-                    }
-                }
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                String text = searchTextField.getText();
-
-                if (text.trim().length() == 0) {
-                    rowSorter.setRowFilter(null);
-                } else {
-                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        });
-    }
-
-    private void initFilterComboBox(int currentTableIndex) {
-        filterComboBox.removeAllItems();
-        filterComboBox.addItem("Toàn bộ");
-
-        JTable table;
-        switch (currentTableIndex) {
-            case 1:
-                table = equipmentsTable;
-                break;
-            case 2:
-                table = importDetailsTable;
-                break;
-            case 3:
-                table = usersTable;
-                break;
-            case 4:
-                table = categoriesTable;
-                break;
-            default:
-                table = suppliersTable;
-                break;
-        }
-
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            String columnName = table.getColumnName(i);
-            if (columnName.equals("Hình ảnh")) {
-                continue;
-            }
-            filterComboBox.addItem(columnName);
-        }
     }
 
     private void loadUserInfos() {
@@ -866,8 +864,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
             tblEquipDetails.addRow(new Object[]{equipment_info.getId(), equipment_info.getName(),
                 equipment_info.getPicture() == null ? _imgGenerator.createLabel("Không có hình ảnh", isOdd) : _imgGenerator.createLabel(equipment_info.getPicture(), isOdd),
                 equipment_info.getPrice(), equipment_info.getWarranty_time() + " năm",
-                _listOfSuppliers.get(equipment_info.getSupplier_id()).getName()
-            });
+                _listOfSuppliers.get(equipment_info.getSupplier_id()).getName(),});
             dem++;
         }
     }
@@ -954,6 +951,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_logoAndName = new javax.swing.JPanel();
         lbl_appLogo = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
         lbl_menuItem_2 = new javax.swing.JLabel();
         lbl_menuItem_3 = new javax.swing.JLabel();
         lbl_menuItem_4 = new javax.swing.JLabel();
@@ -964,17 +962,10 @@ public class AdminDashBoard extends javax.swing.JFrame {
         lbl_menuItem_8 = new javax.swing.JLabel();
         lbl_time = new javax.swing.JLabel();
         lbl_date = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
         pnl_function = new javax.swing.JPanel();
         lbl_close_hover = new javax.swing.JLabel();
-        searchTextField = new javax.swing.JTextField();
-        filterComboBox = new javax.swing.JComboBox<>();
-        editButton = new javax.swing.JButton();
-        removeButton = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel36 = new javax.swing.JLabel();
-        button2 = new Button();
-        button3 = new Button();
-        button4 = new Button();
+        button6 = new Button();
         pnl_dashboard = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
@@ -1044,14 +1035,12 @@ public class AdminDashBoard extends javax.swing.JFrame {
         button1 = new Button();
         pnl_eqsDetail = new javax.swing.JPanel();
         txtTenThietBi = new javax.swing.JTextField();
-        btnRefreshCTTB = new javax.swing.JButton();
         jLabel22 = new javax.swing.JLabel();
         alertMCTTB = new javax.swing.JLabel();
         txtGia = new javax.swing.JTextField();
         alertTTB = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
         alertNCC = new javax.swing.JLabel();
-        btnConfirm = new javax.swing.JButton();
         alertGia = new javax.swing.JLabel();
         lbl_themCTTB = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
@@ -1067,6 +1056,8 @@ public class AdminDashBoard extends javax.swing.JFrame {
         btnGetImage = new Button();
         categoriesScrollPane = new javax.swing.JScrollPane();
         categoriesTable = new javax.swing.JTable();
+        button5 = new Button();
+        btn_confirmCategories = new Button();
         pnl_suppliers = new javax.swing.JPanel();
         suppliersScrollPane = new javax.swing.JScrollPane();
         suppliersTable = new javax.swing.JTable();
@@ -1093,16 +1084,23 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
         pnl_container.setBackground(new java.awt.Color(255, 255, 255));
 
-        pnl_appBar.setBackground(new java.awt.Color(120, 128, 181));
+        pnl_appBar.setBackground(new java.awt.Color(45, 53, 60));
 
-        pnl_logoAndName.setBackground(new java.awt.Color(120, 128, 181));
+        pnl_logoAndName.setBackground(new java.awt.Color(45, 53, 60));
+        pnl_logoAndName.setPreferredSize(new java.awt.Dimension(230, 105));
 
-        lbl_appLogo.setBackground(new java.awt.Color(120, 128, 181));
+        lbl_appLogo.setBackground(new java.awt.Color(45, 53, 60));
         lbl_appLogo.setOpaque(true);
 
-        jLabel8.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(228, 231, 241));
-        jLabel8.setText("My Application");
+        jLabel8.setFont(new java.awt.Font("Roboto", 1, 16)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(30, 215, 96));
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel8.setText("QUẢN LÝ THIẾT BỊ");
+
+        jLabel15.setFont(new java.awt.Font("Roboto", 1, 16)); // NOI18N
+        jLabel15.setForeground(new java.awt.Color(30, 215, 96));
+        jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel15.setText("PHÒNG GYM");
 
         javax.swing.GroupLayout pnl_logoAndNameLayout = new javax.swing.GroupLayout(pnl_logoAndName);
         pnl_logoAndName.setLayout(pnl_logoAndNameLayout);
@@ -1112,19 +1110,24 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lbl_appLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE))
+                .addGroup(pnl_logoAndNameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
+                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)))
         );
         pnl_logoAndNameLayout.setVerticalGroup(
             pnl_logoAndNameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_logoAndNameLayout.createSequentialGroup()
-                .addContainerGap(26, Short.MAX_VALUE)
-                .addGroup(pnl_logoAndNameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(28, Short.MAX_VALUE)
+                .addGroup(pnl_logoAndNameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnl_logoAndNameLayout.createSequentialGroup()
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lbl_appLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23))
+                .addGap(15, 15, 15))
         );
 
-        lbl_menuItem_2.setBackground(new java.awt.Color(120, 128, 181));
+        lbl_menuItem_2.setBackground(new java.awt.Color(45, 53, 60));
         lbl_menuItem_2.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_menuItem_2.setForeground(new java.awt.Color(255, 255, 255));
         lbl_menuItem_2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/profile.png"))); // NOI18N
@@ -1132,7 +1135,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         lbl_menuItem_2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_menuItem_2.setOpaque(true);
 
-        lbl_menuItem_3.setBackground(new java.awt.Color(120, 128, 181));
+        lbl_menuItem_3.setBackground(new java.awt.Color(45, 53, 60));
         lbl_menuItem_3.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_menuItem_3.setForeground(new java.awt.Color(255, 255, 255));
         lbl_menuItem_3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/punching-bag.png"))); // NOI18N
@@ -1140,7 +1143,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         lbl_menuItem_3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_menuItem_3.setOpaque(true);
 
-        lbl_menuItem_4.setBackground(new java.awt.Color(120, 128, 181));
+        lbl_menuItem_4.setBackground(new java.awt.Color(45, 53, 60));
         lbl_menuItem_4.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_menuItem_4.setForeground(new java.awt.Color(255, 255, 255));
         lbl_menuItem_4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/details.png"))); // NOI18N
@@ -1148,7 +1151,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         lbl_menuItem_4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_menuItem_4.setOpaque(true);
 
-        lbl_menuItem_5.setBackground(new java.awt.Color(120, 128, 181));
+        lbl_menuItem_5.setBackground(new java.awt.Color(45, 53, 60));
         lbl_menuItem_5.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_menuItem_5.setForeground(new java.awt.Color(255, 255, 255));
         lbl_menuItem_5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/inventory.png"))); // NOI18N
@@ -1156,7 +1159,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         lbl_menuItem_5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_menuItem_5.setOpaque(true);
 
-        lbl_menuItem_1.setBackground(new java.awt.Color(120, 128, 181));
+        lbl_menuItem_1.setBackground(new java.awt.Color(45, 53, 60));
         lbl_menuItem_1.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_menuItem_1.setForeground(new java.awt.Color(255, 255, 255));
         lbl_menuItem_1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/business-report.png"))); // NOI18N
@@ -1164,7 +1167,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         lbl_menuItem_1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_menuItem_1.setOpaque(true);
 
-        lbl_menuItem_6.setBackground(new java.awt.Color(120, 128, 181));
+        lbl_menuItem_6.setBackground(new java.awt.Color(45, 53, 60));
         lbl_menuItem_6.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_menuItem_6.setForeground(new java.awt.Color(255, 255, 255));
         lbl_menuItem_6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/import.png"))); // NOI18N
@@ -1172,7 +1175,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         lbl_menuItem_6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_menuItem_6.setOpaque(true);
 
-        lbl_menuItem_7.setBackground(new java.awt.Color(120, 128, 181));
+        lbl_menuItem_7.setBackground(new java.awt.Color(45, 53, 60));
         lbl_menuItem_7.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_menuItem_7.setForeground(new java.awt.Color(255, 255, 255));
         lbl_menuItem_7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/settings.png"))); // NOI18N
@@ -1185,7 +1188,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
             }
         });
 
-        lbl_menuItem_8.setBackground(new java.awt.Color(120, 128, 181));
+        lbl_menuItem_8.setBackground(new java.awt.Color(45, 53, 60));
         lbl_menuItem_8.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_menuItem_8.setForeground(new java.awt.Color(255, 255, 255));
         lbl_menuItem_8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/analytics.png"))); // NOI18N
@@ -1198,53 +1201,52 @@ public class AdminDashBoard extends javax.swing.JFrame {
             }
         });
 
-        lbl_time.setBackground(new java.awt.Color(120, 128, 181));
+        lbl_time.setBackground(new java.awt.Color(45, 53, 60));
         lbl_time.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_time.setForeground(new java.awt.Color(255, 255, 255));
-        lbl_time.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/clock.png"))); // NOI18N
-        lbl_time.setText("    Thời gian");
-        lbl_time.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_time.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_time.setText("   Thời gian");
+        lbl_time.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         lbl_time.setOpaque(true);
-        lbl_time.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbl_timeMouseClicked(evt);
-            }
-        });
+        lbl_time.setPreferredSize(new java.awt.Dimension(98, 26));
 
-        lbl_date.setBackground(new java.awt.Color(120, 128, 181));
+        lbl_date.setBackground(new java.awt.Color(45, 53, 60));
         lbl_date.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_date.setForeground(new java.awt.Color(255, 255, 255));
-        lbl_date.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/clock.png"))); // NOI18N
-        lbl_date.setText("    Ngày");
-        lbl_date.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_date.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_date.setText("   Ngày");
+        lbl_date.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         lbl_date.setOpaque(true);
-        lbl_date.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbl_dateMouseClicked(evt);
-            }
-        });
+        lbl_date.setPreferredSize(new java.awt.Dimension(62, 26));
+
+        jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/clock.png"))); // NOI18N
 
         javax.swing.GroupLayout pnl_appBarLayout = new javax.swing.GroupLayout(pnl_appBar);
         pnl_appBar.setLayout(pnl_appBarLayout);
         pnl_appBarLayout.setHorizontalGroup(
             pnl_appBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnl_logoAndName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnl_logoAndName, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
             .addComponent(lbl_menuItem_2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(lbl_menuItem_5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(lbl_menuItem_3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(lbl_menuItem_4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(lbl_menuItem_1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(lbl_menuItem_7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(lbl_menuItem_6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(lbl_menuItem_8, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-            .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(lbl_date, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lbl_menuItem_8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_appBarLayout.createSequentialGroup()
+                .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addGroup(pnl_appBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                    .addComponent(lbl_date, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addComponent(lbl_menuItem_1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnl_appBarLayout.setVerticalGroup(
             pnl_appBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnl_appBarLayout.createSequentialGroup()
-                .addComponent(pnl_logoAndName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pnl_logoAndName, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_menuItem_1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lbl_menuItem_2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1260,20 +1262,21 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 .addComponent(lbl_menuItem_8, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lbl_menuItem_7, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lbl_time, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lbl_date, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(93, 93, 93)
+                .addGroup(pnl_appBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(pnl_appBarLayout.createSequentialGroup()
+                        .addComponent(lbl_time, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lbl_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
-        pnl_function.setBackground(new java.awt.Color(120, 128, 181));
+        pnl_function.setBackground(new java.awt.Color(45, 53, 60));
         pnl_function.setPreferredSize(new java.awt.Dimension(1200, 115));
 
-        lbl_close_hover.setBackground(new java.awt.Color(255, 255, 255));
+        lbl_close_hover.setBackground(new java.awt.Color(45, 53, 60));
         lbl_close_hover.setForeground(new java.awt.Color(255, 255, 255));
         lbl_close_hover.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_close_hover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close1.png"))); // NOI18N
-        lbl_close_hover.setOpaque(true);
         lbl_close_hover.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lbl_close_hoverMouseClicked(evt);
@@ -1286,76 +1289,16 @@ public class AdminDashBoard extends javax.swing.JFrame {
             }
         });
 
-        filterComboBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                filterComboBoxItemStateChanged(evt);
-            }
-        });
-
-        editButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/edit.png"))); // NOI18N
-        editButton.setEnabled(false);
-        editButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        editButton.setPreferredSize(new java.awt.Dimension(107, 23));
-        editButton.addActionListener(new java.awt.event.ActionListener() {
+        button6.setBackground(new java.awt.Color(195, 20, 50));
+        button6.setForeground(new java.awt.Color(255, 255, 255));
+        button6.setText("Chức năng");
+        button6.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        button6.setGradientBackgroundColor(new java.awt.Color(36, 11, 54));
+        button6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        button6.setRounded(true);
+        button6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editButtonActionPerformed(evt);
-            }
-        });
-
-        removeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/delete.png"))); // NOI18N
-        removeButton.setEnabled(false);
-        removeButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        removeButton.setPreferredSize(new java.awt.Dimension(107, 23));
-        removeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeButtonActionPerformed(evt);
-            }
-        });
-
-        jLabel6.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(197, 255, 253));
-        jLabel6.setText("Chức Năng:");
-
-        jLabel36.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel36.setForeground(new java.awt.Color(197, 255, 253));
-        jLabel36.setText("Tìm Kiếm:");
-
-        button2.setBackground(new java.awt.Color(195, 20, 50));
-        button2.setForeground(new java.awt.Color(255, 255, 255));
-        button2.setText("Thêm Loại Thiết Bị");
-        button2.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        button2.setGradientBackgroundColor(new java.awt.Color(36, 11, 54));
-        button2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        button2.setRounded(true);
-        button2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button2ActionPerformed(evt);
-            }
-        });
-
-        button3.setBackground(new java.awt.Color(195, 20, 50));
-        button3.setForeground(new java.awt.Color(255, 255, 255));
-        button3.setText("Thêm Nhà Cung Cấp");
-        button3.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        button3.setGradientBackgroundColor(new java.awt.Color(36, 11, 54));
-        button3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        button3.setRounded(true);
-        button3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button3ActionPerformed(evt);
-            }
-        });
-
-        button4.setBackground(new java.awt.Color(195, 20, 50));
-        button4.setForeground(new java.awt.Color(255, 255, 255));
-        button4.setText("Tạo Phiếu Nhập");
-        button4.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        button4.setGradientBackgroundColor(new java.awt.Color(36, 11, 54));
-        button4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        button4.setRounded(true);
-        button4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button4ActionPerformed(evt);
+                button6ActionPerformed(evt);
             }
         });
 
@@ -1364,62 +1307,19 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_functionLayout.setHorizontalGroup(
             pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnl_functionLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnl_functionLayout.createSequentialGroup()
-                        .addComponent(jLabel36, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_functionLayout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addGroup(pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(pnl_functionLayout.createSequentialGroup()
-                        .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(button3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(25, 25, 25)
-                        .addComponent(button4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 485, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnl_functionLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(filterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnl_functionLayout.createSequentialGroup()
-                        .addGap(221, 221, 221)
-                        .addComponent(removeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 74, Short.MAX_VALUE))))
+                .addContainerGap(1217, Short.MAX_VALUE)
+                .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(pnl_functionLayout.createSequentialGroup()
+                .addGap(1102, 1102, 1102)
+                .addComponent(button6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         pnl_functionLayout.setVerticalGroup(
             pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnl_functionLayout.createSequentialGroup()
-                .addGroup(pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnl_functionLayout.createSequentialGroup()
-                        .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(pnl_functionLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(filterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel36, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGroup(pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_functionLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(removeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(editButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_functionLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(button3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(button4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel6)))))
+                .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 16, Short.MAX_VALUE)
+                .addComponent(button6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1647,7 +1547,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_dashboardLayout.setHorizontalGroup(
             pnl_dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_dashboardLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(250, Short.MAX_VALUE)
                 .addGroup(pnl_dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1708,15 +1608,16 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_usersLayout.setHorizontalGroup(
             pnl_usersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_usersLayout.createSequentialGroup()
-                .addContainerGap(254, Short.MAX_VALUE)
+                .addContainerGap(390, Short.MAX_VALUE)
                 .addComponent(usersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(147, 147, 147))
         );
         pnl_usersLayout.setVerticalGroup(
             pnl_usersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_usersLayout.createSequentialGroup()
-                .addGap(0, 285, Short.MAX_VALUE)
-                .addComponent(usersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(258, Short.MAX_VALUE)
+                .addComponent(usersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(84, 84, 84))
         );
 
         pnl_equipments.setBackground(new java.awt.Color(255, 255, 255));
@@ -1876,7 +1777,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(equipmentsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
         pnl_equipmentsLayout.setVerticalGroup(
             pnl_equipmentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1884,7 +1785,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 .addGap(127, 127, 127)
                 .addComponent(equipmentsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 736, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 766, Short.MAX_VALUE)
         );
 
         pnl_settings.setBackground(new java.awt.Color(254, 217, 155));
@@ -1947,7 +1848,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_settingsLayout.setHorizontalGroup(
             pnl_settingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnl_settingsLayout.createSequentialGroup()
-                .addContainerGap(411, Short.MAX_VALUE)
+                .addContainerGap(419, Short.MAX_VALUE)
                 .addGroup(pnl_settingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_settingsLayout.createSequentialGroup()
                         .addGroup(pnl_settingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -2011,23 +1912,13 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_eqsDetail.setPreferredSize(new java.awt.Dimension(1200, 710));
         pnl_eqsDetail.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        txtTenThietBi.setBackground(new java.awt.Color(247, 247, 247));
         txtTenThietBi.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtTenThietBiKeyReleased(evt);
             }
         });
         pnl_eqsDetail.add(txtTenThietBi, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 160, 200, 40));
-
-        btnRefreshCTTB.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        btnRefreshCTTB.setForeground(new java.awt.Color(0, 0, 255));
-        btnRefreshCTTB.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/refresh.png"))); // NOI18N
-        btnRefreshCTTB.setText("Làm mới");
-        btnRefreshCTTB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRefreshCTTBActionPerformed(evt);
-            }
-        });
-        pnl_eqsDetail.add(btnRefreshCTTB, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 300, -1, -1));
 
         jLabel22.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         jLabel22.setForeground(new java.awt.Color(36, 11, 54));
@@ -2039,7 +1930,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         alertMCTTB.setText("Mã CTBB alert");
         pnl_eqsDetail.add(alertMCTTB, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 130, -1, -1));
 
-        txtGia.setBorder(null);
+        txtGia.setBackground(new java.awt.Color(247, 247, 247));
         txtGia.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtGiaKeyReleased(evt);
@@ -2060,26 +1951,15 @@ public class AdminDashBoard extends javax.swing.JFrame {
         alertNCC.setText("NCC alert");
         pnl_eqsDetail.add(alertNCC, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 200, -1, -1));
 
-        btnConfirm.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        btnConfirm.setForeground(new java.awt.Color(0, 153, 0));
-        btnConfirm.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/plus.png"))); // NOI18N
-        btnConfirm.setText("Thêm");
-        btnConfirm.setToolTipText("");
-        btnConfirm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnConfirmActionPerformed(evt);
-            }
-        });
-        pnl_eqsDetail.add(btnConfirm, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 300, 135, -1));
-
         alertGia.setForeground(new java.awt.Color(255, 0, 0));
         alertGia.setText("Giá TB alert");
         pnl_eqsDetail.add(alertGia, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 130, -1, -1));
 
-        lbl_themCTTB.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        lbl_themCTTB.setFont(new java.awt.Font("Dialog", 1, 20)); // NOI18N
         lbl_themCTTB.setForeground(new java.awt.Color(51, 51, 255));
+        lbl_themCTTB.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_themCTTB.setText("THÊM CHI TIẾT THIẾT BỊ");
-        pnl_eqsDetail.add(lbl_themCTTB, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 12, -1, -1));
+        pnl_eqsDetail.add(lbl_themCTTB, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 10, 1240, 40));
 
         jLabel26.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         jLabel26.setForeground(new java.awt.Color(36, 11, 54));
@@ -2090,7 +1970,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         alertTGBH.setText("TGBH alert");
         pnl_eqsDetail.add(alertTGBH, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 270, -1, -1));
 
-        txtThoiGianBH.setBorder(null);
+        txtThoiGianBH.setBackground(new java.awt.Color(247, 247, 247));
         txtThoiGianBH.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtThoiGianBHKeyReleased(evt);
@@ -2116,6 +1996,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         jLabel30.setText("năm");
         pnl_eqsDetail.add(jLabel30, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 250, -1, -1));
 
+        txtMaChiTietTB.setBackground(new java.awt.Color(247, 247, 247));
         txtMaChiTietTB.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtMaChiTietTBKeyReleased(evt);
@@ -2173,8 +2054,34 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
         pnl_eqsDetail.add(categoriesScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 370, 1250, 390));
 
+        button5.setBackground(new java.awt.Color(255, 255, 255));
+        button5.setForeground(new java.awt.Color(0, 0, 255));
+        button5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/refresh.png"))); // NOI18N
+        button5.setText("Làm mới");
+        button5.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        button5.setRounded(true);
+        button5.setSelected(true);
+        button5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button5ActionPerformed(evt);
+            }
+        });
+        pnl_eqsDetail.add(button5, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 300, 135, 45));
+
+        btn_confirmCategories.setBackground(new java.awt.Color(255, 255, 255));
+        btn_confirmCategories.setForeground(new java.awt.Color(0, 153, 0));
+        btn_confirmCategories.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/plus.png"))); // NOI18N
+        btn_confirmCategories.setText("Thêm");
+        btn_confirmCategories.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        btn_confirmCategories.setRounded(true);
+        btn_confirmCategories.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_confirmCategoriesActionPerformed(evt);
+            }
+        });
+        pnl_eqsDetail.add(btn_confirmCategories, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 300, 145, 45));
+
         pnl_suppliers.setBackground(new java.awt.Color(255, 255, 255));
-        pnl_suppliers.setPreferredSize(new java.awt.Dimension(1200, 710));
 
         suppliersTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -2300,14 +2207,14 @@ public class AdminDashBoard extends javax.swing.JFrame {
                     .addGroup(pnl_suppliersLayout.createSequentialGroup()
                         .addGap(187, 187, 187)
                         .addComponent(lbl_themNCC)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 138, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 195, Short.MAX_VALUE)
                 .addComponent(suppliersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 608, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         pnl_suppliersLayout.setVerticalGroup(
             pnl_suppliersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(suppliersScrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(pnl_suppliersLayout.createSequentialGroup()
-                .addContainerGap(86, Short.MAX_VALUE)
+                .addContainerGap(128, Short.MAX_VALUE)
                 .addComponent(lbl_themNCC)
                 .addGap(100, 100, 100)
                 .addGroup(pnl_suppliersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -2367,21 +2274,21 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_imports.setLayout(pnl_importsLayout);
         pnl_importsLayout.setHorizontalGroup(
             pnl_importsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1189, Short.MAX_VALUE)
+            .addGap(0, 1256, Short.MAX_VALUE)
             .addGroup(pnl_importsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(pnl_importsLayout.createSequentialGroup()
-                    .addGap(0, 235, Short.MAX_VALUE)
+                    .addGap(0, 268, Short.MAX_VALUE)
                     .addComponent(importDetailsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 234, Short.MAX_VALUE)))
+                    .addGap(0, 268, Short.MAX_VALUE)))
         );
         pnl_importsLayout.setVerticalGroup(
             pnl_importsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 710, Short.MAX_VALUE)
+            .addGap(0, 764, Short.MAX_VALUE)
             .addGroup(pnl_importsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(pnl_importsLayout.createSequentialGroup()
-                    .addGap(0, 142, Short.MAX_VALUE)
+                    .addGap(0, 170, Short.MAX_VALUE)
                     .addComponent(importDetailsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 143, Short.MAX_VALUE)))
+                    .addGap(0, 169, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout pnl_containerLayout = new javax.swing.GroupLayout(pnl_container);
@@ -2390,79 +2297,79 @@ public class AdminDashBoard extends javax.swing.JFrame {
             pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnl_containerLayout.createSequentialGroup()
                 .addComponent(pnl_appBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnl_function, javax.swing.GroupLayout.DEFAULT_SIZE, 1249, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pnl_function, javax.swing.GroupLayout.DEFAULT_SIZE, 1257, Short.MAX_VALUE)
                     .addComponent(pnl_dashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 499, Short.MAX_VALUE)
+                    .addGap(0, 232, Short.MAX_VALUE)
                     .addComponent(pnl_users, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 235, Short.MAX_VALUE)
+                    .addGap(0, 232, Short.MAX_VALUE)
                     .addComponent(pnl_equipments, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 236, Short.MAX_VALUE)
-                    .addComponent(pnl_settings, javax.swing.GroupLayout.PREFERRED_SIZE, 1249, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGap(0, 232, Short.MAX_VALUE)
+                    .addComponent(pnl_settings, javax.swing.GroupLayout.PREFERRED_SIZE, 1257, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 236, Short.MAX_VALUE)
-                    .addComponent(pnl_eqsDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 1249, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGap(0, 232, Short.MAX_VALUE)
+                    .addComponent(pnl_eqsDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 1257, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 285, Short.MAX_VALUE)
+                    .addGap(0, 232, Short.MAX_VALUE)
                     .addComponent(pnl_suppliers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(284, 284, 284)
-                    .addComponent(pnl_imports, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
+                    .addGap(0, 233, Short.MAX_VALUE)
+                    .addComponent(pnl_imports, javax.swing.GroupLayout.PREFERRED_SIZE, 1256, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
         pnl_containerLayout.setVerticalGroup(
             pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnl_appBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnl_containerLayout.createSequentialGroup()
                 .addComponent(pnl_function, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnl_dashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(pnl_dashboard, javax.swing.GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE))
+            .addGroup(pnl_containerLayout.createSequentialGroup()
+                .addComponent(pnl_appBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 149, Short.MAX_VALUE)
+                    .addGap(0, 112, Short.MAX_VALUE)
                     .addComponent(pnl_users, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 123, Short.MAX_VALUE)
-                    .addComponent(pnl_equipments, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGap(0, 113, Short.MAX_VALUE)
+                    .addComponent(pnl_equipments, javax.swing.GroupLayout.PREFERRED_SIZE, 766, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 111, Short.MAX_VALUE)
+                    .addGap(0, 117, Short.MAX_VALUE)
                     .addComponent(pnl_settings, javax.swing.GroupLayout.PREFERRED_SIZE, 762, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
+                    .addGap(0, 113, Short.MAX_VALUE)
+                    .addComponent(pnl_eqsDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 766, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
                     .addGap(0, 115, Short.MAX_VALUE)
-                    .addComponent(pnl_eqsDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 758, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(pnl_suppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 764, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 137, Short.MAX_VALUE)
-                    .addComponent(pnl_suppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 722, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(124, 124, 124)
-                    .addComponent(pnl_imports, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
+                    .addGap(0, 115, Short.MAX_VALUE)
+                    .addComponent(pnl_imports, javax.swing.GroupLayout.PREFERRED_SIZE, 764, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnl_container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnl_container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnl_container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnl_container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -2478,39 +2385,35 @@ public class AdminDashBoard extends javax.swing.JFrame {
     }//GEN-LAST:event_lbl_close_hoverMouseEntered
 
     private void lbl_close_hoverMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_close_hoverMouseExited
-        lbl_close_hover.setSize(24, 24);
-        lbl_close_hover.setIcon(ImageGenerator.ResizeImage(new ImageGenerator().getImageFolderPath() + "/src/icon/close1.png", lbl_close_hover));
+        lbl_close_hover.setSize(40, 32);
+        lbl_close_hover.setIcon(ImageGenerator.ResizeImage(new ImageGenerator().getImageFolderPath() + "/src/icon/close3.png", lbl_close_hover));
     }//GEN-LAST:event_lbl_close_hoverMouseExited
 
     private void usersTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_usersTableMouseClicked
-        editButton.setEnabled(false);
-        removeButton.setEnabled(false);
+        _sideBarFunctionFrm.getEditButton().setEnabled(false);
+        _sideBarFunctionFrm.getRemoveButton().setEnabled(false);
     }//GEN-LAST:event_usersTableMouseClicked
 
     private void equipmentsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_equipmentsTableMouseClicked
-        editButton.setEnabled(true);
-        removeButton.setEnabled(true);
+        _sideBarFunctionFrm.getEditButton().setEnabled(true);
+        _sideBarFunctionFrm.getRemoveButton().setEnabled(true);
         tableImageCellCallback(evt, equipmentsTable);
     }//GEN-LAST:event_equipmentsTableMouseClicked
 
     private void importDetailsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_importDetailsTableMouseClicked
-        editButton.setEnabled(false);
-        removeButton.setEnabled(true);
+        _sideBarFunctionFrm.getEditButton().setEnabled(false);
+        _sideBarFunctionFrm.getRemoveButton().setEnabled(true);
     }//GEN-LAST:event_importDetailsTableMouseClicked
 
     private void suppliersTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_suppliersTableMouseClicked
-        editButton.setEnabled(true);
-        removeButton.setEnabled(true);
+        _sideBarFunctionFrm.getEditButton().setEnabled(true);
+        _sideBarFunctionFrm.getRemoveButton().setEnabled(true);
     }//GEN-LAST:event_suppliersTableMouseClicked
 
     private void lbl_menuItem_7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_menuItem_7MouseClicked
 
 
     }//GEN-LAST:event_lbl_menuItem_7MouseClicked
-
-    private void filterComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_filterComboBoxItemStateChanged
-        searchTextField.setText("");
-    }//GEN-LAST:event_filterComboBoxItemStateChanged
 
     private void lbl_menuItem_8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_menuItem_8MouseClicked
         // TODO add your handling code here:
@@ -2521,96 +2424,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         LoginForm.create();
     }//GEN-LAST:event_button1ActionPerformed
 
-    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        try {
-            switch (_selectedTable) {
-                case 1: {
-                    String id = equipmentsTable.getValueAt(equipmentsTable.getSelectedRow(), 0).toString();
-                    initRendererForEdit(id);
-                    break;
-                }
-                case 2: {
-                    break;
-                }
-                case 3: {
-                    break;
-                }
-                case 4: {
-                    String id = categoriesTable.getValueAt(categoriesTable.getSelectedRow(), 0).toString();
-                    System.out.println(id);
-                    fillOutCategoriesInfo(id);
-
-                    _isCategoriesUpdate = true;
-                    lbl_themCTTB.setText("CẬP NHẬT THIẾT BỊ");
-                    btnConfirm.setText("Cập nhật");
-                    break;
-                }
-                case 5: {
-                    String index = suppliersTable.getValueAt(suppliersTable.getSelectedRow(), 0).toString();
-                    int idx = Integer.parseInt(index);
-                    fillOutSupplierInfo(idx);
-                    lbl_themNCC.setText("CẬP NHẬT NHÀ CUNG CẤP");
-                    btnSupplierConfirm.setText("Cập nhật");
-                    break;
-                }
-                default:
-                    break;
-            }
-            loadDatabase();
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Vui lòng chọn dòng trước khi edit");
-        }
-
-    }//GEN-LAST:event_editButtonActionPerformed
-
-    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-        int result = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa?", "Cảnh báo!",
-                JOptionPane.YES_NO_OPTION);
-        switch (_selectedTable) {
-            case 1: {
-                if (result == JOptionPane.YES_OPTION) {
-                    String id = equipmentsTable.getValueAt(equipmentsTable.getSelectedRow(), 0).toString();
-                    _deleter.deleteEquipment(id);
-                }
-                break;
-            }
-            case 2: {
-                if (result == JOptionPane.YES_OPTION) {
-                    int id = Integer.valueOf(importDetailsTable.getValueAt(importDetailsTable.getSelectedRow(), 0).toString());
-                    _deleter.deleteImport(id);
-                }
-                break;
-            }
-            case 3: {
-                if (result == JOptionPane.YES_OPTION) {
-                    int id = Integer.valueOf(usersTable.getValueAt(usersTable.getSelectedRow(), 0).toString());
-                    _deleter.deleteUser(id);
-                }
-
-                break;
-            }
-            case 4: {
-                if (result == JOptionPane.YES_OPTION) {
-                    String id = categoriesTable.getValueAt(categoriesTable.getSelectedRow(), 0).toString();
-                    _deleter.deleteEquipmentDetail(id);
-                }
-
-                break;
-            }
-            case 5: {
-                if (result == JOptionPane.YES_OPTION) {
-                    int id = Integer.valueOf(suppliersTable.getValueAt(suppliersTable.getSelectedRow(), 0).toString());
-                    _deleter.deleteSupplier(id);
-                }
-
-                break;
-            }
-            default:
-                break;
-        }
-        loadDatabase();
-    }//GEN-LAST:event_removeButtonActionPerformed
-
     private void txtTenThietBiKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTenThietBiKeyReleased
         String tenTB = txtTenThietBi.getText();
 
@@ -2619,133 +2432,12 @@ public class AdminDashBoard extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtTenThietBiKeyReleased
 
-    private void btnRefreshCTTBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshCTTBActionPerformed
-        resetCategoriesField();
-        initCategoriesAlert();
-        if (_listOfSuppliers.size() != _sC.getSuppliersInfo().size()) {
-            getSupplierList();
-        }
-    }//GEN-LAST:event_btnRefreshCTTBActionPerformed
-
     private void txtGiaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtGiaKeyReleased
         String gia = txtGia.getText();
         if (gia.matches("^[\\d]+$") && Integer.parseInt(gia) >= 10000) {
             initAlertLabel(alertGia);
         }
     }//GEN-LAST:event_txtGiaKeyReleased
-
-    private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmActionPerformed
-        initCategoriesAlert();
-        String maChiTietTB = txtMaChiTietTB.getText();
-        String tenThietbi = txtTenThietBi.getText();
-        String hinhAnh;
-
-        if (_isCategoriesUpdate) {
-            if (btnGetImage.getText().equals("Chọn hình ảnh!")) {
-                hinhAnh = null;
-            } else if (btnGetImage.getText().contains("/")) {
-                hinhAnh = btnGetImage.getText();
-            } else {
-                hinhAnh = "/src/images/" + btnGetImage.getText();
-            }
-        } else {
-            if (btnGetImage.getText().equals("Chọn hình ảnh!")) {
-                hinhAnh = null;
-            } else {
-                hinhAnh = "/src/images/" + btnGetImage.getText();
-            }
-        }
-
-        String gia = txtGia.getText();
-        String thoigianBH = txtThoiGianBH.getText();
-        int selectedNhaCungCap = cbNhaCungCap.getSelectedIndex();
-        int nhaCungCapId = 0;
-
-        boolean check = true;
-
-        if (maChiTietTB.length() == 0) {
-            createAlert(alertMCTTB, "Mã CTTB không được để trống");
-            check = false;
-        }
-        if (tenThietbi.length() == 0) {
-            createAlert(alertTTB, "Tên thiết bị không được để trống");
-            check = false;
-        }
-        if (gia.length() == 0) {
-            createAlert(alertGia, "Giá TB không được để trống");
-            check = false;
-        }
-
-        if (!maChiTietTB.matches("^[a-zA-Z]{3}[\\d]{2}$")) {
-            createAlert(alertMCTTB, "Mã CTTB phải đúng định dạng 3 ký tự chữ và 2 ký tự số");
-            check = false;
-        }
-        if (tenThietbi.length() > 0 && tenThietbi.matches("[^a-zA-Z]+")) {
-            createAlert(alertTTB, "Tên TB không để trống và phải là ký tự chữ");
-            check = false;
-        }
-        if (!gia.matches("\\d+") || Integer.parseInt(gia) < 10000) {
-            createAlert(alertGia, "Giá TB ít nhất là 10000 và là ký tự số");
-            check = false;
-        }
-        if (cbNhaCungCap.getSelectedItem().toString().equals("Thêm nhà cung cấp")) {
-            createAlert(alertNCC, "Chọn 1 nhà cung cấp");
-            check = false;
-        }
-
-        if (maChiTietTB.length() > 5) {
-            createAlert(alertMCTTB, "Mã CTTB không được vượt quá 5 ký tự");
-            check = false;
-        }
-
-        if (!thoigianBH.matches("[\\d]{1,2}")) {
-            createAlert(alertTGBH, "Vui lòng nhập năm từ 0 đến 10");
-            check = false;
-        } else if (Integer.parseInt(thoigianBH) > 10 || Integer.parseInt(thoigianBH) < 0) {
-            createAlert(alertTGBH, "Vui lòng nhập năm từ 0 đến 10");
-            check = false;
-        }
-
-        if (check) {
-            nhaCungCapId = _listOfSuppliers.get(selectedNhaCungCap).getSupplierId();
-            int price = Integer.parseInt(gia);
-            Equipment_Details eD = new Equipment_Details();
-            eD.setId(maChiTietTB.toUpperCase());
-            eD.setName(tenThietbi);
-            eD.setPicture(hinhAnh);
-            eD.setPrice(price);
-            eD.setSupplier_id(nhaCungCapId);
-            if (thoigianBH.length() > 0) {
-                eD.setWarranty_time(Integer.parseInt(thoigianBH));
-            }
-
-            if (_eC.isIdExist(maChiTietTB)) {
-                if (_eC.updateEquipmentDetails(eD)) {
-                    new AlertFrame("Cập nhật thành công").setVisible(true);
-                    try {
-                        if (hinhAnh != null) {
-                            _addImgFrame.saveImage();
-                        }
-                    } catch (NullPointerException e) {
-                        System.out.println("Waiting");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Cập nhật thất  bại");
-                }
-            } else {
-                if (_eC.addNewEquipmentDetails(eD)) {
-                    new AlertFrame("Thêm thành công").setVisible(true);
-                    if (hinhAnh != null) {
-                        _addImgFrame.saveImage();
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Thêm thất  bại");
-                }
-            }
-            loadDatabase();
-            resetCategoriesField();
-        }
-    }//GEN-LAST:event_btnConfirmActionPerformed
 
     private void txtThoiGianBHKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtThoiGianBHKeyReleased
         String thoigianBH = txtThoiGianBH.getText();
@@ -2854,8 +2546,8 @@ public class AdminDashBoard extends javax.swing.JFrame {
     }//GEN-LAST:event_txtDiaChiNCCKeyReleased
 
     private void categoriesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categoriesTableMouseClicked
-        editButton.setEnabled(true);
-        removeButton.setEnabled(true);
+        _sideBarFunctionFrm.getEditButton().setEnabled(true);
+        _sideBarFunctionFrm.getRemoveButton().setEnabled(true);
         tableImageCellCallback(evt, categoriesTable);
     }//GEN-LAST:event_categoriesTableMouseClicked
 
@@ -2919,24 +2611,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
             _importForm.addEquiment(equipmentID, name, status, price, picture, detailID);
         }
         _importForm.getParent().loadDatabase();
-        this.dispose();
     }//GEN-LAST:event_confirmButtonActionPerformed
-
-    private void button2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button2ActionPerformed
-        setLabelBackground(lbl_menuItem_4);
-        showPanel(pnl_eqsDetail);
-    }//GEN-LAST:event_button2ActionPerformed
-
-    private void button3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button3ActionPerformed
-        setLabelBackground(lbl_menuItem_5);
-        showPanel(pnl_suppliers);
-    }//GEN-LAST:event_button3ActionPerformed
-
-    private void button4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button4ActionPerformed
-        ImportForm importForm = new ImportForm(this, _userID);
-        importForm.setLocationRelativeTo(this);
-        importForm.setVisible(true);
-    }//GEN-LAST:event_button4ActionPerformed
 
     private void detailIDComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailIDComboBoxActionPerformed
         if (detailIDComboBox.getSelectedItem() == null) {
@@ -2969,13 +2644,143 @@ public class AdminDashBoard extends javax.swing.JFrame {
         initRenderer();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void lbl_timeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_timeMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_lbl_timeMouseClicked
+    private void button5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button5ActionPerformed
+        resetCategoriesField();
+        initCategoriesAlert();
+        if (_listOfSuppliers.size() != _sC.getSuppliersInfo().size()) {
+            getSupplierList();
+        }
+    }//GEN-LAST:event_button5ActionPerformed
 
-    private void lbl_dateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_dateMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_lbl_dateMouseClicked
+    private void btn_confirmCategoriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_confirmCategoriesActionPerformed
+        initCategoriesAlert();
+        String maChiTietTB = txtMaChiTietTB.getText();
+        String tenThietbi = txtTenThietBi.getText();
+        String hinhAnh;
+
+        if (_isCategoriesUpdate) {
+            if (btnGetImage.getText().equals("Chọn hình ảnh!")) {
+                hinhAnh = null;
+            } else if (btnGetImage.getText().contains("/")) {
+                hinhAnh = btnGetImage.getText();
+            } else {
+                hinhAnh = "/src/images/" + btnGetImage.getText();
+            }
+        } else {
+            if (btnGetImage.getText().equals("Chọn hình ảnh!")) {
+                hinhAnh = null;
+            } else {
+                hinhAnh = "/src/images/" + btnGetImage.getText();
+            }
+        }
+
+        String gia = txtGia.getText();
+        String thoigianBH = txtThoiGianBH.getText();
+        int selectedNhaCungCap = cbNhaCungCap.getSelectedIndex();
+        int nhaCungCapId = 0;
+
+        boolean check = true;
+
+        if (maChiTietTB.length() == 0) {
+            createAlert(alertMCTTB, "Mã CTTB không được để trống");
+            check = false;
+        }
+        if (tenThietbi.length() == 0) {
+            createAlert(alertTTB, "Tên thiết bị không được để trống");
+            check = false;
+        }
+        if (gia.length() == 0) {
+            createAlert(alertGia, "Giá TB không được để trống");
+            check = false;
+        }
+
+        if (!maChiTietTB.matches("^[a-zA-Z]{3}[\\d]{2}$")) {
+            createAlert(alertMCTTB, "Mã CTTB phải đúng định dạng 3 ký tự chữ và 2 ký tự số");
+            check = false;
+        }
+        if (tenThietbi.length() > 0 && tenThietbi.matches("[^a-zA-Z]+")) {
+            createAlert(alertTTB, "Tên TB không để trống và phải là ký tự chữ");
+            check = false;
+        }
+        if (!gia.matches("\\d+") || Integer.parseInt(gia) < 10000) {
+            createAlert(alertGia, "Giá TB ít nhất là 10000 và là ký tự số");
+            check = false;
+        }
+        if (cbNhaCungCap.getSelectedItem().toString().equals("Thêm nhà cung cấp")) {
+            createAlert(alertNCC, "Chọn 1 nhà cung cấp");
+            check = false;
+        }
+
+        if (maChiTietTB.length() > 5) {
+            createAlert(alertMCTTB, "Mã CTTB không được vượt quá 5 ký tự");
+            check = false;
+        }
+
+        if (!thoigianBH.matches("[\\d]{1,2}")) {
+            createAlert(alertTGBH, "Vui lòng nhập năm từ 0 đến 10");
+            check = false;
+        } else if (Integer.parseInt(thoigianBH) > 10 || Integer.parseInt(thoigianBH) < 0) {
+            createAlert(alertTGBH, "Vui lòng nhập năm từ 0 đến 10");
+            check = false;
+        }
+
+        if (check) {
+            nhaCungCapId = _listOfSuppliers.get(selectedNhaCungCap).getSupplierId();
+            int price = Integer.parseInt(gia);
+            Equipment_Details eD = new Equipment_Details();
+            eD.setId(maChiTietTB.toUpperCase());
+            eD.setName(tenThietbi);
+            eD.setPicture(hinhAnh);
+            eD.setPrice(price);
+            eD.setSupplier_id(nhaCungCapId);
+            if (thoigianBH.length() > 0) {
+                eD.setWarranty_time(Integer.parseInt(thoigianBH));
+            }
+
+            if (_eC.isIdExist(maChiTietTB)) {
+                if (_eC.updateEquipmentDetails(eD)) {
+                    new AlertFrame("Cập nhật thành công").setVisible(true);
+                    try {
+                        if (hinhAnh != null) {
+                            _addImgFrame.saveImage();
+                        }
+                        lbl_themCTTB.setText("THÊM THIẾT BỊ");
+                        btn_confirmCategories.setText("Thêm");
+                        txtMaChiTietTB.setFocusable(true);
+                        txtMaChiTietTB.setEditable(true);
+                        txtMaChiTietTB.requestFocus(true);
+
+                    } catch (NullPointerException e) {
+                        System.out.println("Waiting");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Cập nhật thất  bại");
+                }
+            } else {
+                if (_eC.addNewEquipmentDetails(eD)) {
+                    new AlertFrame("Thêm thành công").setVisible(true);
+                    if (hinhAnh != null) {
+                        _addImgFrame.saveImage();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm thất  bại");
+                }
+            }
+            loadDatabase();
+            resetCategoriesField();
+        }
+    }//GEN-LAST:event_btn_confirmCategoriesActionPerformed
+
+    private void button6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button6ActionPerformed
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SideBarFunction sBF = new SideBarFunction(_this, _detailUpdated);
+                _sideBarFunctionFrm = sBF;
+                sBF.setVisible(true);
+            }
+        }).start();
+    }//GEN-LAST:event_button6ActionPerformed
 
     public void fillOutSupplierInfo(int id) {
         for (Supplier s : _listOfSuppliers) {
@@ -2989,7 +2794,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
             }
         }
 
-        btnConfirm.setText("Cập nhật");
+        btn_confirmCategories.setText("Cập nhật");
     }
 
     public void resetSupplierField() {
@@ -3016,7 +2821,10 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
     private List<Equipment_Details> _listOfEquipmentDetails;
     private javax.swing.JFrame _parent;
+    private javax.swing.JFrame _this;
+    private SideBarFunction _sideBarFunctionFrm;
     private boolean _isCategoriesUpdate = false;
+    private boolean _isPopupShow = false;
     private static AddEquipmentDetailsForm _obj = null;
     private String oldPicutre;
     private ImportForm _importForm = null;
@@ -3037,15 +2845,13 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JLabel amountLabel;
     private javax.swing.JTextField amountTextField;
     private javax.swing.JLabel birthDayLb;
-    private javax.swing.JButton btnConfirm;
     private Button btnGetImage;
-    private javax.swing.JButton btnRefreshCTTB;
     private javax.swing.JButton btnRefreshNCC;
     private javax.swing.JButton btnSupplierConfirm;
+    private Button btn_confirmCategories;
     private Button button1;
-    private Button button2;
-    private Button button3;
-    private Button button4;
+    private Button button5;
+    private Button button6;
     private javax.swing.JScrollPane categoriesScrollPane;
     private javax.swing.JTable categoriesTable;
     private javax.swing.JComboBox<String> cbNhaCungCap;
@@ -3062,7 +2868,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JLabel detailIDAlertLabel;
     private javax.swing.JComboBox<String> detailIDComboBox;
     private javax.swing.JLabel detailIDLabel;
-    private javax.swing.JButton editButton;
     private javax.swing.JLabel emailLb;
     private javax.swing.JLabel equipmentIDAlertLabel;
     private javax.swing.JLabel equipmentIDLabel;
@@ -3071,7 +2876,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JTextField equipmentNameTextField;
     private javax.swing.JScrollPane equipmentsScrollPane;
     private javax.swing.JTable equipmentsTable;
-    private javax.swing.JComboBox<String> filterComboBox;
     private javax.swing.JLabel fullNameLb;
     private javax.swing.JScrollPane importDetailsScrollPane;
     private javax.swing.JTable importDetailsTable;
@@ -3082,7 +2886,9 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
@@ -3099,10 +2905,8 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
-    private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -3143,8 +2947,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JPanel pnl_users;
     private javax.swing.JLabel priceLabel;
     private javax.swing.JTextField priceTextField;
-    private javax.swing.JButton removeButton;
-    private javax.swing.JTextField searchTextField;
     private javax.swing.JComboBox<String> statusComboBox;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JLabel supplierLabel;
