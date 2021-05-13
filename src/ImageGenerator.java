@@ -20,11 +20,11 @@ import javax.swing.table.TableColumn;
  * @author Nguyen Hai Dang
  */
 public class ImageGenerator {
-
+    
     public String getImageFolderPath() {
         return _imageFolderPath;
     }
-
+    
     public JLabel createLabel(String imageIcon, boolean isOdd) {
         if (imageIcon == null) {
             imageIcon = "";
@@ -40,35 +40,39 @@ public class ImageGenerator {
         }
         label.setOpaque(true);
         label.setFocusable(true);
-
+        
         if (imageIcon.equals("Không có hình ảnh") || imageIcon.equals("")) {
             label.setText("Không có hình ảnh");
             return label;
         }
-
+        
         label.setIcon(ResizeImage(_imageFolderPath + imageIcon, label));
         return label;
     }
 
+    
     public void ImageColumnSetting(javax.swing.JTable table) {
-        table.getColumn("Hình ảnh").setCellRenderer(new imageTableCellRenderer());
-
+        ImageColumnSetting(table, "Hình ảnh");
     }
-
+    
+    public void ImageColumnSetting(javax.swing.JTable table, String columnName) {
+        table.getColumn(columnName).setCellRenderer(new imageTableCellRenderer());
+    }
+    
     class imageTableCellRenderer implements TableCellRenderer {
-
+        
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             TableColumn tb = table.getColumn("Hình ảnh");
             tb.setMaxWidth(150);
             tb.setMinWidth(120);
-
+            
             table.setRowHeight(50);
-
+            
             return (Component) value;
         }
     }
-
+    
     static public ImageIcon ResizeImage(String imagePath, JLabel label) {
         ImageIcon myImage = new ImageIcon(imagePath);
         Image img = myImage.getImage();
@@ -76,6 +80,6 @@ public class ImageGenerator {
         ImageIcon image = new ImageIcon(newImg);
         return image;
     }
-
+    
     final String _imageFolderPath = new File("").getAbsolutePath() + "/";
 }

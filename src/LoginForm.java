@@ -622,6 +622,7 @@ public class LoginForm extends javax.swing.JFrame {
                 pnl_bg.setVisible(false);
 
                 AdminDashBoard admDb = new AdminDashBoard(_userID, _role);
+                admDb.setLocationRelativeTo(this);
                 AlertFrame alertFrame = new AlertFrame("Đăng nhập thành công!");
 
                 new java.util.Timer().schedule(new TimerTask() {
@@ -634,7 +635,8 @@ public class LoginForm extends javax.swing.JFrame {
                 }, 1000 * 2);
                 alertFrame.setVisible(true);
             });
-        } else {
+        }
+        else {
             createAlert(alertLb, "Sai tên đăng nhập hoặc tài khoản!");
         }
     }//GEN-LAST:event_loginBtnActionPerformed
@@ -666,7 +668,7 @@ public class LoginForm extends javax.swing.JFrame {
 
     private void loginBtn3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtn3ActionPerformed
         String email = txtEmail.getText();
-        String sql = "SELECT email from users where email = ?" ;
+        String sql = "SELECT email from users where email = ?";
         boolean isEmailExist = false;
         try {
             Connection con = ConnectMysql.getConnectDB();
@@ -775,7 +777,7 @@ public class LoginForm extends javax.swing.JFrame {
     }//GEN-LAST:event_txtVerKeyReleased
 
     private void signupBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signupBtnActionPerformed
-        
+
     }//GEN-LAST:event_signupBtnActionPerformed
 
     private void createAlert(JLabel label, String alertContent) {

@@ -43,7 +43,7 @@ public class AddImage extends javax.swing.JFrame {
 
     public JButton _button, browseButton, cancelButton, selectButton;
     public JPanel contentPane;
-
+    
     public static AddImage getObj(JButton button, String title) {
         if (_obj == null) {
             _obj = new AddImage(button, title);
@@ -62,7 +62,12 @@ public class AddImage extends javax.swing.JFrame {
     public void setSelectedFile(File _selectedFile) {
         this._selectedFile = _selectedFile;
     }
-
+    
+    public AddImage()
+    {
+        _fileNameList = new ArrayList<>();
+    }
+    
     public AddImage(JButton button, String title) {
         _imagePath = null;
         setTitle(title);
@@ -306,6 +311,12 @@ public class AddImage extends javax.swing.JFrame {
                 _fileNameList.add(fileEntry.getName());
             }
         }
+    }
+    
+    public ArrayList<String> getFileNameList(final File folder)
+    {
+        listFilesForFolder(folder);
+        return (ArrayList<String>) _fileNameList;
     }
 
     public static void copyFileUsingStream(File source, File dest) throws IOException {

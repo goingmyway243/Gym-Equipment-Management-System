@@ -88,7 +88,7 @@ public class DeleteValue {
             JOptionPane.showMessageDialog(null, "Không thể xóa thông tin nhân viên hiện tại \n(tồn tại phiếu nhập do nhân viên này quản lý)");
             return;
         }
-        String sql = "delete from equipment_details where id = ?";
+        String sql = "delete from users where id = ?";
         try {
             PreparedStatement ps = _connector.prepareStatement(sql);
             ps.setInt(1, id);
