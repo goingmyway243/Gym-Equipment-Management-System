@@ -23,11 +23,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -185,6 +187,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         theader(importDetailsTable);
         theader(equipmentsTable);
         theader(loginInfoTable);
+        theader(importEquipmentTable);
 
         _eC = new EquipmentDetailsController();
         _sC = new SupplierController();
@@ -244,7 +247,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         amountLabel.setVisible(false);
         amountTextField.setVisible(false);
         confirmEditButton.setVisible(true);
-        confirmButton.setVisible(false);
     }
 
     public void loadDetailIDComboBox() {
@@ -273,17 +275,17 @@ public class AdminDashBoard extends javax.swing.JFrame {
         loadDetailIDComboBox();
         detailIDComboBox.setSelectedItem(detailID);
     }
-    
+
     //////////////////////////|///////////////|///////////////////////////////
     //========================| ADD EQUIPMENT | ==============================
     //////////////////////////V///////////////V///////////////////////////////
-    
     private void initRenderer() {
         confirmEditButton.setVisible(false);
 
         setAlertVisible(false);
         loadStatusComboBox();
         loadDetailIDComboBox();
+
         _detailUpdated = false;
     }
 
@@ -381,28 +383,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         }
     }
 
-    private int getMaxEquimentID(String equipmentID) {
-        Connection connector = ConnectMysql.getConnectDB();
-        String sql = "select count(id) as countID from gym_equipments where substring(id,1,3) = '" + equipmentID + "'";
-        int idCount = 1;
-        try {
-            ResultSet rs = connector.createStatement().executeQuery(sql);
-            if (rs.next()) {
-                idCount = rs.getInt("countID");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AddEquipmentForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        for (int i = 0; i < _importForm.checkIDList.size(); i++) {
-            if (equipmentID.equals(_importForm.checkIDList.get(i))) {
-                idCount++;
-            }
-        }
-
-        return idCount;
-    }
-
     private void setAlertVisible(boolean visible) {
         equipmentIDAlertLabel.setVisible(visible);
         amountAlertLabel.setVisible(visible);
@@ -430,25 +410,88 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
         return check;
     }
-    
+
     //////////////////////////^///////////////^///////////////////////////////
     //========================| ADD EQUIPMENT | ==============================
     //////////////////////////|///////////////|///////////////////////////////
-    
-    
-    
     //////////////////////////|///////////////|///////////////////////////////
     //========================| IMPORT DETAIL | ==============================
     //////////////////////////V///////////////V///////////////////////////////
-    
-    
-    
-    
-    
+    public Vector<String> _checkEquipmentIDList = new Vector<>();
+    private int _importCount = 0;
+
+    public void addEquimentForImport(String id, String name, String status, int price, String picture, String detailID) {
+        DefaultTableModel tableModel = (DefaultTableModel) importEquipmentTable.getModel();
+        boolean isOdd = _importCount % 2 == 0 ? true : false;
+
+        _imgGenerator.ImageColumnSetting(importEquipmentTable);
+
+        tableModel.addRow(new Object[]{id, name, status, price,
+            _imgGenerator.createLabel(picture, isOdd),
+            detailID});
+        _checkEquipmentIDList.add(id.substring(0, 3));
+        _importCount++;
+    }
+
+    private void loadImportData() {
+        DefaultTableModel tableModel = (DefaultTableModel) importEquipmentTable.getModel();
+        tableModel.setNumRows(0);
+        loadImportID();
+        importDateTextField.setText(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+        importEditButton.setEnabled(false);
+        importDeleteButton.setEnabled(false);
+        _checkEquipmentIDList.clear();
+    }
+
+    private void loadImportID() {
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "select count(id) as countID from import_details";
+        int id = 1;
+        try {
+            ResultSet rs = connector.createStatement().executeQuery(sql);
+            if (rs.next()) {
+                id = rs.getInt("countID") + 1;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ImportForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        importIDTextField.setText(id + "");
+    }
+
+    private void saveImportDetailToDatabase(int importID, int userID, java.sql.Date date) {
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "insert into import_details values (?,?,?)";
+        try {
+            PreparedStatement ps = connector.prepareStatement(sql);
+            ps.setInt(1, importID);
+            ps.setInt(2, userID);
+            ps.setDate(3, date);
+            ps.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(ImportForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void saveEquipmentToDatabase(String id, String status, String detailID, int importID, java.sql.Timestamp timeStamp) {
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "insert into gym_equipments values (?,?,?,?,?,?)";
+        try {
+            PreparedStatement ps = connector.prepareStatement(sql);
+            ps.setString(1, id);
+            ps.setString(2, status);
+            ps.setString(3, detailID);
+            ps.setInt(4, importID);
+            ps.setTimestamp(5, timeStamp);
+            ps.setTimestamp(6, timeStamp);
+            ps.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(ImportForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     //////////////////////////^///////////////^///////////////////////////////
     //========================| IMPORT DETAIL | ==============================
     //////////////////////////|///////////////|///////////////////////////////
-    
     public void fillOutCategoriesInfo(String id) {
         int dem = 0;
         _listOfEquipmentDetails = _eC.getListEquipmentDetails();
@@ -653,6 +696,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         loginInfoScrollPane.setVisible(false);
         loginInfoPanel.setVisible(false);
         loadDatabase();
+        loadImportData();
     }
 
     private void loadLoginInfos() {
@@ -700,7 +744,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 _imgGenerator.createLabel(user.getProfilePicture(), isOdd),
                 formatter.format(user.getUpdatedAt())
             });
-            System.out.println(user.getProfilePicture());
             dem++;
         }
     }
@@ -927,15 +970,13 @@ public class AdminDashBoard extends javax.swing.JFrame {
         }
 
         if (column == imageColumn) {
-            if(table == equipmentsTable)
-            {
-               imagePath = getEquipmentImage(table.getValueAt(row, 3).toString());
+            if (table == equipmentsTable) {
+                imagePath = getEquipmentImage(table.getValueAt(row, 3).toString());
             }
-            else if(table == categoriesTable)
-            {
+            else if (table == categoriesTable) {
                 imagePath = lED.get(row).getPicture();
             }
-            
+
             imagePath = imagePath == null ? "" : imagePath;
             if (!imagePath.equals("")) {
                 ShowImageFrame sIF = ShowImageFrame.getObj();
@@ -1022,7 +1063,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         equipmentsScrollPane = new javax.swing.JScrollPane();
         equipmentsTable = new javax.swing.JTable();
         jPanel1 = new JPanelGradient2();
-        confirmButton = new javax.swing.JButton();
         amountLabel = new javax.swing.JLabel();
         amountTextField = new javax.swing.JTextField();
         pictureLabel = new javax.swing.JLabel();
@@ -1113,6 +1153,21 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_imports = new javax.swing.JPanel();
         importDetailsScrollPane = new javax.swing.JScrollPane();
         importDetailsTable = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
+        importIDLabel = new javax.swing.JLabel();
+        importIDTextField = new javax.swing.JTextField();
+        importAddButton = new javax.swing.JButton();
+        scrollPane = new javax.swing.JScrollPane();
+        importEquipmentTable = new javax.swing.JTable();
+        importDateLabel = new javax.swing.JLabel();
+        importDateTextField = new javax.swing.JTextField();
+        importEditButton = new javax.swing.JButton();
+        importDeleteButton = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        saveImportButton = new Button();
+        refreshImportButton = new Button();
+        loadImportButton = new Button();
+        makeImportButton = new Button();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -1353,7 +1408,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
             pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnl_functionLayout.createSequentialGroup()
                 .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 26, Short.MAX_VALUE)
+                .addGap(0, 17, Short.MAX_VALUE)
                 .addComponent(button6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1681,14 +1736,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         equipmentsScrollPane.setViewportView(equipmentsTable);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        confirmButton.setText("Xác nhận");
-        confirmButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                confirmButtonActionPerformed(evt);
-            }
-        });
-        jPanel1.add(confirmButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 670, -1, 36));
 
         amountLabel.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
         amountLabel.setText("Số lượng:");
@@ -2329,25 +2376,182 @@ public class AdminDashBoard extends javax.swing.JFrame {
         });
         importDetailsScrollPane.setViewportView(importDetailsTable);
 
+        importIDLabel.setText("Mã phiếu nhập");
+
+        importIDTextField.setEditable(false);
+        importIDTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        importAddButton.setText("Thêm thiết bị");
+        importAddButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importAddButtonActionPerformed(evt);
+            }
+        });
+
+        importEquipmentTable.setAutoCreateRowSorter(true);
+        importEquipmentTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Mã thiết bị", "Tên thiết bị", "Trạng thái", "Giá", "Hình ảnh", "Mã loại thiết bị"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        scrollPane.setViewportView(importEquipmentTable);
+
+        importDateLabel.setText("Ngày nhập");
+
+        importDateTextField.setEditable(false);
+        importDateTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        importEditButton.setText("Sửa");
+        importEditButton.setEnabled(false);
+
+        importDeleteButton.setText("Xóa");
+        importDeleteButton.setEnabled(false);
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel6.setText("TẠO PHIẾU NHẬP");
+
+        saveImportButton.setText("Lưu phiếu");
+        saveImportButton.setGradientBackgroundColor(null);
+        saveImportButton.setRounded(true);
+        saveImportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveImportButtonActionPerformed(evt);
+            }
+        });
+
+        refreshImportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/refresh.png"))); // NOI18N
+        refreshImportButton.setText("Làm mới");
+        refreshImportButton.setRounded(true);
+        refreshImportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshImportButtonActionPerformed(evt);
+            }
+        });
+
+        loadImportButton.setText("Chọn phiếu...");
+        loadImportButton.setGradientBackgroundColor(null);
+        loadImportButton.setRounded(true);
+        loadImportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadImportButtonActionPerformed(evt);
+            }
+        });
+
+        makeImportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/add (1).png"))); // NOI18N
+        makeImportButton.setText("Lập phiếu");
+        makeImportButton.setRounded(true);
+        makeImportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                makeImportButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(543, 543, 543)
+                        .addComponent(jLabel6))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(importAddButton)
+                            .addComponent(importEditButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(importDeleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(15, 15, 15)
+                        .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1126, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(importDateLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(importDateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(refreshImportButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(48, 48, 48)
+                        .addComponent(makeImportButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(51, 51, 51))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(importIDLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(importIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(loadImportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(48, 48, 48)
+                        .addComponent(saveImportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(46, 46, 46))))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(jLabel6)
+                .addGap(15, 15, 15)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(loadImportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(saveImportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(importIDLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(importIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(20, 20, 20)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(importAddButton)
+                        .addGap(17, 17, 17)
+                        .addComponent(importEditButton)
+                        .addGap(17, 17, 17)
+                        .addComponent(importDeleteButton))
+                    .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(refreshImportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(makeImportButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(7, 7, 7)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(importDateLabel)
+                            .addComponent(importDateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout pnl_importsLayout = new javax.swing.GroupLayout(pnl_imports);
         pnl_imports.setLayout(pnl_importsLayout);
         pnl_importsLayout.setHorizontalGroup(
             pnl_importsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1256, Short.MAX_VALUE)
-            .addGroup(pnl_importsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(pnl_importsLayout.createSequentialGroup()
-                    .addGap(0, 268, Short.MAX_VALUE)
-                    .addComponent(importDetailsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 268, Short.MAX_VALUE)))
+            .addGroup(pnl_importsLayout.createSequentialGroup()
+                .addGap(87, 87, 87)
+                .addComponent(importDetailsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1052, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnl_importsLayout.setVerticalGroup(
             pnl_importsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 764, Short.MAX_VALUE)
-            .addGroup(pnl_importsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(pnl_importsLayout.createSequentialGroup()
-                    .addGap(0, 170, Short.MAX_VALUE)
-                    .addComponent(importDetailsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 169, Short.MAX_VALUE)))
+            .addGroup(pnl_importsLayout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(importDetailsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 367, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout pnl_containerLayout = new javax.swing.GroupLayout(pnl_container);
@@ -2659,31 +2863,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_supplierTextFieldActionPerformed
 
-    private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
-        int amount = 0, price = 0;
-        String id = equipmentIDTextField.getText().toUpperCase();
-        String name = equipmentNameTextField.getText();
-        String status = statusComboBox.getSelectedItem().toString();
-        String picture = _imagePath;
-        String detailID = detailIDComboBox.getSelectedItem().toString();
-
-        if (!checkValues(id, amountTextField.getText(), detailID)) {
-            return;
-        }
-
-        amount = Integer.valueOf(amountTextField.getText());
-        price = Integer.valueOf(priceTextField.getText());
-
-        int incID = getMaxEquimentID(id);
-
-        for (int i = 0; i < amount; i++) {
-            incID++;
-            String equipmentID = id + String.format("-%03d", incID);
-            _importForm.addEquiment(equipmentID, name, status, price, picture, detailID);
-        }
-        _importForm.getParent().loadDatabase();
-    }//GEN-LAST:event_confirmButtonActionPerformed
-
     private void detailIDComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailIDComboBoxActionPerformed
         if (detailIDComboBox.getSelectedItem() == null) {
             return;
@@ -2873,6 +3052,75 @@ public class AdminDashBoard extends javax.swing.JFrame {
         loginInfoScrollPane.setVisible(!loginInfoScrollPane.isVisible());
     }//GEN-LAST:event_showLoginInfoButtonActionPerformed
 
+    private void importAddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importAddButtonActionPerformed
+        AddEquipmentForm addEquimentForm = new AddEquipmentForm(this);
+        addEquimentForm.setLocationRelativeTo(this);
+        addEquimentForm.setVisible(true);
+        this.setEnabled(false);
+    }//GEN-LAST:event_importAddButtonActionPerformed
+
+    private void loadImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadImportButtonActionPerformed
+        String imageFolderPath = new File("").getAbsolutePath().concat("/src/file_import_details/");
+        JFileChooser fileChooser = new JFileChooser(imageFolderPath);
+        System.out.println(fileChooser.getCurrentDirectory());
+        fileChooser.addChoosableFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+
+                String extension = new ImageFilter().getExtension(f);
+                if (extension != null) {
+                    if (extension.equals("txt")) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public String getDescription() {
+                return "Import Text File";
+            }
+        });
+
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        int result = fileChooser.showSaveDialog(null);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                
+            }
+    }//GEN-LAST:event_loadImportButtonActionPerformed
+
+    private void makeImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_makeImportButtonActionPerformed
+        String id, status, detailID;
+        java.sql.Timestamp timeStamp = new java.sql.Timestamp(new Date().getTime());
+        java.sql.Date date = new java.sql.Date(new Date().getTime());
+        int importID = Integer.valueOf(importIDTextField.getText());
+
+        if (importEquipmentTable.getRowCount() > 0) {
+            saveImportDetailToDatabase(importID, _userID, date);
+
+            for (int i = 0; i < importEquipmentTable.getRowCount(); i++) {
+                id = importEquipmentTable.getValueAt(i, 0).toString();
+                status = importEquipmentTable.getValueAt(i, 2).toString();
+                detailID = importEquipmentTable.getValueAt(i, 5).toString();
+                saveEquipmentToDatabase(id, status, detailID, importID, timeStamp);
+            }
+        }
+        new AlertFrame("Lưu vào CSDL thành công").setVisible(true);
+        loadImportData();
+        loadDatabase();
+    }//GEN-LAST:event_makeImportButtonActionPerformed
+
+    private void saveImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveImportButtonActionPerformed
+
+    }//GEN-LAST:event_saveImportButtonActionPerformed
+
+    private void refreshImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshImportButtonActionPerformed
+        loadImportData();
+    }//GEN-LAST:event_refreshImportButtonActionPerformed
+
     public void fillOutSupplierInfo(int id) {
         for (Supplier s : _listOfSuppliers) {
             if (s.getSupplierId() == id) {
@@ -2919,8 +3167,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private boolean _isPopupShow = false;
     private static AddEquipmentDetailsForm _obj = null;
     private String oldPicutre;
-    private ImportForm _importForm = null;
-    private AdminDashBoard _admDb = null;
     private String _id;
     private String _imagePath = "";
     private boolean _detailUpdated = false;
@@ -2947,7 +3193,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JScrollPane categoriesScrollPane;
     private javax.swing.JTable categoriesTable;
     private javax.swing.JComboBox<String> cbNhaCungCap;
-    private javax.swing.JButton confirmButton;
     private javax.swing.JButton confirmEditButton;
     private javax.swing.JLabel contactLb;
     private javax.swing.JLabel createLb;
@@ -2969,8 +3214,16 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JScrollPane equipmentsScrollPane;
     private javax.swing.JTable equipmentsTable;
     private javax.swing.JLabel fullNameLb;
+    private javax.swing.JButton importAddButton;
+    private javax.swing.JLabel importDateLabel;
+    private javax.swing.JTextField importDateTextField;
+    private javax.swing.JButton importDeleteButton;
     private javax.swing.JScrollPane importDetailsScrollPane;
     private javax.swing.JTable importDetailsTable;
+    private javax.swing.JButton importEditButton;
+    private javax.swing.JTable importEquipmentTable;
+    private javax.swing.JLabel importIDLabel;
+    private javax.swing.JTextField importIDTextField;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -2999,10 +3252,12 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -3024,9 +3279,11 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JLabel lbl_themCTTB;
     private javax.swing.JLabel lbl_themNCC;
     private javax.swing.JLabel lbl_time;
+    private Button loadImportButton;
     private javax.swing.JPanel loginInfoPanel;
     private javax.swing.JScrollPane loginInfoScrollPane;
     private javax.swing.JTable loginInfoTable;
+    private Button makeImportButton;
     private javax.swing.JLabel pictureFieldLabel;
     private javax.swing.JLabel pictureLabel;
     private javax.swing.JPanel pnl_appBar;
@@ -3043,6 +3300,9 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JLabel priceLabel;
     private javax.swing.JTextField priceTextField;
     private javax.swing.JLabel profilePictureLabel;
+    private Button refreshImportButton;
+    private Button saveImportButton;
+    private javax.swing.JScrollPane scrollPane;
     private Button showLoginInfoButton;
     private Button signupButton;
     private javax.swing.JComboBox<String> statusComboBox;

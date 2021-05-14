@@ -284,6 +284,10 @@ public class ImportForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         String id, status, detailID;
         java.sql.Timestamp timeStamp = new java.sql.Timestamp(new Date().getTime());
@@ -307,14 +311,10 @@ public class ImportForm extends javax.swing.JFrame {
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        AddEquipmentForm addEquimentForm = new AddEquipmentForm(this);
+        AddEquipmentForm addEquimentForm = new AddEquipmentForm(null);
         addEquimentForm.setVisible(true);
         addEquimentForm.setLocationRelativeTo(this);
     }//GEN-LAST:event_addButtonActionPerformed
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_cancelButtonActionPerformed
 
     private AdminDashBoard _admDb = null;
     private ImageGenerator _imgGenerator = new ImageGenerator();

@@ -27,14 +27,15 @@ public class AddEquipmentForm extends javax.swing.JFrame {
     public AddEquipmentForm(AdminDashBoard parent, String id) {
         _admDb = parent;
         _id = id;
+        _editMode = true;
 
         initComponents();
         initRendererForEdit();
         loadCurrentData();
     }
 
-    public AddEquipmentForm(ImportForm parent) {
-        _importForm = parent;
+    public AddEquipmentForm(AdminDashBoard parent) {
+        _admDb = parent;
 
         initComponents();
         initRenderer();
@@ -55,8 +56,6 @@ public class AddEquipmentForm extends javax.swing.JFrame {
             while (rs.next()) {
                 detailIDComboBox.addItem(rs.getString("id"));
             }
-
-            detailIDComboBox.addItem("Thêm loại thiết bị...");
         } catch (SQLException ex) {
             Logger.getLogger(AddEquipmentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -71,8 +70,6 @@ public class AddEquipmentForm extends javax.swing.JFrame {
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        confirmEditButton.setVisible(false);
-
         setAlertVisible(false);
         loadStatusComboBox();
         loadDetailIDComboBox();
@@ -85,8 +82,6 @@ public class AddEquipmentForm extends javax.swing.JFrame {
         equipmentIDTextField.setEditable(false);
         amountLabel.setVisible(false);
         amountTextField.setVisible(false);
-        confirmEditButton.setVisible(true);
-        confirmButton.setVisible(false);
     }
 
     private void loadCurrentData() {
@@ -196,8 +191,8 @@ public class AddEquipmentForm extends javax.swing.JFrame {
             Logger.getLogger(AddEquipmentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        for (int i = 0; i < _importForm.checkIDList.size(); i++) {
-            if (equipmentID.equals(_importForm.checkIDList.get(i))) {
+        for (int i = 0; i < _admDb._checkEquipmentIDList.size(); i++) {
+            if (equipmentID.equals(_admDb._checkEquipmentIDList.get(i))) {
                 idCount++;
             }
         }
@@ -242,6 +237,7 @@ public class AddEquipmentForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         equipmentIDLabel = new javax.swing.JLabel();
         equipmentIDTextField = new javax.swing.JTextField();
         statusLabel = new javax.swing.JLabel();
@@ -256,21 +252,27 @@ public class AddEquipmentForm extends javax.swing.JFrame {
         priceTextField = new javax.swing.JTextField();
         warrantyLabel = new javax.swing.JLabel();
         warrantyTextField = new javax.swing.JTextField();
-        confirmButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
         amountLabel = new javax.swing.JLabel();
         amountTextField = new javax.swing.JTextField();
         pictureLabel = new javax.swing.JLabel();
         amountAlertLabel = new javax.swing.JLabel();
         equipmentIDAlertLabel = new javax.swing.JLabel();
         detailIDAlertLabel = new javax.swing.JLabel();
-        confirmEditButton = new javax.swing.JButton();
-        pictureFieldLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        pictureFieldLabel = new javax.swing.JLabel();
+        addEquipmentConfirmButton = new Button();
+        addEquipmentCancelButton = new Button();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 255), 5, true));
 
         equipmentIDLabel.setText("Mã thiết bị");
+
+        equipmentIDTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         statusLabel.setText("Trạng thái");
 
@@ -279,6 +281,7 @@ public class AddEquipmentForm extends javax.swing.JFrame {
         equipmentNameLabel.setText("Tên thiết bị");
 
         equipmentNameTextField.setEditable(false);
+        equipmentNameTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         statusComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -297,24 +300,12 @@ public class AddEquipmentForm extends javax.swing.JFrame {
         priceLabel.setText("Giá");
 
         priceTextField.setEditable(false);
+        priceTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         warrantyLabel.setText("Bảo hành");
 
         warrantyTextField.setEditable(false);
-
-        confirmButton.setText("Xác nhận");
-        confirmButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                confirmButtonActionPerformed(evt);
-            }
-        });
-
-        cancelButton.setText("Hủy");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        warrantyTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         amountLabel.setText("Số lượng");
 
@@ -332,135 +323,176 @@ public class AddEquipmentForm extends javax.swing.JFrame {
         detailIDAlertLabel.setForeground(new java.awt.Color(255, 51, 0));
         detailIDAlertLabel.setText("Chọn 1 mã thiết bị");
 
-        confirmEditButton.setText("Xác nhận");
-        confirmEditButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                confirmEditButtonActionPerformed(evt);
-            }
-        });
-
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(51, 51, 255));
         jLabel1.setText("THÊM THIẾT BỊ");
+
+        jPanel2.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 255), 3, true));
+
+        pictureFieldLabel.setBackground(new java.awt.Color(204, 51, 255));
+        pictureFieldLabel.setForeground(new java.awt.Color(204, 255, 255));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pictureFieldLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pictureFieldLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        addEquipmentConfirmButton.setText("Xác nhận");
+        addEquipmentConfirmButton.setRounded(true);
+        addEquipmentConfirmButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addEquipmentConfirmButtonActionPerformed(evt);
+            }
+        });
+
+        addEquipmentCancelButton.setText("Hủy");
+        addEquipmentCancelButton.setRounded(true);
+        addEquipmentCancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addEquipmentCancelButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(153, 153, 153)
+                        .addComponent(jLabel1))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(pictureLabel)
+                        .addGap(41, 41, 41)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(amountLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(amountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(32, 32, 32)
+                        .addComponent(amountAlertLabel))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(216, 216, 216)
+                        .addComponent(addEquipmentConfirmButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(addEquipmentCancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(supplierLabel)
+                                    .addComponent(equipmentNameLabel)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(detailIDLabel))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(priceLabel))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(statusLabel)))
+                        .addGap(26, 26, 26)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(statusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(priceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(43, 43, 43)
+                                .addComponent(warrantyLabel)
+                                .addGap(18, 18, 18)
+                                .addComponent(warrantyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(supplierTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(equipmentIDTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(detailIDComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(42, 42, 42)
+                                    .addComponent(detailIDAlertLabel))
+                                .addComponent(equipmentIDAlertLabel, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(equipmentNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(equipmentIDLabel)))
+                .addContainerGap(16, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(11, 11, 11)
+                .addComponent(jLabel1)
+                .addGap(27, 27, 27)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(equipmentIDLabel)
+                    .addComponent(equipmentIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(equipmentIDAlertLabel)
+                .addGap(13, 13, 13)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(statusLabel)
+                    .addComponent(statusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(19, 19, 19)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(detailIDAlertLabel)
+                    .addComponent(detailIDComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(detailIDLabel))
+                .addGap(30, 30, 30)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(equipmentNameLabel)
+                    .addComponent(equipmentNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(29, 29, 29)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(supplierLabel)
+                    .addComponent(supplierTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(warrantyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(warrantyLabel)
+                            .addComponent(priceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(priceLabel)))
+                .addGap(27, 27, 27)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pictureLabel)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(amountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(amountLabel)
+                            .addComponent(amountAlertLabel))))
+                .addGap(30, 30, 30)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addEquipmentCancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addEquipmentConfirmButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(19, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(equipmentIDLabel)
-                                    .addComponent(statusLabel)
-                                    .addComponent(equipmentNameLabel))
-                                .addGap(0, 263, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(confirmEditButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(confirmButton)))
-                        .addGap(18, 18, 18)
-                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(83, 83, 83)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(equipmentIDAlertLabel)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(equipmentIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(statusComboBox, 0, 135, Short.MAX_VALUE)
-                                            .addComponent(detailIDComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addGap(46, 46, 46)
-                                        .addComponent(detailIDAlertLabel))))
-                            .addComponent(detailIDLabel)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(240, 240, 240)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(warrantyLabel)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(63, 63, 63)
-                                        .addComponent(warrantyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(amountLabel)
-                                .addGap(20, 20, 20)
-                                .addComponent(amountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(48, 48, 48)
-                                .addComponent(amountAlertLabel))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(supplierLabel)
-                                    .addComponent(priceLabel)
-                                    .addComponent(pictureLabel))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(priceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(supplierTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(equipmentNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(pictureFieldLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGap(6, 6, 6)))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(143, 143, 143)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(jLabel1)
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(equipmentIDLabel)
-                    .addComponent(equipmentIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(equipmentIDAlertLabel)
-                .addGap(11, 11, 11)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(statusLabel)
-                    .addComponent(statusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(detailIDLabel)
-                    .addComponent(detailIDComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(detailIDAlertLabel))
-                .addGap(34, 34, 34)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(equipmentNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(equipmentNameLabel))
-                .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(supplierLabel)
-                    .addComponent(supplierTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(priceLabel)
-                    .addComponent(priceTextField)
-                    .addComponent(warrantyLabel)
-                    .addComponent(warrantyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pictureLabel)
-                    .addComponent(pictureFieldLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(32, 32, 32)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(amountLabel)
-                    .addComponent(amountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(amountAlertLabel))
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(confirmButton)
-                    .addComponent(confirmEditButton))
-                .addGap(21, 21, 21))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -473,28 +505,11 @@ public class AddEquipmentForm extends javax.swing.JFrame {
 
         String detailID = detailIDComboBox.getSelectedItem().toString();
         if (!detailID.equals("")) {
-            if (detailID.equals("Thêm loại thiết bị...")) {
-                AddEquipmentDetailsForm detailForm = AddEquipmentDetailsForm.getObj(this, -1, false);
-                detailForm.setLocationRelativeTo(this);
-                detailForm.setVisible(true);
-            } else {
-                loadDetailInfo(detailID);
-            }
+            loadDetailInfo(detailID);
         }
     }//GEN-LAST:event_detailIDComboBoxItemStateChanged
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        this.dispose();
-        if (_detailUpdated) {
-            if (_importForm != null) {
-                _importForm.getParent().loadDatabase();
-            } else if (_admDb != null) {
-                _admDb.loadDatabase();
-            }
-        }
-    }//GEN-LAST:event_cancelButtonActionPerformed
-
-    private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
+    private void addEquipmentConfirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addEquipmentConfirmButtonActionPerformed
         int amount = 0, price = 0;
         String id = equipmentIDTextField.getText().toUpperCase();
         String name = equipmentNameTextField.getText();
@@ -502,52 +517,56 @@ public class AddEquipmentForm extends javax.swing.JFrame {
         String picture = _imagePath;
         String detailID = detailIDComboBox.getSelectedItem().toString();
 
-        if (!checkValues(id, amountTextField.getText(), detailID)) {
-            return;
+        if (_editMode) {
+            if (detailIDComboBox.getSelectedItem().toString().equals("")) {
+                detailIDAlertLabel.setVisible(true);
+                return;
+            }
+
+            editEquipment(id, status, detailID);
+            JOptionPane.showMessageDialog(null, "Chỉnh sửa thành công");
         }
+        else {
+            if (!checkValues(id, amountTextField.getText(), detailID)) {
+                return;
+            }
 
-        amount = Integer.valueOf(amountTextField.getText());
-        price = Integer.valueOf(priceTextField.getText());
+            amount = Integer.valueOf(amountTextField.getText());
+            price = Integer.valueOf(priceTextField.getText());
 
-        int incID = getMaxEquimentID(id);
+            int incID = getMaxEquimentID(id);
 
-        for (int i = 0; i < amount; i++) {
-            incID++;
-            String equipmentID = id + String.format("-%03d", incID);
-            _importForm.addEquiment(equipmentID, name, status, price, picture, detailID);
+            for (int i = 0; i < amount; i++) {
+                incID++;
+                String equipmentID = id + String.format("-%03d", incID);
+                _admDb.addEquimentForImport(equipmentID, name, status, price, picture, detailID);
+            }
         }
-        _importForm.getParent().loadDatabase();
-        this.dispose();
-    }//GEN-LAST:event_confirmButtonActionPerformed
-
-    private void confirmEditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmEditButtonActionPerformed
-        if (detailIDComboBox.getSelectedItem().toString().equals("")) {
-            detailIDAlertLabel.setVisible(true);
-            return;
-        }
-
-        String id = equipmentIDTextField.getText();
-        String status = statusComboBox.getSelectedItem().toString();
-        String detailID = detailIDComboBox.getSelectedItem().toString();
-
-        editEquipment(id, status, detailID);
-        JOptionPane.showMessageDialog(null, "Chỉnh sửa thành công");
+        
+        _admDb.setEnabled(true);
         _admDb.loadDatabase();
         this.dispose();
-    }//GEN-LAST:event_confirmEditButtonActionPerformed
+    }//GEN-LAST:event_addEquipmentConfirmButtonActionPerformed
 
-    private ImportForm _importForm = null;
+    private void addEquipmentCancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addEquipmentCancelButtonActionPerformed
+        if (_detailUpdated) {
+            _admDb.loadDatabase();
+        }
+        _admDb.setEnabled(true);
+        this.dispose();
+    }//GEN-LAST:event_addEquipmentCancelButtonActionPerformed
+
     private AdminDashBoard _admDb = null;
     private String _id;
     private String _imagePath = "";
     private boolean _detailUpdated = false;
+    private boolean _editMode = false;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private Button addEquipmentCancelButton;
+    private Button addEquipmentConfirmButton;
     private javax.swing.JLabel amountAlertLabel;
     private javax.swing.JLabel amountLabel;
     private javax.swing.JTextField amountTextField;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JButton confirmButton;
-    private javax.swing.JButton confirmEditButton;
     private javax.swing.JLabel detailIDAlertLabel;
     private javax.swing.JComboBox<String> detailIDComboBox;
     private javax.swing.JLabel detailIDLabel;
@@ -557,6 +576,8 @@ public class AddEquipmentForm extends javax.swing.JFrame {
     private javax.swing.JLabel equipmentNameLabel;
     private javax.swing.JTextField equipmentNameTextField;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel pictureFieldLabel;
     private javax.swing.JLabel pictureLabel;
     private javax.swing.JLabel priceLabel;

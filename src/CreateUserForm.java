@@ -510,10 +510,6 @@ public class CreateUserForm extends javax.swing.JDialog {
         if (result == JFileChooser.APPROVE_OPTION) {
             _profilePictureFile = fileChooser.getSelectedFile();
             avatarButton.setText(_profilePictureFile.getName());
-            this.repaint();
-        }
-        else if (result == JFileChooser.CANCEL_OPTION) {
-            this.repaint();
         }
     }//GEN-LAST:event_avatarButtonActionPerformed
 
