@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -178,7 +179,7 @@ public class AddEquipmentForm extends javax.swing.JFrame {
         }
     }
 
-    private int getMaxEquimentID(String equipmentID) {
+    public static int getMaxEquimentID(String equipmentID, Vector<String> checkIDList) {
         Connection connector = ConnectMysql.getConnectDB();
         String sql = "select count(id) as countID from gym_equipments where substring(id,1,3) = '" + equipmentID + "'";
         int idCount = 1;
@@ -191,13 +192,13 @@ public class AddEquipmentForm extends javax.swing.JFrame {
             Logger.getLogger(AddEquipmentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        for (int i = 0; i < _admDb._checkEquipmentIDList.size(); i++) {
-            if (equipmentID.equals(_admDb._checkEquipmentIDList.get(i))) {
+        for (int i = 0; i < checkIDList.size(); i++) {
+            if (equipmentID.equals(checkIDList.get(i))) {
                 idCount++;
             }
         }
 
-        return idCount;
+        return idCount + 1;
     }
 
     private void setAlertVisible(boolean visible) {
@@ -220,6 +221,11 @@ public class AddEquipmentForm extends javax.swing.JFrame {
             amountAlertLabel.setVisible(true);
             check = false;
         }
+        else if (Integer.valueOf(amount) < 1) {
+            amountAlertLabel.setVisible(true);
+            check = false;
+        }
+
         if (detailID.equals("")) {
             detailIDAlertLabel.setVisible(true);
             check = false;
@@ -281,7 +287,6 @@ public class AddEquipmentForm extends javax.swing.JFrame {
         equipmentNameLabel.setText("Tên thiết bị");
 
         equipmentNameTextField.setEditable(false);
-        equipmentNameTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         statusComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -375,18 +380,6 @@ public class AddEquipmentForm extends javax.swing.JFrame {
                         .addGap(41, 41, 41)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(amountLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(amountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(32, 32, 32)
-                        .addComponent(amountAlertLabel))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(216, 216, 216)
-                        .addComponent(addEquipmentConfirmButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(addEquipmentCancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(10, 10, 10)
@@ -422,7 +415,21 @@ public class AddEquipmentForm extends javax.swing.JFrame {
                             .addComponent(equipmentNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(equipmentIDLabel)))
+                        .addComponent(equipmentIDLabel))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(amountLabel)
+                                .addGap(41, 41, 41)
+                                .addComponent(amountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(amountAlertLabel))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(216, 216, 216)
+                                .addComponent(addEquipmentConfirmButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addComponent(addEquipmentCancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -467,15 +474,12 @@ public class AddEquipmentForm extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pictureLabel)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(22, 22, 22)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(31, 31, 31)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(amountLabel)
                     .addComponent(amountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(amountLabel)
-                            .addComponent(amountAlertLabel))))
-                .addGap(30, 30, 30)
+                    .addComponent(amountAlertLabel))
+                .addGap(27, 27, 27)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addEquipmentCancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addEquipmentConfirmButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -505,6 +509,7 @@ public class AddEquipmentForm extends javax.swing.JFrame {
 
         String detailID = detailIDComboBox.getSelectedItem().toString();
         if (!detailID.equals("")) {
+            detailIDComboBox.removeItem("");
             loadDetailInfo(detailID);
         }
     }//GEN-LAST:event_detailIDComboBoxItemStateChanged
@@ -534,15 +539,15 @@ public class AddEquipmentForm extends javax.swing.JFrame {
             amount = Integer.valueOf(amountTextField.getText());
             price = Integer.valueOf(priceTextField.getText());
 
-            int incID = getMaxEquimentID(id);
+            int incID = getMaxEquimentID(id,_admDb._checkEquipmentIDList);
 
             for (int i = 0; i < amount; i++) {
-                incID++;
                 String equipmentID = id + String.format("-%03d", incID);
                 _admDb.addEquimentForImport(equipmentID, name, status, price, picture, detailID);
+                incID++;
             }
         }
-        
+
         _admDb.setEnabled(true);
         _admDb.loadDatabase();
         this.dispose();

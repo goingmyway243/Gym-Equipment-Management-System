@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -239,54 +240,31 @@ public class AdminDashBoard extends javax.swing.JFrame {
         }
     }
 
-    public void initRendererForEdit(String id) {
-        initRenderer();
-        loadCurrentData(id);
-        equipmentIDTextField.setText(id);
-        equipmentIDTextField.setEditable(false);
-        amountLabel.setVisible(false);
-        amountTextField.setVisible(false);
-        confirmEditButton.setVisible(true);
-    }
-
-    public void loadDetailIDComboBox() {
-        detailIDComboBox.removeAllItems();
-        detailIDComboBox.addItem("");
-        _detailUpdated = true;
-
-        Connection connector = ConnectMysql.getConnectDB();
-        String sql = "select id from equipment_details";
-
-        try {
-            PreparedStatement ps = connector.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                detailIDComboBox.addItem(rs.getString("id"));
-            }
-
-            detailIDComboBox.addItem("Thêm loại thiết bị...");
-        } catch (SQLException ex) {
-            Logger.getLogger(AddEquipmentForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void loadDetailIDComboBox(String detailID) {
-        loadDetailIDComboBox();
-        detailIDComboBox.setSelectedItem(detailID);
-    }
-
     //////////////////////////|///////////////|///////////////////////////////
     //========================| ADD EQUIPMENT | ==============================
     //////////////////////////V///////////////V///////////////////////////////
     private void initRenderer() {
-        confirmEditButton.setVisible(false);
-
-        setAlertVisible(false);
         loadStatusComboBox();
         loadDetailIDComboBox();
+    }
 
-        _detailUpdated = false;
+    public void initRendererForEdit(String id) {
+        initRenderer();
+        detailIDComboBox.removeItemAt(0);
+        loadCurrentData(id);
+        equipmentIDTextField.setText(id);
+    }
+
+    public void refreshEquipmentEditBox() {
+        initRenderer();
+        equipmentIDTextField.setText("");
+        statusComboBox.setSelectedIndex(0);
+        detailIDComboBox.setSelectedIndex(0);
+        equipmentNameTextField.setText("");
+        supplierTextField.setText("");
+        priceTextField.setText("");
+        warrantyTextField.setText("");
+        pictureFieldLabel.setIcon(null);
     }
 
     private void loadCurrentData(String id) {
@@ -323,6 +301,25 @@ public class AdminDashBoard extends javax.swing.JFrame {
         statusComboBox.addItem("Đang hoạt động");
         statusComboBox.addItem("Bảo trì");
         statusComboBox.addItem("Bị hỏng");
+    }
+
+    public void loadDetailIDComboBox() {
+        detailIDComboBox.removeAllItems();
+        detailIDComboBox.addItem("");
+
+        Connection connector = ConnectMysql.getConnectDB();
+        String sql = "select id from equipment_details";
+
+        try {
+            PreparedStatement ps = connector.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                detailIDComboBox.addItem(rs.getString("id"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AddEquipmentForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void loadDetailInfo(String detailID) {
@@ -381,34 +378,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(AddEquipmentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    private void setAlertVisible(boolean visible) {
-        equipmentIDAlertLabel.setVisible(visible);
-        amountAlertLabel.setVisible(visible);
-        detailIDAlertLabel.setVisible(visible);
-    }
-
-    private boolean checkValues(String id, String amount, String detailID) {
-        setAlertVisible(false);
-        boolean check = true;
-        String amountPattern = "\\d{1,2}";
-        String idPattern = "[a-zA-Z]{3}";
-
-        if (!id.matches(idPattern)) {
-            equipmentIDAlertLabel.setVisible(true);
-            check = false;
-        }
-        if (!amount.matches(amountPattern)) {
-            amountAlertLabel.setVisible(true);
-            check = false;
-        }
-        if (detailID.equals("")) {
-            detailIDAlertLabel.setVisible(true);
-            check = false;
-        }
-
-        return check;
     }
 
     //////////////////////////^///////////////^///////////////////////////////
@@ -913,6 +882,8 @@ public class AdminDashBoard extends javax.swing.JFrame {
             Logger.getLogger(AdminDashBoard.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
+        equipmentsTable.getRowSorter().toggleSortOrder(1);
+        equipmentsTable.getRowSorter().toggleSortOrder(1);
     }
 
     private void loadEquipmentDetails() {
@@ -1063,14 +1034,8 @@ public class AdminDashBoard extends javax.swing.JFrame {
         equipmentsScrollPane = new javax.swing.JScrollPane();
         equipmentsTable = new javax.swing.JTable();
         jPanel1 = new JPanelGradient2();
-        amountLabel = new javax.swing.JLabel();
-        amountTextField = new javax.swing.JTextField();
         pictureLabel = new javax.swing.JLabel();
-        amountAlertLabel = new javax.swing.JLabel();
-        equipmentIDAlertLabel = new javax.swing.JLabel();
-        detailIDAlertLabel = new javax.swing.JLabel();
         equipmentIDLabel = new javax.swing.JLabel();
-        confirmEditButton = new javax.swing.JButton();
         equipmentIDTextField = new javax.swing.JTextField();
         pictureFieldLabel = new javax.swing.JLabel();
         statusLabel = new javax.swing.JLabel();
@@ -1086,7 +1051,8 @@ public class AdminDashBoard extends javax.swing.JFrame {
         priceTextField = new javax.swing.JTextField();
         warrantyLabel = new javax.swing.JLabel();
         warrantyTextField = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        EquipmentEditConfirmButton = new Button();
+        EquipmentRefreshButton = new Button();
         pnl_settings = new javax.swing.JPanel();
         loginInfoPanel = new javax.swing.JPanel();
         loginInfoScrollPane = new javax.swing.JScrollPane();
@@ -1358,7 +1324,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lbl_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         pnl_function.setBackground(new java.awt.Color(45, 53, 60));
@@ -1737,46 +1703,20 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        amountLabel.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
-        amountLabel.setText("Số lượng:");
-        jPanel1.add(amountLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 620, -1, -1));
-
-        amountTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        amountTextField.setText("1");
-        jPanel1.add(amountTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 620, 42, 38));
-
         pictureLabel.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
         pictureLabel.setText("Hình ảnh:");
         jPanel1.add(pictureLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 482, -1, -1));
-
-        amountAlertLabel.setForeground(new java.awt.Color(255, 0, 0));
-        amountAlertLabel.setText("Nhập số lượng từ 1 - 99");
-        jPanel1.add(amountAlertLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 630, -1, -1));
-
-        equipmentIDAlertLabel.setForeground(new java.awt.Color(255, 0, 0));
-        equipmentIDAlertLabel.setText("Nhập mã thiết bị 3 chữ");
-        jPanel1.add(equipmentIDAlertLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 98, -1, -1));
-
-        detailIDAlertLabel.setForeground(new java.awt.Color(255, 51, 0));
-        detailIDAlertLabel.setText("Chọn 1 mã thiết bị");
-        jPanel1.add(detailIDAlertLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 245, -1, -1));
 
         equipmentIDLabel.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
         equipmentIDLabel.setText("Mã thiết bị:");
         jPanel1.add(equipmentIDLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 54, -1, -1));
 
-        confirmEditButton.setText("Xác nhận");
-        confirmEditButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                confirmEditButtonActionPerformed(evt);
-            }
-        });
-        jPanel1.add(confirmEditButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 670, -1, 36));
+        equipmentIDTextField.setEditable(false);
         jPanel1.add(equipmentIDTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 49, 247, 37));
 
         pictureFieldLabel.setBackground(new java.awt.Color(204, 204, 255));
         pictureFieldLabel.setOpaque(true);
-        jPanel1.add(pictureFieldLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 482, 230, 123));
+        jPanel1.add(pictureFieldLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 482, 230, 140));
 
         statusLabel.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
         statusLabel.setText("Trạng thái:");
@@ -1841,25 +1781,43 @@ public class AdminDashBoard extends javax.swing.JFrame {
         warrantyTextField.setEditable(false);
         jPanel1.add(warrantyTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(356, 413, 120, 40));
 
-        jButton2.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/cancel.png"))); // NOI18N
-        jButton2.setText("Hủy bỏ");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        EquipmentEditConfirmButton.setBackground(new java.awt.Color(255, 255, 255));
+        EquipmentEditConfirmButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/plus.png"))); // NOI18N
+        EquipmentEditConfirmButton.setText("Xác nhận");
+        EquipmentEditConfirmButton.setEntered(false);
+        EquipmentEditConfirmButton.setEnteredColor(java.awt.Color.white);
+        EquipmentEditConfirmButton.setGradientBackgroundColor(new java.awt.Color(102, 255, 102));
+        EquipmentEditConfirmButton.setRounded(true);
+        EquipmentEditConfirmButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                EquipmentEditConfirmButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 670, -1, -1));
+        jPanel1.add(EquipmentEditConfirmButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 670, 120, 40));
+
+        EquipmentRefreshButton.setBackground(new java.awt.Color(255, 255, 255));
+        EquipmentRefreshButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/refresh.png"))); // NOI18N
+        EquipmentRefreshButton.setText("Làm mới");
+        EquipmentRefreshButton.setEntered(false);
+        EquipmentRefreshButton.setEnteredColor(java.awt.Color.white);
+        EquipmentRefreshButton.setGradientBackgroundColor(new java.awt.Color(204, 204, 255));
+        EquipmentRefreshButton.setRounded(true);
+        EquipmentRefreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EquipmentRefreshButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(EquipmentRefreshButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 670, 120, 40));
 
         javax.swing.GroupLayout pnl_equipmentsLayout = new javax.swing.GroupLayout(pnl_equipments);
         pnl_equipments.setLayout(pnl_equipmentsLayout);
         pnl_equipmentsLayout.setHorizontalGroup(
             pnl_equipmentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnl_equipmentsLayout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(equipmentsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
         pnl_equipmentsLayout.setVerticalGroup(
             pnl_equipmentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2840,21 +2798,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
     }//GEN-LAST:event_db_txtDNHMouseClicked
 
-    private void confirmEditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmEditButtonActionPerformed
-        if (detailIDComboBox.getSelectedItem().toString().equals("")) {
-            detailIDAlertLabel.setVisible(true);
-            return;
-        }
-
-        String id = equipmentIDTextField.getText();
-        String status = statusComboBox.getSelectedItem().toString();
-        String detailID = detailIDComboBox.getSelectedItem().toString();
-
-        editEquipment(id, status, detailID);
-        JOptionPane.showMessageDialog(null, "Chỉnh sửa thành công");
-        loadDatabase();
-    }//GEN-LAST:event_confirmEditButtonActionPerformed
-
     private void detailIDComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_detailIDComboBoxItemStateChanged
 
     }//GEN-LAST:event_detailIDComboBoxItemStateChanged
@@ -2890,10 +2833,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         showPanel(pnl_equipments);
         setLabelBackground(lbl_menuItem_3);
     }//GEN-LAST:event_jPanel3MouseClicked
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        initRenderer();
-    }//GEN-LAST:event_jButton2ActionPerformed
 
     private void button5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button5ActionPerformed
         resetCategoriesField();
@@ -3034,7 +2973,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                SideBarFunction sBF = new SideBarFunction(_this, _detailUpdated);
+                SideBarFunction sBF = new SideBarFunction(_this, false);
                 _sideBarFunctionFrm = sBF;
                 sBF.setVisible(true);
             }
@@ -3060,9 +2999,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
     }//GEN-LAST:event_importAddButtonActionPerformed
 
     private void loadImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadImportButtonActionPerformed
-        String imageFolderPath = new File("").getAbsolutePath().concat("/src/file_import_details/");
-        JFileChooser fileChooser = new JFileChooser(imageFolderPath);
-        System.out.println(fileChooser.getCurrentDirectory());
+        JFileChooser fileChooser = new JFileChooser(_importFolderPath);
         fileChooser.addChoosableFileFilter(new FileFilter() {
             @Override
             public boolean accept(File f) {
@@ -3072,7 +3009,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
                 String extension = new ImageFilter().getExtension(f);
                 if (extension != null) {
-                    if (extension.equals("txt")) {
+                    if (extension.equals("bin")) {
                         return true;
                     }
                 }
@@ -3081,15 +3018,37 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
             @Override
             public String getDescription() {
-                return "Import Text File";
+                return "Import Binary Text File";
             }
         });
 
         fileChooser.setAcceptAllFileFilterUsed(false);
-        int result = fileChooser.showSaveDialog(null);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                
+        int result = fileChooser.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            loadImportData();
+
+            File file = fileChooser.getSelectedFile();
+            ArrayList<EquipmentData> dataList = (ArrayList<EquipmentData>) FileController.readImportDetailFile(file);
+            List<Equipment_Details> detailList = _eC.getListEquipmentDetails();
+
+            for (EquipmentData data : dataList) {
+                int maxID = (AddEquipmentForm.getMaxEquimentID(data.getEquipmentID(), _checkEquipmentIDList));
+                data.setEquipmentID(data.getEquipmentID() + String.format("-%03d", maxID));
+                Equipment_Details dataDetail = null;
+
+                for (Equipment_Details detail : detailList) {
+                    if (detail.getId().equals(data.getDetailID())) {
+                        dataDetail = detail;
+                        break;
+                    }
+                }
+
+                if (dataDetail != null) {
+                    addEquimentForImport(data.getEquipmentID(), dataDetail.getName(), data.getStatus(),
+                            dataDetail.getPrice(), dataDetail.getPicture(), data.getDetailID());
+                }
             }
+        }
     }//GEN-LAST:event_loadImportButtonActionPerformed
 
     private void makeImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_makeImportButtonActionPerformed
@@ -3114,12 +3073,62 @@ public class AdminDashBoard extends javax.swing.JFrame {
     }//GEN-LAST:event_makeImportButtonActionPerformed
 
     private void saveImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveImportButtonActionPerformed
+        if (importEquipmentTable.getRowCount() < 1) {
+            return;
+        }
 
+        Object result = JOptionPane.showInputDialog(null, "Nhập tên file để lưu:", "Lưu phiếu nhập", JOptionPane.PLAIN_MESSAGE);
+        if (result != null) {
+            File file = new File(_importFolderPath + result.toString() + ".bin");
+
+            if (file.exists()) {
+                int choice = JOptionPane.showConfirmDialog(null, "Tồn tại file cùng tên, bạn có muốn ghi đè?",
+                        "File đã tồn tại", JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }
+            else {
+                try {
+                    file.createNewFile();
+                } catch (IOException ex) {
+                    Logger.getLogger(AdminDashBoard.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            ArrayList<EquipmentData> dataList = new ArrayList<>();
+            for (int i = 0; i < importEquipmentTable.getRowCount(); i++) {
+                String equipmentID = importEquipmentTable.getValueAt(i, 0).toString().substring(0, 3);
+                String status = importEquipmentTable.getValueAt(i, 2).toString();
+                String detailID = importEquipmentTable.getValueAt(i, 5).toString();
+                dataList.add(new EquipmentData(equipmentID, status, detailID));
+            }
+            FileController.saveImportDetailFile(file, dataList);
+        }
     }//GEN-LAST:event_saveImportButtonActionPerformed
 
     private void refreshImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshImportButtonActionPerformed
         loadImportData();
     }//GEN-LAST:event_refreshImportButtonActionPerformed
+
+    private void EquipmentEditConfirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EquipmentEditConfirmButtonActionPerformed
+        if (equipmentIDTextField.getText().isEmpty()) {
+            return;
+        }
+
+        String id = equipmentIDTextField.getText();
+        String status = statusComboBox.getSelectedItem().toString();
+        String detailID = detailIDComboBox.getSelectedItem().toString();
+
+        editEquipment(id, status, detailID);
+        new AlertFrame("Chỉnh sửa thành công").setVisible(true);
+        refreshEquipmentEditBox();
+        loadDatabase();
+    }//GEN-LAST:event_EquipmentEditConfirmButtonActionPerformed
+
+    private void EquipmentRefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EquipmentRefreshButtonActionPerformed
+        refreshEquipmentEditBox();
+    }//GEN-LAST:event_EquipmentRefreshButtonActionPerformed
 
     public void fillOutSupplierInfo(int id) {
         for (Supplier s : _listOfSuppliers) {
@@ -3169,8 +3178,10 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private String oldPicutre;
     private String _id;
     private String _imagePath = "";
-    private boolean _detailUpdated = false;
+    private String _importFolderPath = new File("").getAbsolutePath().concat("/src/file_import_details/");
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private Button EquipmentEditConfirmButton;
+    private Button EquipmentRefreshButton;
     private javax.swing.JLabel alertDCNCC;
     private javax.swing.JLabel alertGia;
     private javax.swing.JLabel alertMCTTB;
@@ -3179,9 +3190,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JLabel alertTGBH;
     private javax.swing.JLabel alertTNCC;
     private javax.swing.JLabel alertTTB;
-    private javax.swing.JLabel amountAlertLabel;
-    private javax.swing.JLabel amountLabel;
-    private javax.swing.JTextField amountTextField;
     private javax.swing.JLabel birthDayLb;
     private Button btnGetImage;
     private javax.swing.JButton btnRefreshNCC;
@@ -3193,7 +3201,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JScrollPane categoriesScrollPane;
     private javax.swing.JTable categoriesTable;
     private javax.swing.JComboBox<String> cbNhaCungCap;
-    private javax.swing.JButton confirmEditButton;
     private javax.swing.JLabel contactLb;
     private javax.swing.JLabel createLb;
     private javax.swing.JLabel db_STC;
@@ -3202,11 +3209,9 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JLabel db_txtLTT;
     private javax.swing.JLabel db_txtNCC;
     private javax.swing.JLabel db_txtTb;
-    private javax.swing.JLabel detailIDAlertLabel;
     private javax.swing.JComboBox<String> detailIDComboBox;
     private javax.swing.JLabel detailIDLabel;
     private javax.swing.JLabel emailLb;
-    private javax.swing.JLabel equipmentIDAlertLabel;
     private javax.swing.JLabel equipmentIDLabel;
     private javax.swing.JTextField equipmentIDTextField;
     private javax.swing.JLabel equipmentNameLabel;
@@ -3224,7 +3229,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JTable importEquipmentTable;
     private javax.swing.JLabel importIDLabel;
     private javax.swing.JTextField importIDTextField;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
