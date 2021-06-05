@@ -1018,7 +1018,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         lbl_appLogo = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
-        lbl_menuItem_2 = new javax.swing.JLabel();
         lbl_menuItem_3 = new javax.swing.JLabel();
         lbl_menuItem_4 = new javax.swing.JLabel();
         lbl_menuItem_5 = new javax.swing.JLabel();
@@ -1029,6 +1028,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         lbl_time = new javax.swing.JLabel();
         lbl_date = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
+        lbl_menuItem_2 = new javax.swing.JLabel();
         pnl_function = new javax.swing.JPanel();
         lbl_close_hover = new javax.swing.JLabel();
         button6 = new Button();
@@ -1204,14 +1204,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 .addGap(15, 15, 15))
         );
 
-        lbl_menuItem_2.setBackground(new java.awt.Color(45, 53, 60));
-        lbl_menuItem_2.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
-        lbl_menuItem_2.setForeground(new java.awt.Color(255, 255, 255));
-        lbl_menuItem_2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/profile.png"))); // NOI18N
-        lbl_menuItem_2.setText("     Nhân viên");
-        lbl_menuItem_2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbl_menuItem_2.setOpaque(true);
-
         lbl_menuItem_3.setBackground(new java.awt.Color(45, 53, 60));
         lbl_menuItem_3.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_menuItem_3.setForeground(new java.awt.Color(255, 255, 255));
@@ -1299,12 +1291,19 @@ public class AdminDashBoard extends javax.swing.JFrame {
         jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/clock.png"))); // NOI18N
 
+        lbl_menuItem_2.setBackground(new java.awt.Color(45, 53, 60));
+        lbl_menuItem_2.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
+        lbl_menuItem_2.setForeground(new java.awt.Color(255, 255, 255));
+        lbl_menuItem_2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/profile.png"))); // NOI18N
+        lbl_menuItem_2.setText("     Nhân viên");
+        lbl_menuItem_2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_menuItem_2.setOpaque(true);
+
         javax.swing.GroupLayout pnl_appBarLayout = new javax.swing.GroupLayout(pnl_appBar);
         pnl_appBar.setLayout(pnl_appBarLayout);
         pnl_appBarLayout.setHorizontalGroup(
             pnl_appBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(pnl_logoAndName, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
-            .addComponent(lbl_menuItem_2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(lbl_menuItem_5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(lbl_menuItem_3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(lbl_menuItem_4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1318,6 +1317,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                     .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
                     .addComponent(lbl_date, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
             .addComponent(lbl_menuItem_1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lbl_menuItem_2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnl_appBarLayout.setVerticalGroup(
             pnl_appBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1325,17 +1325,17 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 .addComponent(pnl_logoAndName, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_menuItem_1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lbl_menuItem_2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(16, 16, 16)
+                .addComponent(lbl_menuItem_6, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_menuItem_3, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lbl_menuItem_4, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lbl_menuItem_5, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lbl_menuItem_6, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_menuItem_2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16)
                 .addComponent(lbl_menuItem_8, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lbl_menuItem_7, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1389,14 +1389,14 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(pnl_functionLayout.createSequentialGroup()
                 .addGap(1102, 1102, 1102)
-                .addComponent(button6, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
+                .addComponent(button6, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pnl_functionLayout.setVerticalGroup(
             pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnl_functionLayout.createSequentialGroup()
                 .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 16, Short.MAX_VALUE)
+                .addGap(0, 17, Short.MAX_VALUE)
                 .addComponent(button6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1622,7 +1622,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_dashboardLayout.setHorizontalGroup(
             pnl_dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_dashboardLayout.createSequentialGroup()
-                .addContainerGap(251, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnl_dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -2436,7 +2436,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                         .addGap(543, 543, 543)
                         .addComponent(jLabel6))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
+                        .addContainerGap()
                         .addComponent(importAddButton)
                         .addGap(15, 15, 15)
                         .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1126, javax.swing.GroupLayout.PREFERRED_SIZE)))
