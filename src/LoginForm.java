@@ -181,7 +181,6 @@ public class LoginForm extends javax.swing.JFrame {
         alertLb = new javax.swing.JLabel();
         showPwdLbl1 = new javax.swing.JLabel();
         usernameTf = new javax.swing.JTextField();
-        signupBtn = new Button();
         loginBtn = new Button();
         lbl_forgotPassword = new javax.swing.JLabel();
         lbl_close_hover = new javax.swing.JLabel();
@@ -337,21 +336,6 @@ public class LoginForm extends javax.swing.JFrame {
         usernameTf.setBorder(null);
         login.add(usernameTf, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 160, 339, 40));
 
-        signupBtn.setBackground(new java.awt.Color(97, 144, 232));
-        signupBtn.setForeground(new java.awt.Color(255, 255, 255));
-        signupBtn.setText("Đăng Ký");
-        signupBtn.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        signupBtn.setGradientBackgroundColor(new java.awt.Color(28, 181, 224));
-        signupBtn.setLineColor(null);
-        signupBtn.setLinePainted(false);
-        signupBtn.setRounded(true);
-        signupBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                signupBtnActionPerformed(evt);
-            }
-        });
-        login.add(signupBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 350, 130, 48));
-
         loginBtn.setBackground(new java.awt.Color(97, 144, 232));
         loginBtn.setForeground(new java.awt.Color(255, 255, 255));
         loginBtn.setText("Đăng Nhập");
@@ -359,13 +343,13 @@ public class LoginForm extends javax.swing.JFrame {
         loginBtn.setGradientBackgroundColor(new java.awt.Color(28, 181, 224));
         loginBtn.setLineColor(null);
         loginBtn.setLinePainted(false);
-        loginBtn.setRounded(true);
+        loginBtn.setRounded(false);
         loginBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginBtnActionPerformed(evt);
             }
         });
-        login.add(loginBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 350, 130, 48));
+        login.add(loginBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 350, 200, 48));
 
         lbl_forgotPassword.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lbl_forgotPassword.setText("Forgot Password?");
@@ -776,10 +760,6 @@ public class LoginForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtVerKeyReleased
 
-    private void signupBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signupBtnActionPerformed
-
-    }//GEN-LAST:event_signupBtnActionPerformed
-
     private void createAlert(JLabel label, String alertContent) {
         label.setSize(339, 30);
         label.setText(alertContent);
@@ -833,7 +813,6 @@ public class LoginForm extends javax.swing.JFrame {
     private javax.swing.JTextField pwdShowed;
     private javax.swing.JLabel showPwdLbl;
     private javax.swing.JLabel showPwdLbl1;
-    private Button signupBtn;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JLabel txtEmailErr;
     private javax.swing.JTextField txtVer;

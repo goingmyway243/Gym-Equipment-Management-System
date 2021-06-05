@@ -550,6 +550,7 @@ public class AddEquipmentForm extends javax.swing.JFrame {
 
         _admDb.setEnabled(true);
         _admDb.loadDatabase();
+        _admDb.getEquipmentImportedInMonth();
         this.dispose();
     }//GEN-LAST:event_addEquipmentConfirmButtonActionPerformed
 

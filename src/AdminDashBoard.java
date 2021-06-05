@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -238,6 +239,34 @@ public class AdminDashBoard extends javax.swing.JFrame {
             signupButton.setVisible(false);
             showLoginInfoButton.setVisible(false);
         }
+
+        getEquipmentImportedInMonth();
+    }
+
+    public void getEquipmentImportedInMonth() {
+        String getCurrentMonthAndYear = "SELECT EXTRACT(YEAR_MONTH FROM CURRENT_TIMESTAMP)";
+        String getNumberOfEquipment = "SELECT COUNT(*) from gym_equipments, import_details WHERE gym_equipments.import_id= import_details.id and MONTH(import_details.date_import) = ? and YEAR(import_details.date_import) = ?";
+        int currentMonth;
+        int currentYear;
+        Connection con = null;
+
+        try {
+            con = ConnectMysql.getConnectDB();
+            Statement s = con.prepareStatement(getCurrentMonthAndYear);
+            ResultSet rs = s.executeQuery(getCurrentMonthAndYear);
+            if (rs.next()) {
+                currentYear = Integer.parseInt(rs.getString(1).substring(0, 4));
+                currentMonth = Integer.parseInt(rs.getString(1).substring(4, 6));
+                PreparedStatement ps = con.prepareStatement(getNumberOfEquipment);
+                ps.setInt(1, currentMonth);
+                ps.setInt(2, currentYear);
+                ResultSet result = ps.executeQuery();
+                if (result.next()) {
+                    db_TBNTT.setText(result.getInt(1) + "");
+                }
+            }
+        } catch (Exception e) {
+        }
     }
 
     //////////////////////////|///////////////|///////////////////////////////
@@ -375,6 +404,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
             ps.setString(4, id);
             ps.execute();
             System.out.println("Chỉnh sửa thành công");
+            getEquipmentImportedInMonth();
         } catch (SQLException ex) {
             Logger.getLogger(AddEquipmentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -407,8 +437,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         tableModel.setNumRows(0);
         loadImportID();
         importDateTextField.setText(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-        importEditButton.setEnabled(false);
-        importDeleteButton.setEnabled(false);
         _checkEquipmentIDList.clear();
     }
 
@@ -485,8 +513,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 if (eD.getPicture() != null) {
                     btnGetImage.setText(eD.getPicture());
                     oldPicutre = eD.getPicture();
-                }
-                else {
+                } else {
                     btnGetImage.setText("Chọn hình ảnh!");
                 }
 
@@ -587,7 +614,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
                                 break;
                             case "Thống kê":
                                 if (!_isPopupShow) {
-                                    DrawGraph.createAndShowGui();
                                     new PieChart(_this).start();
                                     _isPopupShow = true;
                                 }
@@ -697,12 +723,12 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private void loadUserInfos() {
         DefaultTableModel tableModel = (DefaultTableModel) usersTable.getModel();
         tableModel.setNumRows(0);
-        _imgGenerator.ImageColumnSetting(usersTable, "Chân dung");
+        _imgGenerator.ImageColumnSetting(usersTable, "Hình ảnh");
 
         List<User> listOfUser = new UserController().getUsersInfo();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
-        boolean isOdd = false;
-        int dem = 0;
+        int dem = 1;
+        boolean isOdd;
 
         for (User user : listOfUser) {
             isOdd = dem % 2 != 0;
@@ -862,7 +888,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
             int dem = 1;
             boolean isOdd;
             while (rs.next()) {
-                isOdd = dem % 2 != 0;
+                isOdd = dem % 2 == 0;
                 String imagePath = getEquipmentImage(rs.getString("detail_id"));
 
                 vector = new Vector();
@@ -943,8 +969,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         if (column == imageColumn) {
             if (table == equipmentsTable) {
                 imagePath = getEquipmentImage(table.getValueAt(row, 3).toString());
-            }
-            else if (table == categoriesTable) {
+            } else if (table == categoriesTable) {
                 imagePath = lED.get(row).getPicture();
             }
 
@@ -1072,7 +1097,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         jLabel24 = new javax.swing.JLabel();
         button1 = new Button();
         signupButton = new Button();
-        profilePictureLabel = new javax.swing.JLabel();
         showLoginInfoButton = new Button();
         pnl_eqsDetail = new javax.swing.JPanel();
         txtTenThietBi = new javax.swing.JTextField();
@@ -1102,8 +1126,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_suppliers = new javax.swing.JPanel();
         suppliersScrollPane = new javax.swing.JScrollPane();
         suppliersTable = new javax.swing.JTable();
-        btnSupplierConfirm = new javax.swing.JButton();
-        btnRefreshNCC = new javax.swing.JButton();
         jLabel25 = new javax.swing.JLabel();
         lbl_themNCC = new javax.swing.JLabel();
         jLabel33 = new javax.swing.JLabel();
@@ -1116,6 +1138,8 @@ public class AdminDashBoard extends javax.swing.JFrame {
         txtTenNCC = new javax.swing.JTextField();
         txtSDT = new javax.swing.JTextField();
         txtDiaChiNCC = new javax.swing.JTextField();
+        refreshSupplierBtn = new Button();
+        btnSupplierConfirm = new Button();
         pnl_imports = new javax.swing.JPanel();
         importDetailsScrollPane = new javax.swing.JScrollPane();
         importDetailsTable = new javax.swing.JTable();
@@ -1127,8 +1151,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         importEquipmentTable = new javax.swing.JTable();
         importDateLabel = new javax.swing.JLabel();
         importDateTextField = new javax.swing.JTextField();
-        importEditButton = new javax.swing.JButton();
-        importDeleteButton = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         saveImportButton = new Button();
         refreshImportButton = new Button();
@@ -1166,7 +1188,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 .addComponent(lbl_appLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnl_logoAndNameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                     .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)))
         );
         pnl_logoAndNameLayout.setVerticalGroup(
@@ -1324,7 +1346,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lbl_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnl_function.setBackground(new java.awt.Color(45, 53, 60));
@@ -1367,14 +1389,14 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(pnl_functionLayout.createSequentialGroup()
                 .addGap(1102, 1102, 1102)
-                .addComponent(button6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(button6, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pnl_functionLayout.setVerticalGroup(
             pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnl_functionLayout.createSequentialGroup()
                 .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 17, Short.MAX_VALUE)
+                .addGap(0, 16, Short.MAX_VALUE)
                 .addComponent(button6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1402,7 +1424,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         db_txtTb.setText("20");
 
         jLabel16.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel16.setText("popup Info (later) : hover");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -1601,7 +1622,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_dashboardLayout.setHorizontalGroup(
             pnl_dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_dashboardLayout.createSequentialGroup()
-                .addContainerGap(250, Short.MAX_VALUE)
+                .addContainerGap(251, Short.MAX_VALUE)
                 .addGroup(pnl_dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1618,7 +1639,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_dashboardLayout.setVerticalGroup(
             pnl_dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_dashboardLayout.createSequentialGroup()
-                .addContainerGap(229, Short.MAX_VALUE)
+                .addGap(229, 229, 229)
                 .addGroup(pnl_dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnl_dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1640,7 +1661,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Mã nhân viên", "Họ tên", "Ngày sinh", "Email", "Số điện thoại", "Chân dung", "Cập nhật lúc"
+                "Mã nhân viên", "Họ tên", "Ngày sinh", "Email", "Số điện thoại", "Hình ảnh", "Cập nhật lúc"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -1662,17 +1683,17 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_users.setLayout(pnl_usersLayout);
         pnl_usersLayout.setHorizontalGroup(
             pnl_usersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnl_usersLayout.createSequentialGroup()
-                .addGap(180, 180, 180)
-                .addComponent(usersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(357, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_usersLayout.createSequentialGroup()
+                .addContainerGap(217, Short.MAX_VALUE)
+                .addComponent(usersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 850, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(190, 190, 190))
         );
         pnl_usersLayout.setVerticalGroup(
             pnl_usersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnl_usersLayout.createSequentialGroup()
-                .addGap(148, 148, 148)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_usersLayout.createSequentialGroup()
+                .addContainerGap(188, Short.MAX_VALUE)
                 .addComponent(usersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(194, Short.MAX_VALUE))
+                .addGap(154, 154, 154))
         );
 
         pnl_equipments.setBackground(new java.awt.Color(255, 255, 255));
@@ -1816,16 +1837,16 @@ public class AdminDashBoard extends javax.swing.JFrame {
             .addGroup(pnl_equipmentsLayout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(equipmentsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addComponent(equipmentsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
+                .addContainerGap())
         );
         pnl_equipmentsLayout.setVerticalGroup(
             pnl_equipmentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnl_equipmentsLayout.createSequentialGroup()
-                .addGap(127, 127, 127)
-                .addComponent(equipmentsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 766, Short.MAX_VALUE)
+            .addGroup(pnl_equipmentsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(equipmentsScrollPane)
+                .addContainerGap())
         );
 
         pnl_settings.setBackground(new java.awt.Color(254, 217, 155));
@@ -1954,9 +1975,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         });
         pnl_settings.add(signupButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 500, 149, 49));
 
-        profilePictureLabel.setBackground(new java.awt.Color(255, 255, 255));
-        pnl_settings.add(profilePictureLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 190, 207, 213));
-
         showLoginInfoButton.setBackground(new java.awt.Color(153, 0, 51));
         showLoginInfoButton.setForeground(new java.awt.Color(255, 255, 255));
         showLoginInfoButton.setText("Danh sách tài khoản");
@@ -1967,7 +1985,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 showLoginInfoButtonActionPerformed(evt);
             }
         });
-        pnl_settings.add(showLoginInfoButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 560, 210, 49));
+        pnl_settings.add(showLoginInfoButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 560, 210, 49));
 
         pnl_eqsDetail.setBackground(new java.awt.Color(197, 255, 253));
         pnl_eqsDetail.setPreferredSize(new java.awt.Dimension(1200, 710));
@@ -2175,27 +2193,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
             suppliersTable.getColumnModel().getColumn(3).setResizable(false);
         }
 
-        btnSupplierConfirm.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        btnSupplierConfirm.setForeground(new java.awt.Color(51, 153, 0));
-        btnSupplierConfirm.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/plus.png"))); // NOI18N
-        btnSupplierConfirm.setText("Thêm");
-        btnSupplierConfirm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSupplierConfirmActionPerformed(evt);
-            }
-        });
-
-        btnRefreshNCC.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        btnRefreshNCC.setForeground(new java.awt.Color(51, 51, 255));
-        btnRefreshNCC.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/refresh.png"))); // NOI18N
-        btnRefreshNCC.setText("Làm mới");
-        btnRefreshNCC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        btnRefreshNCC.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRefreshNCCActionPerformed(evt);
-            }
-        });
-
         jLabel25.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         jLabel25.setText("Mã:");
 
@@ -2240,44 +2237,63 @@ public class AdminDashBoard extends javax.swing.JFrame {
             }
         });
 
+        refreshSupplierBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/refresh.png"))); // NOI18N
+        refreshSupplierBtn.setText("Làm mới");
+        refreshSupplierBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshSupplierBtnActionPerformed(evt);
+            }
+        });
+
+        btnSupplierConfirm.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/plus.png"))); // NOI18N
+        btnSupplierConfirm.setText("Thêm");
+        btnSupplierConfirm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSupplierConfirmActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnl_suppliersLayout = new javax.swing.GroupLayout(pnl_suppliers);
         pnl_suppliers.setLayout(pnl_suppliersLayout);
         pnl_suppliersLayout.setHorizontalGroup(
             pnl_suppliersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_suppliersLayout.createSequentialGroup()
-                .addGroup(pnl_suppliersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnl_suppliersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(pnl_suppliersLayout.createSequentialGroup()
-                        .addGap(105, 105, 105)
-                        .addComponent(btnRefreshNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(78, 78, 78)
-                        .addComponent(btnSupplierConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnl_suppliersLayout.createSequentialGroup()
-                        .addGap(79, 79, 79)
                         .addGroup(pnl_suppliersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel25)
-                            .addComponent(jLabel34)
-                            .addComponent(jLabel35)
-                            .addComponent(jLabel33))
-                        .addGap(27, 27, 27)
-                        .addGroup(pnl_suppliersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtMaNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(alertSDTNCC)
-                            .addComponent(txtDiaChiNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtTenNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(alertTNCC)
-                            .addComponent(alertDCNCC)))
+                            .addGroup(pnl_suppliersLayout.createSequentialGroup()
+                                .addGap(79, 79, 79)
+                                .addGroup(pnl_suppliersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel25)
+                                    .addComponent(jLabel34)
+                                    .addComponent(jLabel35)
+                                    .addComponent(jLabel33))
+                                .addGap(27, 27, 27)
+                                .addGroup(pnl_suppliersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtMaNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(alertSDTNCC)
+                                    .addComponent(txtDiaChiNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtTenNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(alertTNCC)
+                                    .addComponent(alertDCNCC)))
+                            .addGroup(pnl_suppliersLayout.createSequentialGroup()
+                                .addGap(187, 187, 187)
+                                .addComponent(lbl_themNCC)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(pnl_suppliersLayout.createSequentialGroup()
-                        .addGap(187, 187, 187)
-                        .addComponent(lbl_themNCC)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 195, Short.MAX_VALUE)
-                .addComponent(suppliersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 608, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(149, Short.MAX_VALUE)
+                        .addComponent(refreshSupplierBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(60, 60, 60)
+                        .addComponent(btnSupplierConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(99, 99, 99)))
+                .addComponent(suppliersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 680, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         pnl_suppliersLayout.setVerticalGroup(
             pnl_suppliersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(suppliersScrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(pnl_suppliersLayout.createSequentialGroup()
-                .addContainerGap(128, Short.MAX_VALUE)
+                .addContainerGap(113, Short.MAX_VALUE)
                 .addComponent(lbl_themNCC)
                 .addGap(100, 100, 100)
                 .addGroup(pnl_suppliersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -2301,11 +2317,11 @@ public class AdminDashBoard extends javax.swing.JFrame {
                     .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(alertSDTNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(128, 128, 128)
+                .addGap(89, 89, 89)
                 .addGroup(pnl_suppliersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSupplierConfirm)
-                    .addComponent(btnRefreshNCC))
-                .addGap(88, 88, 88))
+                    .addComponent(btnSupplierConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(refreshSupplierBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(142, 142, 142))
         );
 
         pnl_imports.setBackground(new java.awt.Color(255, 255, 255));
@@ -2370,12 +2386,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         importDateTextField.setEditable(false);
         importDateTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
-        importEditButton.setText("Sửa");
-        importEditButton.setEnabled(false);
-
-        importDeleteButton.setText("Xóa");
-        importDeleteButton.setEnabled(false);
-
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(51, 51, 255));
         jLabel6.setText("TẠO PHIẾU NHẬP");
@@ -2427,13 +2437,10 @@ public class AdminDashBoard extends javax.swing.JFrame {
                         .addComponent(jLabel6))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(importAddButton)
-                            .addComponent(importEditButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(importDeleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(importAddButton)
                         .addGap(15, 15, 15)
                         .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1126, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(10, 12, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2475,11 +2482,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(importAddButton)
-                        .addGap(17, 17, 17)
-                        .addComponent(importEditButton)
-                        .addGap(17, 17, 17)
-                        .addComponent(importDeleteButton))
+                        .addComponent(importAddButton))
                     .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2520,31 +2523,31 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 .addComponent(pnl_appBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnl_function, javax.swing.GroupLayout.DEFAULT_SIZE, 1257, Short.MAX_VALUE)
+                    .addComponent(pnl_function, javax.swing.GroupLayout.DEFAULT_SIZE, 1258, Short.MAX_VALUE)
                     .addComponent(pnl_dashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 232, Short.MAX_VALUE)
+                    .addGap(0, 233, Short.MAX_VALUE)
                     .addComponent(pnl_users, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 232, Short.MAX_VALUE)
+                    .addGap(0, 235, Short.MAX_VALUE)
                     .addComponent(pnl_equipments, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 232, Short.MAX_VALUE)
+                    .addGap(0, 233, Short.MAX_VALUE)
                     .addComponent(pnl_settings, javax.swing.GroupLayout.PREFERRED_SIZE, 1257, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 232, Short.MAX_VALUE)
+                    .addGap(0, 233, Short.MAX_VALUE)
                     .addComponent(pnl_eqsDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 1257, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 232, Short.MAX_VALUE)
+                    .addGap(0, 233, Short.MAX_VALUE)
                     .addComponent(pnl_suppliers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 233, Short.MAX_VALUE)
+                    .addGap(0, 212, Short.MAX_VALUE)
                     .addComponent(pnl_imports, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
         pnl_containerLayout.setVerticalGroup(
@@ -2572,7 +2575,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                     .addComponent(pnl_eqsDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 766, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
-                    .addGap(0, 115, Short.MAX_VALUE)
+                    .addGap(0, 124, Short.MAX_VALUE)
                     .addComponent(pnl_suppliers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnl_containerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_containerLayout.createSequentialGroup()
@@ -2588,7 +2591,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnl_container, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(pnl_container, javax.swing.GroupLayout.DEFAULT_SIZE, 867, Short.MAX_VALUE)
         );
 
         pack();
@@ -2698,63 +2701,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         _addImgFrame.setVisible(true);
     }//GEN-LAST:event_btnGetImageActionPerformed
 
-    private void btnSupplierConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSupplierConfirmActionPerformed
-        initSuppliersAlert();
-        String maNCCs = txtMaNCC.getText();
-        String tenNCC = txtTenNCC.getText();
-        String diaChiNCC = txtDiaChiNCC.getText();
-        String sdtNCC = txtSDT.getText();
-        boolean check = true;
-
-        if (tenNCC.length() == 0) {
-            createAlert(alertTNCC, "Tên không được để trống");
-            check = false;
-        }
-        if (diaChiNCC.equals("")) {
-            createAlert(alertDCNCC, "Địa chỉ không được để trống");
-            check = false;
-        }
-
-        if (tenNCC.length() < 0 || tenNCC.matches("[^a-zA-Z]+")) {
-            createAlert(alertTNCC, "Tên NCC phải là chữ cái");
-            check = false;
-        }
-        if (!sdtNCC.matches("^[0]{1}[0-9]{9}$") || sdtNCC.length() < 0) {
-            createAlert(alertSDTNCC, "SDT không hợp lệ (10 chữ số)");
-            check = false;
-        }
-
-        if (check) {
-            int maNCC = Integer.parseInt(maNCCs);
-            Supplier s = new Supplier(maNCC, tenNCC, diaChiNCC, sdtNCC);
-            if (_sC.isIdExist(maNCC)) {
-                if (_sC.updateSupplier(s)) {
-                    new AlertFrame("Cập nhật thành công").setVisible(true);
-                    btnSupplierConfirm.setText("Thêm");
-                    lbl_themNCC.setText("Thêm nhà cung cấp");
-                }
-                else {
-                    JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
-                }
-            }
-            else {
-                if (_sC.addNewSupplier(s)) {
-                    new AlertFrame("Thêm thành công").setVisible(true);
-                }
-                else {
-                    JOptionPane.showMessageDialog(this, "Thêm thất bại");
-                }
-            }
-            loadDatabase();
-            resetSupplierField();
-        }
-    }//GEN-LAST:event_btnSupplierConfirmActionPerformed
-
-    private void btnRefreshNCCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshNCCActionPerformed
-        resetSupplierField();
-        initSuppliersAlert();
-    }//GEN-LAST:event_btnRefreshNCCActionPerformed
-
     private void txtTenNCCKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTenNCCKeyReleased
         String tenNCC = txtTenNCC.getText();
         if (tenNCC.matches("[a-zA-Z]+")) {
@@ -2817,8 +2763,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 AddEquipmentDetailsForm detailForm = AddEquipmentDetailsForm.getObj(this, -1, false);
                 detailForm.setLocationRelativeTo(this);
                 detailForm.setVisible(true);
-            }
-            else {
+            } else {
                 loadDetailInfo(detailID);
             }
         }
@@ -2851,19 +2796,15 @@ public class AdminDashBoard extends javax.swing.JFrame {
         if (_isCategoriesUpdate) {
             if (btnGetImage.getText().equals("Chọn hình ảnh!")) {
                 hinhAnh = null;
-            }
-            else if (btnGetImage.getText().contains("/")) {
+            } else if (btnGetImage.getText().contains("/")) {
                 hinhAnh = btnGetImage.getText();
-            }
-            else {
+            } else {
                 hinhAnh = "/src/images/" + btnGetImage.getText();
             }
-        }
-        else {
+        } else {
             if (btnGetImage.getText().equals("Chọn hình ảnh!")) {
                 hinhAnh = null;
-            }
-            else {
+            } else {
                 hinhAnh = "/src/images/" + btnGetImage.getText();
             }
         }
@@ -2913,8 +2854,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         if (!thoigianBH.matches("[\\d]{1,2}")) {
             createAlert(alertTGBH, "Vui lòng nhập năm từ 0 đến 10");
             check = false;
-        }
-        else if (Integer.parseInt(thoigianBH) > 10 || Integer.parseInt(thoigianBH) < 0) {
+        } else if (Integer.parseInt(thoigianBH) > 10 || Integer.parseInt(thoigianBH) < 0) {
             createAlert(alertTGBH, "Vui lòng nhập năm từ 0 đến 10");
             check = false;
         }
@@ -2948,19 +2888,16 @@ public class AdminDashBoard extends javax.swing.JFrame {
                     } catch (NullPointerException e) {
                         System.out.println("Waiting");
                     }
-                }
-                else {
+                } else {
                     JOptionPane.showMessageDialog(this, "Cập nhật thất  bại");
                 }
-            }
-            else {
+            } else {
                 if (_eC.addNewEquipmentDetails(eD)) {
                     new AlertFrame("Thêm thành công").setVisible(true);
                     if (hinhAnh != null) {
                         _addImgFrame.saveImage();
                     }
-                }
-                else {
+                } else {
                     JOptionPane.showMessageDialog(this, "Thêm thất  bại");
                 }
             }
@@ -3087,8 +3024,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 if (choice == JOptionPane.NO_OPTION) {
                     return;
                 }
-            }
-            else {
+            } else {
                 try {
                     file.createNewFile();
                 } catch (IOException ex) {
@@ -3123,12 +3059,67 @@ public class AdminDashBoard extends javax.swing.JFrame {
         editEquipment(id, status, detailID);
         new AlertFrame("Chỉnh sửa thành công").setVisible(true);
         refreshEquipmentEditBox();
+        getEquipmentImportedInMonth();
         loadDatabase();
     }//GEN-LAST:event_EquipmentEditConfirmButtonActionPerformed
 
     private void EquipmentRefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EquipmentRefreshButtonActionPerformed
         refreshEquipmentEditBox();
     }//GEN-LAST:event_EquipmentRefreshButtonActionPerformed
+
+    private void btnSupplierConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSupplierConfirmActionPerformed
+        initSuppliersAlert();
+        String maNCCs = txtMaNCC.getText();
+        String tenNCC = txtTenNCC.getText();
+        String diaChiNCC = txtDiaChiNCC.getText();
+        String sdtNCC = txtSDT.getText();
+        boolean check = true;
+
+        if (tenNCC.length() == 0) {
+            createAlert(alertTNCC, "Tên không được để trống");
+            check = false;
+        }
+        if (diaChiNCC.equals("")) {
+            createAlert(alertDCNCC, "Địa chỉ không được để trống");
+            check = false;
+        }
+
+        if (tenNCC.length() < 0 || tenNCC.matches("[^a-zA-Z]+")) {
+            createAlert(alertTNCC, "Tên NCC phải là chữ cái");
+            check = false;
+        }
+        if (!sdtNCC.matches("^[0]{1}[0-9]{9}$") || sdtNCC.length() < 0) {
+            createAlert(alertSDTNCC, "SDT không hợp lệ (10 chữ số)");
+            check = false;
+        }
+
+        if (check) {
+            int maNCC = Integer.parseInt(maNCCs);
+            Supplier s = new Supplier(maNCC, tenNCC, diaChiNCC, sdtNCC);
+            if (_sC.isIdExist(maNCC)) {
+                if (_sC.updateSupplier(s)) {
+                    new AlertFrame("Cập nhật thành công").setVisible(true);
+                    btnSupplierConfirm.setText("Thêm");
+                    lbl_themNCC.setText("Thêm nhà cung cấp");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+                }
+            } else {
+                if (_sC.addNewSupplier(s)) {
+                    new AlertFrame("Thêm thành công").setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm thất bại");
+                }
+            }
+            loadDatabase();
+            resetSupplierField();
+        }
+    }//GEN-LAST:event_btnSupplierConfirmActionPerformed
+
+    private void refreshSupplierBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshSupplierBtnActionPerformed
+        resetSupplierField();
+        initSuppliersAlert();
+    }//GEN-LAST:event_refreshSupplierBtnActionPerformed
 
     public void fillOutSupplierInfo(int id) {
         for (Supplier s : _listOfSuppliers) {
@@ -3192,8 +3183,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JLabel alertTTB;
     private javax.swing.JLabel birthDayLb;
     private Button btnGetImage;
-    private javax.swing.JButton btnRefreshNCC;
-    private javax.swing.JButton btnSupplierConfirm;
+    private Button btnSupplierConfirm;
     private Button btn_confirmCategories;
     private Button button1;
     private Button button5;
@@ -3222,10 +3212,8 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JButton importAddButton;
     private javax.swing.JLabel importDateLabel;
     private javax.swing.JTextField importDateTextField;
-    private javax.swing.JButton importDeleteButton;
     private javax.swing.JScrollPane importDetailsScrollPane;
     private javax.swing.JTable importDetailsTable;
-    private javax.swing.JButton importEditButton;
     private javax.swing.JTable importEquipmentTable;
     private javax.swing.JLabel importIDLabel;
     private javax.swing.JTextField importIDTextField;
@@ -3303,8 +3291,8 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JPanel pnl_users;
     private javax.swing.JLabel priceLabel;
     private javax.swing.JTextField priceTextField;
-    private javax.swing.JLabel profilePictureLabel;
     private Button refreshImportButton;
+    private Button refreshSupplierBtn;
     private Button saveImportButton;
     private javax.swing.JScrollPane scrollPane;
     private Button showLoginInfoButton;
