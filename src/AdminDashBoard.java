@@ -644,7 +644,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                                     _sideBarFunctionFrm.initFilterComboBox(_selectedTable);
                                 }
                                 break;
-                            case "Đơn nhập":
+                            case "Phiếu nhập":
                                 showPanel(pnl_imports);
                                 _selectedTable = 2;
                                 if (_sideBarFunctionFrm != null) {
@@ -1292,7 +1292,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         lbl_menuItem_6.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_menuItem_6.setForeground(new java.awt.Color(255, 255, 255));
         lbl_menuItem_6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/import.png"))); // NOI18N
-        lbl_menuItem_6.setText("     Đơn nhập");
+        lbl_menuItem_6.setText("     Phiếu nhập");
         lbl_menuItem_6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_menuItem_6.setOpaque(true);
 
@@ -1441,14 +1441,14 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(pnl_functionLayout.createSequentialGroup()
                 .addGap(1102, 1102, 1102)
-                .addComponent(button6, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                .addComponent(button6, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pnl_functionLayout.setVerticalGroup(
             pnl_functionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnl_functionLayout.createSequentialGroup()
                 .addComponent(lbl_close_hover, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 16, Short.MAX_VALUE)
+                .addGap(0, 17, Short.MAX_VALUE)
                 .addComponent(button6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -2641,7 +2641,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnl_container, javax.swing.GroupLayout.DEFAULT_SIZE, 867, Short.MAX_VALUE)
+            .addComponent(pnl_container, javax.swing.GroupLayout.PREFERRED_SIZE, 867, Short.MAX_VALUE)
         );
 
         pack();

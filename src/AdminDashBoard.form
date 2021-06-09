@@ -379,7 +379,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/icon/import.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="     &#x110;&#x1a1;n nh&#x1ead;p"/>
+                <Property name="text" type="java.lang.String" value="     Phi&#x1ebf;u nh&#x1ead;p"/>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
                   <Color id="Hand Cursor"/>
                 </Property>
@@ -528,7 +528,7 @@
                   </Group>
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="1102" max="-2" attributes="0"/>
-                      <Component id="button6" pref="146" max="32767" attributes="0"/>
+                      <Component id="button6" pref="148" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -537,7 +537,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="lbl_close_hover" min="-2" pref="32" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="16" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="17" max="32767" attributes="0"/>
                       <Component id="button6" min="-2" pref="46" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
