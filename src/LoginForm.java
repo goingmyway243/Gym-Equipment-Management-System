@@ -349,10 +349,10 @@ public class LoginForm extends javax.swing.JFrame {
                 loginBtnActionPerformed(evt);
             }
         });
-        login.add(loginBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 350, 200, 48));
+        login.add(loginBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 320, 160, 48));
 
         lbl_forgotPassword.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        lbl_forgotPassword.setText("Forgot Password?");
+        lbl_forgotPassword.setText("Quên mật khẩu?");
         lbl_forgotPassword.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_forgotPassword.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -365,7 +365,7 @@ public class LoginForm extends javax.swing.JFrame {
                 lbl_forgotPasswordMouseEntered(evt);
             }
         });
-        login.add(lbl_forgotPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 300, -1, -1));
+        login.add(lbl_forgotPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 330, -1, -1));
 
         lbl_close_hover.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_close_hover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close1.png"))); // NOI18N

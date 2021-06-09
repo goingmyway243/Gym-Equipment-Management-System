@@ -30,6 +30,8 @@ public class SideBarFunction extends javax.swing.JDialog implements WindowListen
      * Creates new form SideBarFunction2
      */
     public AdminDashBoard admDb;
+    
+    
 
     public SideBarFunction(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -45,7 +47,7 @@ public class SideBarFunction extends javax.swing.JDialog implements WindowListen
 
         Dimension srcSize = Toolkit.getDefaultToolkit().getScreenSize();
 //        System.out.println("");
-        
+
         setLocation(srcSize.width / 2 - admDb.getWidth() / 2 - 80 + admDb.getWidth(), srcSize.height / 2 - admDb.getHeight() / 2 + 110);
 
         lbl_close_hover.setIcon(ImageGenerator.ResizeImage(new ImageGenerator().getImageFolderPath() + "/src/icon/close3.png", lbl_close_hover));
@@ -173,7 +175,6 @@ public class SideBarFunction extends javax.swing.JDialog implements WindowListen
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(45, 53, 60));
-        setUndecorated(true);
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(45, 53, 60));
@@ -363,19 +364,34 @@ public class SideBarFunction extends javax.swing.JDialog implements WindowListen
     }// </editor-fold>//GEN-END:initComponents
 
     private void button4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button4ActionPerformed
-        ImportForm importForm = new ImportForm(admDb, admDb.getUserID());
-        importForm.setLocationRelativeTo(this);
-        importForm.setVisible(true);
+        admDb.setLabelBackground(admDb.getLbl_menuItem_6());
+        admDb.showPanel((admDb.getPnl_imports()));
+
+        admDb.setSelectedTable(2);
+        if (admDb.getSideBarFunctionFrm() != null) {
+            admDb.getSideBarFunctionFrm().initFilterComboBox(admDb.getSelectedTable());
+        }
     }//GEN-LAST:event_button4ActionPerformed
 
     private void button3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button3ActionPerformed
         admDb.setLabelBackground(admDb.getLbl_menuItem_5());
         admDb.showPanel(admDb.getPnl_suppliers());
+
+        admDb.setSelectedTable(5);
+        if (admDb.getSideBarFunctionFrm() != null) {
+            admDb.getSideBarFunctionFrm().initFilterComboBox(admDb.getSelectedTable());
+        }
     }//GEN-LAST:event_button3ActionPerformed
 
     private void button2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button2ActionPerformed
         admDb.setLabelBackground(admDb.getLbl_menuItem_4());
         admDb.showPanel(admDb.getPnl_eqsDetail());
+
+        admDb.setSelectedTable(4);
+        if (admDb.getSideBarFunctionFrm() != null) {
+            admDb.getSideBarFunctionFrm().initFilterComboBox(admDb.getSelectedTable());
+        }
+
     }//GEN-LAST:event_button2ActionPerformed
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
@@ -414,6 +430,13 @@ public class SideBarFunction extends javax.swing.JDialog implements WindowListen
                 if (result == JOptionPane.YES_OPTION) {
                     int id = Integer.valueOf(admDb.getSuppliersTable().getValueAt(admDb.getSuppliersTable().getSelectedRow(), 0).toString());
                     admDb.getDeleter().deleteSupplier(id);
+                }
+                break;
+            }
+            case 6: {
+                if (result == JOptionPane.YES_OPTION) {
+                    int id = Integer.valueOf(admDb.getUsersTable().getValueAt(admDb.getUsersTable().getSelectedRow(), 0).toString());
+                    admDb.getDeleter().deleteUser(id);
                 }
                 break;
             }
