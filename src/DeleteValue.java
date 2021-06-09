@@ -84,8 +84,8 @@ public class DeleteValue {
     }
 
     public void deleteUser(int id) {
-        if (!checkUser(id)) {
-            JOptionPane.showMessageDialog(null, "Không thể xóa thông tin nhân viên hiện tại \n(tồn tại phiếu nhập do nhân viên này quản lý)");
+        if (id == 1) {
+            JOptionPane.showMessageDialog(null, "Không thể xóa tài khoản này!");
             return;
         }
         String sql = "delete from users where id = ?";

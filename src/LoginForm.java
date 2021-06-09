@@ -689,7 +689,6 @@ public class LoginForm extends javax.swing.JFrame {
             props.put("mail.smtp.auth", "true");
             props.put("mail.smtp.starttls.required", "true");
             props.setProperty("mail.debug", "true");
-
             java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
             Session mailSession = Session.getDefaultInstance(props, null);
 

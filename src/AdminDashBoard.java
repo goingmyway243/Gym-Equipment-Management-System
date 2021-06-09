@@ -29,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -132,8 +133,20 @@ public class AdminDashBoard extends javax.swing.JFrame {
         return _userID;
     }
 
+    public List<Supplier> getListOfSuppliers() {
+        return _listOfSuppliers;
+    }
+
+    public JTextField getTxtMaNCC() {
+        return txtMaNCC;
+    }
+
     public Button getButton6() {
         return button6;
+    }
+
+    public Button getRefreshEquipDetails() {
+        return refreshEquipDetails;
     }
 
     public SideBarFunction getSideBarFunctionFrm() {
@@ -253,9 +266,11 @@ public class AdminDashBoard extends javax.swing.JFrame {
         if (!role.equals(ADMIN_ROLE)) {
             signupButton.setVisible(false);
             showLoginInfoButton.setVisible(false);
+            lbl_menuItem_2.setEnabled(false);
         }
 
         getEquipmentImportedInMonth();
+        setResizable(false);
     }
 
     public void getEquipmentImportedInMonth() {
@@ -596,8 +611,12 @@ public class AdminDashBoard extends javax.swing.JFrame {
                                 }
                                 break;
                             case "Nhân viên":
+                                if (!_role.equals(ADMIN_ROLE)) {
+                                    break;
+                                }
                                 showPanel(pnl_users);
                                 _selectedTable = 3;
+
                                 if (_sideBarFunctionFrm != null) {
                                     _sideBarFunctionFrm.initFilterComboBox(_selectedTable);
                                 }
@@ -610,8 +629,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                                 }
 
                                 break;
-                            case "Chi tiết thiết bị":
-
+                            case "Loại thiết bị":
                                 showPanel(pnl_eqsDetail);
                                 _selectedTable = 4;
                                 if (_sideBarFunctionFrm != null) {
@@ -934,6 +952,17 @@ public class AdminDashBoard extends javax.swing.JFrame {
         equipmentsTable.getRowSorter().toggleSortOrder(1);
     }
 
+    private String getSupplierName(int id) {
+        String supplierName = "";
+        for (Supplier s : _listOfSuppliers) {
+            if (s.getSupplierId() == id) {
+                return s.getName();
+            }
+        }
+
+        return supplierName;
+    }
+
     private void loadEquipmentDetails() {
         db_txtLTT.setText(countAllRecordFromTable("SELECT COUNT(*) FROM equipment_details") + "");
         DefaultTableModel tblEquipDetails = (DefaultTableModel) categoriesTable.getModel();
@@ -943,13 +972,14 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
         int dem = 1;
         boolean isOdd;
+
         for (Equipment_Details equipment_info : lED) {
             isOdd = dem % 2 != 0;
 
             tblEquipDetails.addRow(new Object[]{equipment_info.getId(), equipment_info.getName(),
                 equipment_info.getPicture() == null ? _imgGenerator.createLabel("Không có hình ảnh", isOdd) : _imgGenerator.createLabel(equipment_info.getPicture(), isOdd),
                 equipment_info.getPrice(), equipment_info.getWarranty_time() + " năm",
-                _listOfSuppliers.get(equipment_info.getSupplier_id() - 1).getName(),});
+                getSupplierName(equipment_info.getSupplier_id())});
             dem++;
         }
     }
@@ -1143,7 +1173,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         btnGetImage = new Button();
         categoriesScrollPane = new javax.swing.JScrollPane();
         categoriesTable = new javax.swing.JTable();
-        button5 = new Button();
+        refreshEquipDetails = new Button();
         btn_confirmCategories = new Button();
         pnl_suppliers = new javax.swing.JPanel();
         suppliersScrollPane = new javax.swing.JScrollPane();
@@ -1238,7 +1268,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         lbl_menuItem_4.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbl_menuItem_4.setForeground(new java.awt.Color(255, 255, 255));
         lbl_menuItem_4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/details.png"))); // NOI18N
-        lbl_menuItem_4.setText("     Chi tiết thiết bị");
+        lbl_menuItem_4.setText("     Loại thiết bị");
         lbl_menuItem_4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbl_menuItem_4.setOpaque(true);
 
@@ -1610,7 +1640,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
         jLabel14.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         jLabel14.setForeground(new java.awt.Color(255, 255, 255));
         jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel14.setText("Đơn Nhập Hàng");
+        jLabel14.setText("Đơn Nhập");
         jLabel14.setOpaque(true);
 
         db_txtDNH.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
@@ -1706,9 +1736,9 @@ public class AdminDashBoard extends javax.swing.JFrame {
         pnl_usersLayout.setHorizontalGroup(
             pnl_usersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_usersLayout.createSequentialGroup()
-                .addContainerGap(217, Short.MAX_VALUE)
-                .addComponent(usersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 850, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(190, 190, 190))
+                .addContainerGap(115, Short.MAX_VALUE)
+                .addComponent(usersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1051, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(91, 91, 91))
         );
         pnl_usersLayout.setVerticalGroup(
             pnl_usersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2080,7 +2110,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
         jLabel28.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         jLabel28.setForeground(new java.awt.Color(36, 11, 54));
-        jLabel28.setText("Mã chi tiết thiết bị :");
+        jLabel28.setText("Mã loại thiết bị :");
         pnl_eqsDetail.add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 80, -1, -1));
 
         jLabel29.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
@@ -2131,7 +2161,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Mã loại", "Tên", "Hình ảnh", "Giá", "Hạn bảo hành", "Nhà cung cấp"
+                "Mã loại thiết bị", "Tên", "Hình ảnh", "Giá", "Hạn bảo hành", "Nhà cung cấp"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -2151,19 +2181,19 @@ public class AdminDashBoard extends javax.swing.JFrame {
 
         pnl_eqsDetail.add(categoriesScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 370, 1250, 390));
 
-        button5.setBackground(new java.awt.Color(255, 255, 255));
-        button5.setForeground(new java.awt.Color(0, 0, 255));
-        button5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/refresh.png"))); // NOI18N
-        button5.setText("Làm mới");
-        button5.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        button5.setRounded(true);
-        button5.setSelected(true);
-        button5.addActionListener(new java.awt.event.ActionListener() {
+        refreshEquipDetails.setBackground(new java.awt.Color(255, 255, 255));
+        refreshEquipDetails.setForeground(new java.awt.Color(0, 0, 255));
+        refreshEquipDetails.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/refresh.png"))); // NOI18N
+        refreshEquipDetails.setText("Làm mới");
+        refreshEquipDetails.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        refreshEquipDetails.setRounded(true);
+        refreshEquipDetails.setSelected(true);
+        refreshEquipDetails.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button5ActionPerformed(evt);
+                refreshEquipDetailsActionPerformed(evt);
             }
         });
-        pnl_eqsDetail.add(button5, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 300, 135, 45));
+        pnl_eqsDetail.add(refreshEquipDetails, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 300, 135, 45));
 
         btn_confirmCategories.setBackground(new java.awt.Color(255, 255, 255));
         btn_confirmCategories.setForeground(new java.awt.Color(0, 153, 0));
@@ -2634,7 +2664,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private void usersTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_usersTableMouseClicked
         if (_sideBarFunctionFrm != null) {
             _sideBarFunctionFrm.getEditButton().setEnabled(false);
-            _sideBarFunctionFrm.getRemoveButton().setEnabled(false);
+            _sideBarFunctionFrm.getRemoveButton().setEnabled(true);
         }
     }//GEN-LAST:event_usersTableMouseClicked
 
@@ -2799,13 +2829,13 @@ public class AdminDashBoard extends javax.swing.JFrame {
         setLabelBackground(lbl_menuItem_3);
     }//GEN-LAST:event_jPanel3MouseClicked
 
-    private void button5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button5ActionPerformed
+    private void refreshEquipDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshEquipDetailsActionPerformed
         resetCategoriesField();
         initCategoriesAlert();
         if (_listOfSuppliers.size() != _sC.getSuppliersInfo().size()) {
             getSupplierList();
         }
-    }//GEN-LAST:event_button5ActionPerformed
+    }//GEN-LAST:event_refreshEquipDetailsActionPerformed
 
     private void btn_confirmCategoriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_confirmCategoriesActionPerformed
         initCategoriesAlert();
@@ -3132,6 +3162,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 }
             }
             loadDatabase();
+            getSupplierList();
             resetSupplierField();
         }
     }//GEN-LAST:event_btnSupplierConfirmActionPerformed
@@ -3206,7 +3237,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private Button btnSupplierConfirm;
     private Button btn_confirmCategories;
     private Button button1;
-    private Button button5;
     private Button button6;
     private javax.swing.JScrollPane categoriesScrollPane;
     private javax.swing.JTable categoriesTable;
@@ -3311,6 +3341,7 @@ public class AdminDashBoard extends javax.swing.JFrame {
     private javax.swing.JPanel pnl_users;
     private javax.swing.JLabel priceLabel;
     private javax.swing.JTextField priceTextField;
+    private Button refreshEquipDetails;
     private Button refreshImportButton;
     private Button refreshSupplierBtn;
     private Button saveImportButton;
